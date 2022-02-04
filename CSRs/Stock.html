@@ -1,0 +1,69 @@
+<script type="text/javascript">
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/presupuesto.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQ.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js")+"'><"+"/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/ComponenteAdd_v2.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings_v2.js") + "'><" + "/script>");
+</script>
+<script type="text/javascript">
+    SP.SOD.executeFunc("clienttemplates.js", "SPClientTemplates", function () {
+        function init() {
+            var templates = {};
+            SPClientTemplates.TemplateManager.RegisterTemplateOverrides({
+                OnPreRender: CSROnPreRender,
+                OnPostRender: CSROnPostRender
+            });
+        }
+        RegisterModuleInit(SPClientTemplates.Utility.ReplaceUrlTokens("~siteCollection/Style Library/customlayout.js"), init);
+        init();
+    });
+    var _cols = {};
+    function inicializar_Columnas() {
+        _cols.Institucion = $("[id^='Institucion_Estado'][id$='LookupField']");
+        _cols.InstitucionConsignado = $("[id^='Institucion'][id$='LookupField']");
+        _cols.bip = $("[id^='bip'][id$='TextField']");
+        _cols.CrearCopias = $("[id^='CrearCopias'][id$='NumberField']");
+        _cols.Modelo = $("[id^='Modelo'][id$='LookupField']");
+        _cols.TipoMaterial = $("[id^='TipoMaterial'][id$='LookupField']");
+
+         _cols.Marca = $("[id^='Marca'][id$='TextField']");
+
+        _cols.NuevaMarca = $("[id^='NuevaMarca'][id$='LookupField']");
+        _cols.NuevaMarca.attr("onchange", "_evento_cambiarMarca()");
+
+        ComponenteAdd_Plus(_cols.NuevaMarca, "Marca", MD_MARCA, "NuevaMarca");
+        ComponenteAdd_Plus(_cols.InstitucionConsignado, "Institucion", MD_INSTITUCION, "InstitucionConsignado");
+        ComponenteAdd_Plus(_cols.Modelo, "Modelo", "b20befab-8aef-4c50-8dd4-ba4f2735fc3b", "Modelo");
+        ComponenteAdd_Plus(_cols.TipoMaterial, "TipoMaterial", "73483a5f-344e-4a55-b394-8c0f170801b0", "TipoMaterial");
+
+        _cols.Marca.closest("tr").hide();
+
+        SPStaff_initDateTimePikers();
+        $('.ms-cui-tabBody').hide();
+        _cols.Institucion.closest("tr").hide();
+        _cols.bip.closest("tr").hide();
+
+        if (getUrlParameter("copia") != undefined && getUrlParameter("copia") == "si") {
+            _cols.CrearCopias.closest("tr").show();
+            _cols.CrearCopias.closest("tr").css("background","yellow");
+        }
+        else {
+            _cols.CrearCopias.closest("tr").hide();
+        }
+
+
+        $('#Institucion').html("Institución actual");
+    }
+    function _evento_cambiarMarca() {
+        _cols.Marca.val(_cols.NuevaMarca.find("option:selected").text());
+    }
+    function onPostRenderFunction(ctx) {
+        inicializar_Columnas();
+    }
+
+</script>

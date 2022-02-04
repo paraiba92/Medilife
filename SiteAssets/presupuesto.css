@@ -1,0 +1,105 @@
+.generar table td {
+    border-right: 1px solid #000;
+}
+
+    .generar table td:last-child {
+        border-right: none;
+    }
+
+.botones {
+    left: calc(50% - 7rem);
+    top: calc(50% - 6rem);
+}
+
+.generar.hr {
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+}
+
+.labelHistoricos {
+    font-size: 13px;
+    color: black;
+    font-weight: 100;
+    vertical-align: baseline;
+}
+
+.checkHistoricos {
+    margin-left: 25px;
+    width: 15px;
+}
+
+.red {
+    color: red;
+}
+
+.black {
+    color: black;
+}
+
+.imgUser {
+    border-radius: 182px 182px 182px 182px;
+    -moz-border-radius: 182px 182px 182px 182px;
+    -webkit-border-radius: 182px 182px 182px 182px;
+    border: 0px solid #000000;
+    /**/
+    -webkit-box-shadow: 0px 2px 30px -4px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 2px 30px -4px rgba(0,0,0,0.75);
+    box-shadow: 0px 2px 30px -4px rgba(0,0,0,0.75);
+}
+
+.customers {
+    border-collapse: collapse;
+    width: 80%;
+}
+
+    .customers th, .customers td {
+        padding: 8px;
+        text-align: center;
+    }
+
+    .customers tr:nth-child(even) {
+        /*  background-color: #f2f2f2;*/
+    }
+
+    .customers a {
+        color: rgb(0, 114, 198);
+    }
+
+    .customers th {
+        background-color: #F2F2F2;
+        color: grey;
+    }
+
+.tabla th, .tabla td {
+    border: 0px solid lightgray !important;
+}
+
+.tabla th {
+    color: grey;
+}
+
+h2 {
+    font-weight: 500;
+    color: steelblue;
+    padding-top: 10px;
+}
+
+.tablaContenedora {
+    border-collapse: collapse;
+}
+    /* Define the hover highlight color for the table row */
+    .tablaContenedora tr:hover {
+        background-color: #ffff99;
+    }
+
+.my-formfield > label {
+    width: 140px;
+    font-weight: bold;
+    color: grey;
+}
+
+.my-formfield select {
+    width: 250px;
+}

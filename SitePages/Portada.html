@@ -1,0 +1,577 @@
+<style>
+    .ula {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        width: 300px;
+        background-color: #f1f1f1;
+    }
+
+    .ula li a {
+        display: block;
+        color: #000;
+        padding: 8px 16px;
+        text-decoration: none;
+    }
+
+    /* Change the link color on hover */
+    .ula li a:hover {
+        background-color: #555;
+        color: white;
+    }
+
+        .ulaMedium {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        width: 250px;
+        background-color: #f1f1f1;
+    }
+
+    .ulaMedium li a {
+        display: block;
+        color: #000;
+        padding: 8px 16px;
+        text-decoration: none;
+    }
+
+    /* Change the link color on hover */
+    .ulaMedium li a:hover {
+        background-color: #555;
+        color: white;
+    }
+    #ms-currentFeedLabel {
+        font-weight: bold;
+        color: orangered;
+        font-family: "Segoe UI Light","Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+        font-size:30px;
+    }
+    .ms-webpart-titleText{
+                font-weight: bold;
+        color: orangered;
+        font-family: "Segoe UI Light","Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+        font-size:30px;
+    }
+</style>
+<link  rel="stylesheet" href="/sites/MedilifeHome/SiteAssets/JQUI.css"/>
+<link  rel="stylesheet" href="/sites/MedilifeHome/SiteAssets/FontAwesome/css/font-awesome.css"/>
+<link  rel="stylesheet" href="/sites/MedilifeHome/SiteAssets/"/>
+<link  rel="stylesheet" href="/sites/MedilifeHome/SiteAssets/lib/main.css"/>
+
+<script src="/sites/MedilifeHome/SiteAssets/JQ.js"></script>
+<script src="/sites/MedilifeHome/SiteAssets/JQUI.js"></script>
+<script src="/sites/MedilifeHome/SiteAssets/SPD_Helper_1.5.js"></script>
+<script src="/sites/MedilifeHome/SiteAssets/Medilife_Settings.js"></script>
+<script src="/sites/MedilifeHome/SiteAssets/lib/main.js"></script>
+<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+<script src="https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js"></script>
+<table style="width:100%;">
+    <tr>
+        <td style="vertical-align:top;">
+             <h1 style="font-weight:bold;"><i class="fa fa-database"></i>&nbsp;Gestión Stock</h1>
+                <hr />
+                <br />
+                <ul class="ula">
+                    <li><a href="/sites/MedilifeHome/SitePages/ReporteStock.aspx" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Stock</a></li>
+                    <li style="background: orangered;">
+                    <a href="/sites/MedilifeHome/SitePages/ReporteStock.aspx?Vencidas=si" target="_blank" style="color:white!important"><table style="width:100%">
+                        <tr>
+                            <td style="text-align:left;">Stock vencido</td>
+                            <td style="text-align:right;font-weight:bold;cursor:pointer;" id="stockVencido">0</td>
+                        </tr>
+                    </table></a>
+                  </li>
+                  <li style="background: orange;">
+                    <a href="/sites/MedilifeHome/SitePages/ReporteStock.aspx?PorVencer=si" target="_blank" style="color:white!important"><table style="width:100%">
+                        <tr>
+                            <td style="text-align:left;">Stock próximo a vencer</td>
+                            <td style="text-align:right;font-weight:bold" id="stockVencer">0</td>
+                        </tr>
+                    </table></a>
+                  </li>
+                  <li><a href="/sites/MedilifeHome/SitePages/ReportePresupuestos.aspx" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Presupuestos</a></li>
+                  <li><a href="/sites/MedilifeHome/SitePages/ReporteRemitos.aspx" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Remitos</a></li>
+                </ul>
+        </td>
+         <td style="vertical-align: top;">
+            <div>
+                <h1 style="font-weight:bold;"><i class="fa fa-user"></i>&nbsp;Administración</h1>
+                    <hr />
+                    <br />
+                <ul class="ulaMedium">
+                  <li><a href="/sites/MedilifeHome/SitePages/ReporteEmpleado.aspx" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Empleados</a></li>
+                  <li><a href="/sites/MedilifeHome/SitePages/ReporteInstituciones.aspx" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Instituciones</a></li>
+                  <li><a href="/sites/MedilifeHome/SitePages/ReporteObraSocial.aspx" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Proveedores</a></li>
+                  <li><a href="/sites/MedilifeHome/SitePages/ReporteMedico.aspx" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Médicos</a></li>
+                  <li><a href="/sites/MedilifeHome/SitePages/ReporteTipoFactura.aspx" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Tipos de factura</a></li>
+                  <li><a href="/sites/MedilifeHome/SitePages/ReporteMarca.aspx" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Marcas de material</a></li>
+                </ul>
+            </div>
+        </td>
+        <td style="vertical-align: top;" colspan="3">
+            <div>
+                <h1 style="font-weight:bold;color:green"><i class="fa fa-file"></i>&nbsp;Facturación</h1>
+                    <hr />
+                    <br />
+                <ul class="ula">
+                  <li style="background:crimson;"><a style="color:white" href="/sites/MedilifeHome/SitePages/ReporteFacturaMedilife.aspx?empresa=1" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Factura Medilife</a></li>
+                  <li style="background:crimson;"><a style="color:white" href="/sites/MedilifeHome/SitePages/FacturaCompras.aspx?empresa=1" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Factura Compras Medilife</a></li>
+                  <li style="background:forestgreen!important"><a href="/sites/MedilifeHome/SitePages/ReporteGasto.aspx" style="color:white" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Gastos INFORMALES</a></li>
+                  <li style="background: royalblue;"><a href="/sites/MedilifeHome/SitePages/ReporteReciboSueldo.aspx" target="_blank" style="color: white;"><i class="fa fa-file"></i>&nbsp;&nbsp;Recibos de sueldo</a></li>                  
+                  <li style="background: white;font-weight: bold;font-size: 20px;padding-top: 10px;padding-bottom: 10px;color: darkcyan;"><label style="color: orange;">DF</label><label>MEDIC</label></li>
+                  <li style="background:darkcyan;"><a style="color:white" href="/sites/MedilifeHome/SitePages/ReporteFacturaMedilife.aspx?empresa=2" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Factura DFMedic</a></li>
+                  <li style="background:darkcyan;"><a style="color:white" href="/sites/MedilifeHome/SitePages/FacturaCompras.aspx?empresa=2" target="_blank"><i class="fa fa-search"></i>&nbsp;&nbsp;Factura Compras DFMedic</a></li>
+                </ul>
+            </div>
+        </td>
+    </tr>
+</table>
+<div id="seccionFacturas" style="padding-top:35px;display:none;">
+    <table style="width:100%"> 
+        <tr>
+            <td style="text-align:left"><h1 style="font-weight:bold;color:steelblue"><i class="fa fa-file"></i>&nbsp;Facturas</h1></td>
+            <td style="text-align:right"><button onclick="window.open('/sites/MedilifeHome/SitePages/ReporteFactura.aspx','_blank');event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: steelblue;cursor:pointer;font-size:16px;font-weight:bold"><i class="fa fa-search"></i>&nbsp;Gestor</button></td>
+        </tr>
+    </table>
+    <hr />
+    <br />
+    <table style="width:100%">
+         <tr>
+            <td style="vertical-align:top;text-align:left;width:35%"><h3 style="font-weight:bold;color:steelblue">A cobrar</h3><br /></td>
+            <td style="vertical-align:top;text-align:left;width:35%"><h3 style="font-weight:bold;color:darkorange">Por vencer (30 días)</h3><br /></td>
+            <td style="vertical-align:top;text-align:left;width:35%"><h3 style="font-weight:bold;color:red">Vencidas</h3><br /></td>
+        </tr>
+        <tr>
+            <td style="vertical-align:top;text-align:left;width:35%"><ul id="facturasACobrar" style="padding-left: 0px !important;"></ul></td>
+            <td style="vertical-align:top;text-align:left;width:35%"><ul id="facturasPorVencer" style="padding-left:0px!important;"></ul></td>
+            <td style="vertical-align:top;text-align:left;width:35%"><ul id="facturasVencidas" style="padding-left:0px!important;"></ul></td>
+        </tr>
+    </table>
+</div>
+<div id="seccionRecordatorios" style="padding-top: 35px;">
+    <table style="width: 650px;"> 
+        <tr>
+            <td style="text-align:left"><h1 style="font-weight:bold;color:#03787c"><i class="fa fa-check"></i>&nbsp;Recordatorios</h1></td>
+            <td style="text-align:right"><button onclick="CreateRecordatorio();event.preventDefault()" style="border-radius: 5px;color: #03787c;min-width: 30px!important;border: none;background: transparent;cursor:pointer;font-size:16px;font-weight:bold"><i class="fa fa-plus"></i></button></td>
+        </tr>
+    </table>
+    <div id='recordatorios' style="width: 650px;"></div>
+</div>
+<br />
+<div id="seccionRecordatoriosOrden" style="padding-top: 35px;">
+    <table style="width: 650px;"> 
+        <tr>
+            <td style="text-align:left"><h1 style="font-weight:bold;color:darkgoldenrod"><i class="fa fa-check"></i>&nbsp;Recordatorios ordenes de compra</h1></td>
+            <td style="text-align:right"><button onclick="CreateRecordatorioOrden();event.preventDefault()" style="border-radius: 5px;color: darkgoldenrod;min-width: 30px!important;border: none;background: transparent;cursor:pointer;font-size:16px;font-weight:bold"><i class="fa fa-plus"></i></button></td>
+        </tr>
+    </table>
+    <div id='recordatoriosOrden' style="width: 650px;"></div>
+</div>
+<style>
+    .specialtable{
+        -webkit-box-shadow: 6px 4px 5px 0px rgba(0,0,0,0.75);
+        -moz-box-shadow: 6px 4px 5px 0px rgba(0,0,0,0.75);
+        box-shadow: 6px 4px 5px 0px rgba(0,0,0,0.75);
+        border-radius: 10px 10px 10px 10px;
+        -moz-border-radius: 10px 10px 10px 10px;
+        -webkit-border-radius: 10px 10px 10px 10px;
+        border: 0px solid #000000;
+    }
+</style>
+<script type="text/javascript">
+    var _cols = {};
+    function init_CustomCSR() {
+        renderizarRecordatorios();
+                renderizarRecordatoriosOrden();
+
+        renderizarStock();
+        renderizarFacturas();
+    }
+    if (_spBodyOnLoadFunctionNames) {
+        _spBodyOnLoadFunctionNames.push("init_CustomCSR");
+    }
+    else {
+        $(document).ready(function () {
+            init_CustomCSR();
+        });
+    }
+    function renderizarStock() {
+        var viewXml_ = {
+            ViewXml: GenerarCamlQuery(DevolverNodosStock(false))
+        }
+        var viewXml = {
+            ViewXml: GenerarCamlQuery(DevolverNodosStock(true))
+        }
+        var vencidas = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_STOCK, viewXml_).results;
+        var porvencer = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_STOCK, viewXml).results;
+        $('#stockVencido').html(vencidas.length);
+        $('#stockVencer').html(porvencer.length);
+
+    }
+    function DevolverNodosStock(porVencer) {
+        var nodos = [];
+        var date = new Date();
+        var oFecha = date.format("yyyy-MM-dd");
+
+        var oneDay = 24 * 60 * 60 * 1000, // 24h
+        today = new Date().getTime(), // in ms
+        firstDate,
+        secondDate;
+
+        firstDate = new Date(today + 60 * oneDay);
+
+        nodos.push('<Contains><FieldRef Name="Estado" /><Value Type="Text">En depósito</Value></Contains>');
+
+        if (!porVencer)
+            nodos.push('<Leq><FieldRef Name="FechaVencimientoStock" /><Value IncludeTimeValue="False" Type="DateTime">' + oFecha + 'T06:53:16Z</Value></Leq>');
+        else {
+            var hasta = new Date(date.getFullYear(), date.getMonth() + 1, 0).format("yyyy-MM-dd");
+            nodos.push('<Geq><FieldRef Name="FechaVencimientoStock" /><Value IncludeTimeValue="False" Type="DateTime">' + oFecha + 'T06:53:16Z</Value></Geq>');
+            nodos.push('<Leq><FieldRef Name="FechaVencimientoStock" /><Value IncludeTimeValue="False" Type="DateTime">' + firstDate.format("yyyy-MM-dd") + 'T06:53:16Z</Value></Leq>');
+        }
+        return nodos;
+    }
+    function renderizarFacturas() {
+
+        var viewXml = { ViewXml: GenerarCamlQuery(Devolver_Nodos_FacturasVencidas()) }
+        var viewXml_2 = { ViewXml: GenerarCamlQuery(Devolver_Nodos_FacturasAVencer()) }
+        var viewXml_3 = { ViewXml: GenerarCamlQuery(Devolver_Nodos_FacturasACobrar()) }
+
+        var facturasVencidas = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_FACTURA, viewXml).results;
+        var facturasAVencer = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_FACTURA, viewXml_2).results;
+        var facturasACobrar = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_FACTURA, viewXml_3).results;
+
+        $('#facturasVencidas').html("");
+        $('#facturasPorVencer').html("");
+        $('#facturasACobrar').html("");
+
+        if (facturasVencidas.length == 0) {
+            $('#facturasVencidas').append("<i>No hay elementos para mostrar</i>")
+        }
+        if (facturasACobrar.length == 0) {
+            $('#facturasACobrar').append("<i>No hay elementos para mostrar</i>")
+        }
+        if (facturasAVencer.length == 0) {
+            $('#facturasPorVencer').append("<i>No hay elementos para mostrar</i>")
+        }
+        for (rec = 0; rec < facturasVencidas.length; rec++) {
+            $('#facturasVencidas').append("<li style='font-size: 10px;color:red;list-style-type: none;padding-bottom:2px;'><button onclick='UpdateFactura(" + facturasVencidas[rec].Id + ");event.preventDefault()' style='border-radius: 5px;color: white;min-width: 30px!important;border: none;color: RED;cursor:pointer;padding: 2px;'><i class='fa fa-edit fa-xs'></i></button>&nbsp;&nbsp;Factura Número: " + facturasVencidas[rec].Numero + "</li>");
+        }
+        for (rec = 0; rec < facturasAVencer.length; rec++) {
+            $('#facturasPorVencer').append("<li style='font-size: 10px;color:darkorange;list-style-type: none;padding-bottom:2px;'><button onclick='UpdateFactura(" + facturasAVencer[rec].Id + ");event.preventDefault()' style='border-radius: 5px;color: white;min-width: 30px!important;border: none;color: darkorange;cursor:pointer;padding: 2px;'><i class='fa fa-edit fa-xs'></i></button>&nbsp;&nbsp;Factura Número: " + facturasAVencer[rec].Numero + "</li>");
+        }
+        for (rec = 0; rec < facturasACobrar.length; rec++) {
+            $('#facturasACobrar').append("<li style='font-size: 10px;color:steelblue;list-style-type: none;padding-bottom:2px;'><button onclick='UpdateFactura(" + facturasACobrar[rec].Id + ");event.preventDefault()' style='border-radius: 5px;color: white;min-width: 30px!important;border: none;color: steelblue;cursor:pointer;padding: 2px;'><i class='fa fa-edit fa-xs'></i></button>&nbsp;&nbsp;Factura Número: " + facturasACobrar[rec].Numero + "</li>");
+        }
+
+    }
+    function CreateRecordatorioOrden() {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/RecordatorioOrdenCompra/NewForm.aspx";
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+            dialogReturnValueCallback: function (result) { renderizarRecordatoriosOrden() }
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function CreateRecordatorio() {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/Recordatorio/NewForm.aspx";
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+            dialogReturnValueCallback: function (result) { renderizarRecordatorios() }
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function UpdateRecodatorioOrden(idx) {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/RecordatorioOrdenCompra/EditForm.aspx?ID=" + idx;
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+            dialogReturnValueCallback: function (result) { renderizarRecordatoriosOrden() }
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function UpdateRecodatorio(idx) {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/Recordatorio/EditForm.aspx?ID=" + idx;
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+            dialogReturnValueCallback: function (result) { renderizarRecordatorios() }
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function UpdateFactura(idx) {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/Factura/EditForm.aspx?ID=" + idx + "&cobro=si";
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+            dialogReturnValueCallback: function (result) { renderizarFacturas() }
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+
+    function Devolver_Nodos_FacturasVencidas() {
+        var nodos = [];
+
+        var date = new Date();
+        date = date.format("yyyy-MM-dd");
+
+        nodos.push('<IsNull><FieldRef Name="FechaPago" /></IsNull>');
+        nodos.push('<Leq><FieldRef Name="FechaVencimiento" /><Value IncludeTimeValue="False" Type="DateTime">' + date + 'T06:53:16Z</Value></Leq>');
+
+        return nodos;
+    }
+    function Devolver_Nodos_FacturasAVencer() {
+
+        var date = new Date();
+        date = date.format("yyyy-MM-dd");
+
+        var nodos = [];
+
+        var oneDay = 24 * 60 * 60 * 1000, // 24h
+        today = new Date().getTime(), // in ms
+        firstDate,
+        secondDate;
+
+        firstDate = new Date(today + 30 * oneDay);
+
+        var date = new Date();
+        date = date.format("yyyy-MM-dd");
+
+        nodos.push('<IsNull><FieldRef Name="FechaPago" /></IsNull>');
+        nodos.push('<Leq><FieldRef Name="FechaVencimiento" /><Value IncludeTimeValue="False" Type="DateTime">' + firstDate.format("yyyy-MM-dd") + 'T06:53:16Z</Value></Leq>');
+        nodos.push('<Geq><FieldRef Name="FechaVencimiento" /><Value IncludeTimeValue="False" Type="DateTime">' + date + 'T06:53:16Z</Value></Geq>');
+
+        return nodos;
+    }
+    function Devolver_Nodos_FacturasACobrar() {
+
+        var nodos = [];
+
+        var date = new Date();
+        date = date.format("yyyy-MM-dd");
+
+        nodos.push('<IsNull><FieldRef Name="FechaPago" /></IsNull>');
+
+        return nodos;
+    }
+    function DevolverNodos_Recordatorio() {
+        var nodos = [];
+
+        var date = new Date();
+        date = date.format("yyyy-MM-dd");
+
+        nodos.push('<Eq><FieldRef Name="Completado" /><Value Type="Boolean">0</Value></Eq>');
+        nodos.push('<Leq><FieldRef Name="FechaAvisoDesde" /><Value IncludeTimeValue="False" Type="DateTime">' + date + 'T06:53:16Z</Value></Leq>');
+        nodos.push('<Geq><FieldRef Name="FechaAvisoHasta" /><Value IncludeTimeValue="False" Type="DateTime">' + date + 'T06:53:16Z</Value></Geq>');
+
+        return nodos;
+    }
+    function DevolverNodosSeguimiento(esAnual) {
+        var nodos = [];
+        var desde = "2020-01-01";
+        var hasta = "2020-12-31";
+        if (!esAnual) {
+            var date = new Date();
+            desde = new Date(date.getFullYear(), date.getMonth(), 1).format("yyyy-MM-dd");
+            hasta = new Date(date.getFullYear(), date.getMonth() + 1, 0).format("yyyy-MM-dd");
+        }
+
+        nodos.push('<Geq><FieldRef Name="Fecha" /><Value IncludeTimeValue="False" Type="DateTime">' + desde + 'T06:53:16Z</Value></Geq>');
+        nodos.push('<Leq><FieldRef Name="Fecha" /><Value IncludeTimeValue="False" Type="DateTime">' + hasta + 'T06:53:16Z</Value></Leq>');
+
+        return nodos;
+    }
+
+    function GenerarCamlQuery(oNodos) {
+        var inicioQ = "<View><Query><Where>";
+        var abroA = "<And>";
+        var cierroA = "</And>";
+        var finQ = "</Where></Query></View>";
+        var Nodos = oNodos;
+        var cont = 0;
+        var arregloY = [];
+        var nodo = "";
+        //Este algoritmo agrupa los nodos de a pares uniendolos con "<And>" recursivamente
+        for (k = 0; k < Nodos.length; k++) {
+            cont++;
+            if (cont == 1) {
+                nodo = Nodos[k];
+                if (k == (Nodos.length - 1))
+                    arregloY.push(nodo);
+            }
+            if (cont == 2) {
+                nodo = abroA + nodo + Nodos[k] + cierroA;
+                arregloY.push(nodo);
+                nodo = "";
+                cont = 0;
+            }
+            if (k == (Nodos.length - 1)) {
+                Nodos = arregloY;
+                if (arregloY.length == 1)
+                    break;
+                k = -1;
+                cont = 0;
+                arregloY = [];
+            }
+        }
+        if (arregloY.length > 0)
+            inicioQ = inicioQ + arregloY[0];
+
+        inicioQ = inicioQ + finQ;
+        datos = inicioQ;
+        return inicioQ;
+    }
+
+</script>
+    <link href='fullcalendar/main.css' rel='stylesheet' />
+    <script src='fullcalendar/main.js'></script>
+    <script type="text/javascript">
+    function renderizarRecordatorios() {
+
+        $('#recordatorios').html("");
+
+        var viewXml = {
+            ViewXml: GenerarCamlQuery(DevolverNodos_Recordatorio())
+        }
+
+        var oRecordatorios = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_RECORDATORIO, viewXml).results;
+
+        if (oRecordatorios.length > 0) {
+
+            $('#recordatorios').append('<table id="customers" ng-hide="jSON.length === 0" style="border-collapse: collapse"><thead><tr style="text-align:center;"><th></th><th style="text-align:left;">Comentario</th><th>Desde - Hasta</th></tr></thead></table>');
+
+            for (rec = 0; rec < oRecordatorios.length; rec++) {
+
+                var fechaDesde = new Date(oRecordatorios[rec].FechaAvisoDesde);
+                var fechaHasta = new Date(oRecordatorios[rec].FechaAvisoHasta);
+                
+                $('#customers').append("<tr><td style='width:50px;'><button onclick='UpdateRecodatorio(" + oRecordatorios[rec].Id + ");event.preventDefault()' style='border-radius: 5px;color: white;min-width: 30px!important;border: none;color: #03787c;cursor:pointer;padding: 2px;background: transparent;'><i class='fa fa-edit fa-lg'></i></button></td><td class='tdAngular' style='text-align:left;'>" + oRecordatorios[rec].Recordatorio + "</td><td style='text-align:center;'><nobr>" +  fechaDesde.format("dd/MM/yyyy") + " - " +  fechaHasta.format("dd/MM/yyyy") + "</nobr></td></tr>");
+            }
+        }
+        else {
+            $('#recordatorios').append("<i style='color:blueviolet'>No hay recordatorios a la fecha</i>");
+        }
+    }
+    function renderizarRecordatoriosOrden() {
+
+        $('#recordatoriosOrden').html("");
+
+        var viewXml = {
+            ViewXml: GenerarCamlQuery(DevolverNodos_Recordatorio())
+        }
+
+        var oRecordatorios = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_RECORDATORIOORDEN, viewXml).results;
+
+        if (oRecordatorios.length > 0) {
+
+            $('#recordatoriosOrden').append('<table id="customersOrden" ng-hide="jSON.length === 0" style="border-collapse: collapse"><thead><tr style="text-align:center;"><th></th><th style="text-align:left;">Comentario</th><th>Desde - Hasta</th></tr></thead></table>');
+
+            for (rec = 0; rec < oRecordatorios.length; rec++) {
+
+                var fechaDesde = new Date(oRecordatorios[rec].FechaAvisoDesde);
+                var fechaHasta = new Date(oRecordatorios[rec].FechaAvisoHasta);
+                
+                $('#customersOrden').append("<tr><td style='width:50px;'><button onclick='UpdateRecodatorioOrden(" + oRecordatorios[rec].Id + ");event.preventDefault()' style='border-radius: 5px;color: white;min-width: 30px!important;border: none;color: darkgoldenrod;cursor:pointer;padding: 2px;background: transparent;'><i class='fa fa-edit fa-lg'></i></button></td><td class='tdAngular' style='text-align:left;'>" + oRecordatorios[rec].Recordatorio + "</td><td style='text-align:center;'><nobr>" +  fechaDesde.format("dd/MM/yyyy") + " - " +  fechaHasta.format("dd/MM/yyyy") + "</nobr></td></tr>");
+            }
+        }
+        else {
+            $('#recordatoriosOrden').append("<i style='color:blueviolet'>No hay recordatoriosde ordenes de compra a la fecha</i>");
+        }
+    }
+    </script>
+    <style>
+      #customers {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #customers th, #customers td {
+            padding: 8px;
+        }
+
+    #customers tr:hover {
+        background-color: #ffff99;
+    }
+
+        #customers th {
+            background-color: #F2F2F2;
+            color: black;
+            padding: 10px;
+            font-weight:normal!important;
+        }
+    #customers th, #customers td {
+        padding: 0px;
+        font-size: 11px;
+    }
+    #customers img {
+        width:10px;
+    }
+    #customers th {
+        color: black;
+        padding: 0px;
+        color: white;
+        background: #03787c;
+        padding: 0px;
+    }
+      #customersOrden {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #customersOrden th, #customersOrden td {
+            padding: 8px;
+        }
+
+    #customersOrden tr:hover {
+        background-color: #ffff99;
+    }
+
+        #customersOrden th {
+            background-color: #F2F2F2;
+            color: black;
+            padding: 10px;
+            font-weight:normal!important;
+        }
+    #customersOrden th, #customersOrden td {
+        padding: 0px;
+        font-size: 11px;
+    }
+    #customersOrden img {
+        width:10px;
+    }
+    #customers td {
+        color:#03787c;
+        font-weight:bold;
+    }
+        #customersOrden td {
+            color: darkgoldenrod;
+            font-weight: bold;
+        }
+        #customersOrden th {
+            color: black;
+            padding: 0px;
+            color: white;
+            background: darkgoldenrod;
+            padding: 0px;
+        }
+    </style>
+<script>
+    setInterval(function () {
+        if ($('#sideNavBox').length > 0) {
+            $('#sideNavBox').remove();
+            $('#contentBox').css("margin-left", "100px");
+        }
+    }, 600);
+</script>

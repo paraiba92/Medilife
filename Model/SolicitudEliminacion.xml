@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/"  xmlns:splog="http://emmsa.net/schemas/splog/">
+	<EnsureList name="SolicitudEliminacion" title="SolicitudEliminacion" description="SolicitudEliminacion">
+
+    <EnsureTextField internalName="ListaId" displayName="Lista id" siteColumn="FALSE" />
+    <EnsureTextField internalName="ItemId" displayName="Item id" siteColumn="FALSE" />
+    <EnsureMultiLineTextField internalName="Motivo" displayName="Motivo" siteColumn="FALSE" />
+    <EnsureBooleanField internalName="Completado" displayName="Completado" defaultValue="FALSE" siteColumn="FALSE"/>
+
+  <EnsureContentType name="Item" parentContentType="System">
+			<AddFieldToContentType name="Title" required="FALSE" showInDisplayForm="FALSE" showInNewForm="FALSE" showInEditForm="FALSE"/>
+      <AddFieldToContentType name="ListaId" required="TRUE"/>
+			<AddFieldToContentType name="ItemId" required="TRUE"/>
+      <AddFieldToContentType name="Motivo" required="TRUE"/>
+      <AddFieldToContentType name="Completado" required="TRUE"/>
+      <ReorderFields />
+		</EnsureContentType>
+   
+	</EnsureList>
+</Root>

@@ -1,0 +1,58 @@
+<div id="hideParentWebPart" style="display:none"></div>
+<div data-role="form">
+	<div data-field="Diametro Largo TipoMedida" class="my-formfield">
+		<label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+		<span>
+			<span data-role="field-control"></span>
+			<span class="ms-metadata">{Description}</span>
+		</span>
+	</div>
+</div>
+<script type="text/javascript">
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/presupuesto.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQ.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js")+"'><"+"/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/ComponenteAdd.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings.js") + "'><" + "/script>");
+</script>
+<script type="text/javascript">
+    var _cols = {};
+
+    SP.SOD.executeFunc("clienttemplates.js", "SPClientTemplates", function () {
+        function init() {
+            var templates = {};
+            SPClientTemplates.TemplateManager.RegisterTemplateOverrides({
+                OnPreRender: CSROnPreRender,
+                OnPostRender: CSROnPostRender
+            });
+        }
+        RegisterModuleInit(SPClientTemplates.Utility.ReplaceUrlTokens("~siteCollection/Style Library/customlayout.js"), init);
+        init();
+    });
+    function inicializar_Columnas() {
+        _cols.Diametro = $("[id^='Diametro'][id$='NumberField']");
+        _cols.Largo = $("[id^='Largo'][id$='NumberField']");
+        _cols.Title = $("[id^='Title'][id$='TextField']");
+        _cols.Institucion = $("[id^='TipoMedida'][id$='ChoiceField']");
+    }
+    function onPostRenderFunction(ctx) {
+        inicializar_Columnas();
+    }
+    function PreSaveActionLocal() {
+        _presave_SetearTitulo();
+        return true;
+    }
+    //EditForm.aspx
+    function PreSaveItem() {
+        _presave_SetearTitulo();
+        return true;
+    }
+    function _presave_SetearTitulo() {
+        _cols.Title.val(_cols.Diametro.val() + "x" + _cols.Largo.val() + " " + $("[id^='TipoMedida'][id$='DropDownChoice']").val().split(" [")[0]);
+    }
+</script>

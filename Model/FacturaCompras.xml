@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/"  xmlns:splog="http://emmsa.net/schemas/splog/">
+	<EnsureList name="FacturaCompra" title="Factura Compras">
+    <ActionsGroup status="Skip">
+    <EnsureLookupField internalName="Empleado" displayName="Empresa" description="Usuario asociado" listName="Empleado" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureLookupField internalName="TipoFactura" displayName="Tipo factura" listName="TipoFactura" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Numero" displayName="N°" defaultValue="0" decimalPlaces="0" minValue="0" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Monto" displayName="Monto $" defaultValue="0" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureNumberField internalName="IVA" displayName="IVA" defaultValue="0" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureDateField internalName="FechaEmitida" displayName="Fecha de emision" siteColumn="FALSE" time="FALSE" />
+    <EnsureDateField internalName="FechaCobro" displayName="Fecha de pago" description="Indica si la factura se cobró/pagó" siteColumn="FALSE" time="FALSE" />
+    <EnsureMultiLineTextField internalName="Comentario" displayName="Comentarios" description="Indique un comentario si es necesario alguna aclaración" siteColumn="FALSE"/>
+    <EnsureLookupField internalName="ObraSocial" displayName="Proveedor" listName="ObraSocial" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureChoiceField internalName="Estado" displayName="Estado" siteColumn="FALSE" defaultValue="P">
+      <na:Choice value="A">Anulada</na:Choice>
+      <na:Choice value="C">Cobrada</na:Choice>
+      <na:Choice value="P">Pendiente</na:Choice>
+    </EnsureChoiceField>
+    </ActionsGroup>  
+    <EnsureNumberField internalName="Credito" displayName="Crédito $" defaultValue="0" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Debito" displayName="Débito $" defaultValue="0" decimalPlaces="2" siteColumn="FALSE" />
+
+    <EnsureContentType name="Item" parentContentType="System">
+			<AddFieldToContentType name="Title" required="FALSE" showInDisplayForm="FALSE" showInNewForm="FALSE" showInEditForm="false"/>
+      <AddFieldToContentType name="Empleado" required="TRUE"/>
+      <AddFieldToContentType name="TipoFactura" required="TRUE"/>
+      <AddFieldToContentType name="Numero" required="TRUE"/>
+      <AddFieldToContentType name="FechaEmitida" required="TRUE"/>
+      <AddFieldToContentType name="FechaCobro" required="FALSE"/>
+      <AddFieldToContentType name="Monto" required="TRUE"/>
+      <AddFieldToContentType name="IVA" required="TRUE"/>
+
+      <AddFieldToContentType name="Credito" required="TRUE"/>
+      <AddFieldToContentType name="Debito" required="TRUE"/>
+
+      <AddFieldToContentType name="ObraSocial" required="FALSE"/>
+      <AddFieldToContentType name="Comentario" required="FALSE"/>
+      <AddFieldToContentType name="Estado" required="FALSE"/>
+      <ReorderFields />
+		</EnsureContentType>
+    
+		<EnsureView name="AllItems" title="Todos los elementos" default="TRUE">
+			<na:ViewFields>
+        <na:FieldRef name="Title"/>
+      </na:ViewFields>
+		</EnsureView>
+
+  </EnsureList>
+</Root>

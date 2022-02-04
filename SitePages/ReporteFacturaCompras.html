@@ -1,0 +1,957 @@
+<div data-role="form">
+<div id="FORMULARIO_REMITO" style="padding-top: 15px;"><label></label></div>
+</div> 
+<script type="text/javascript" src="/_layouts/15/ScriptResx.ashx?name=sp.res&culture=es-es"></script>
+<script type="text/javascript" src="/_layouts/15/sp.init.js"></script>
+<script type="text/javascript" src="/_layouts/15/MicrosoftAjax.js"></script>
+<script type="text/javascript" src="/_layouts/15/3082/strings.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.runtime.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.dialog.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientforms.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientpeoplepicker.js"></script>
+<script type="text/javascript" src="/_layouts/15/clienttemplates.js"></script>
+<script type="text/javascript" src="/_layouts/15/autofill.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.taxonomy.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.taxonomy.js"></script>
+<script type="text/javascript" src="/_layouts/15/core.js"></script>
+
+<script type="text/javascript">
+
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/paginacion.css") + "'></link>");
+
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-ui/css/base/jquery-ui-1.10.4.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-1.7.1.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-ui/js/jquery-ui-1.10.4.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-1.4.8.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-route.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-locale_es-es.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/Angular/dirPagination.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/NumeroLetra.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/RemoveComponent.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FormularioCSR_Helper.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Canvas.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/MaestroFichero.js") + "'><" + "/script>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/MaestroFichero.css") + "'></link>");
+
+</script>
+<script>
+    var myAngApp = angular.module('miApp', ['ngRoute', 'angularUtils.directives.dirPagination']).config(['$compileProvider', function ($compileProvider) {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|skype|chrome-extension):/);
+}]);
+
+var gUsuarioAccountName;
+function init() {
+    AngularController();
+};
+init();
+function AngularController() {
+
+    myAngApp.controller('spResultado', function ($scope, $location, $http, $anchorScroll, $timeout) {
+
+        $scope.Duplicados = false;
+        $scope.facturasDuplicadas = [];
+        $scope.showSection = false;
+        $scope.showLoading = false;
+        $scope.jSON = [];
+        $scope.sortingOrder = "None"; //orden por default
+        $scope.reverse = false;
+        $scope.currentPage = 1;
+        $scope.registrosPagina = 20;
+        $scope.sortKey = 'Numero';
+
+        $scope.resetFilters = function () {
+            $scope.sr_Title = "";
+        };
+
+        $scope.sort = function (keyname) {
+            $scope.sortKey = keyname;
+            $scope.reverse = !$scope.reverse;
+            $scope.currentPage = 1;
+        };
+        $scope.resetFilters = function () {
+            $scope.sr_obrasocial = "";
+        };
+        $scope.ejecutarWS = function () {
+            $scope.showLoading = true;
+            $timeout(function () {
+
+                var viewXml = {
+                    ViewXml: GenerarCamlQuery(DevolverNodos())
+                }
+
+                var elementos = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, "b2eef159-f5c2-4542-864b-0366056f6608", viewXml).results;
+                procesarJSON(elementos);
+                $scope.showLoading = false;
+
+            })
+        }
+        function procesarJSON(elementos) {
+
+            $scope.sr_institucion = "";
+            $scope.Duplicados = false;
+            $scope.sr_Title = "";
+
+            var multiOs = multiOsSelected;
+
+            if (multiOs.length > 0) {
+                var nuevosElementos = [];
+                for (rec = 0; rec < elementos.length; rec++) {
+                    var rta = false;
+                    for (rec2 = 0; rec2 < multiOs.length; rec2++) {
+                        if (elementos[rec].ObraSocialId == multiOs[rec2].id) {
+                            rta = true;
+                        }
+                    }
+                    if (!rta) {
+                        nuevosElementos.push(elementos[rec]);
+                    }
+                }
+                elementos = nuevosElementos;
+            }
+
+            $scope.facturasDuplicadas = [];
+
+
+            for (rec = 0; rec < elementos.length; rec++) {
+                for (rec2 = 0; rec2 < elementos.length; rec2++) {
+                    if (elementos[rec].Id != elementos[rec2].Id && elementos[rec].Numero == elementos[rec2].Numero && elementos[rec].TipoFacturaId == elementos[rec2].TipoFacturaId && elementos[rec].EmpleadoId == elementos[rec2].EmpleadoId) {
+                        $scope.Duplicados = true;
+                        var _tipoFacturaNombre = _evento_obtener_tipoFactura(elementos[rec].TipoFacturaId);
+                        var _empleadoNombre = _evento_obtener_Empleado(elementos[rec].EmpleadoId);
+
+                        var _warning = "La factura de tipo " + _tipoFacturaNombre + " y N°:" + elementos[rec].Numero + " se encuentra duplicada. EMPRESA: " + _empleadoNombre;
+
+                        var _noRepeat = false;
+                        for (k = 0; k < $scope.facturasDuplicadas.length; k++) {
+                            if (_warning == $scope.facturasDuplicadas[k].result) {
+                                _noRepeat = true;
+                            }
+                        }
+                        if (!_noRepeat)
+                            $scope.facturasDuplicadas.push({ result : _warning});
+                    }
+                }
+            }
+            console.log($scope.facturasDuplicadas);
+
+            $scope.jSON = [];
+            var anios = ["2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"];
+            var meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            var timeLine = [];
+
+            for (s = 0; s < anios.length; s++) {
+                timeLine.push({
+                    Anio: anios[s],
+                    CountAnio: 0,
+                    Meses: []
+                });
+                for (ss = 0; ss < meses.length; ss++) {
+                    timeLine[timeLine.length - 1].Meses.push({
+                        Mes: meses[ss],
+                        CountMes:0,
+                        Data: []
+                    });
+                }
+            }
+            for (s = 0; s < timeLine.length; s++) {
+                for (rec = 0; rec < elementos.length; rec++) {
+                    var year = new Date(elementos[rec].FechaEmitida).format("yyyy");
+                    var monthIndex = new Date(elementos[rec].FechaEmitida).getMonth();
+
+                    var totalMonto = 0;
+                    var totalHM = 0;
+                    var totalIva = 0;
+
+                    if (year == timeLine[s].Anio) {
+                        timeLine[s].CountAnio= timeLine[s].CountAnio+1;
+                        timeLine[s].Meses[monthIndex].CountMes = timeLine[s].Meses[monthIndex].CountMes + 1;
+                        if (elementos[rec].FechaEmitida != null) {
+                            elementos[rec].FechaEmitida = new Date(elementos[rec].FechaEmitida).format("dd/MM/yyyy");
+                        }
+                        if (elementos[rec].FechaCobro != null) {
+                            elementos[rec].FechaCobro = new Date(elementos[rec].FechaCobro).format("dd/MM/yyyy");
+                        }
+                        elementos[rec].ObraSocialNombre = "";
+                        if (elementos[rec].ObraSocialId != null) {
+                            elementos[rec].ObraSocialNombre = _evento_obtener_os(elementos[rec].ObraSocialId);
+                        }
+                        elementos[rec].TipoFacturaNombre = "";
+                        if (elementos[rec].TipoFacturaId != null) {
+                            elementos[rec].TipoFacturaNombre = _evento_obtener_tipoFactura(elementos[rec].TipoFacturaId);
+                        }
+                        elementos[rec].EmpleadoNombre = "Sin definir";
+                        if (elementos[rec].EmpleadoId != null) {
+                            elementos[rec].EmpleadoNombre = _evento_obtener_Empleado(elementos[rec].EmpleadoId);
+                        }
+                        elementos[rec].Total = elementos[rec].Monto - elementos[rec].IVA;
+
+                        timeLine[s].Meses[monthIndex].Data.push(elementos[rec]);
+                    }
+                }
+
+            }
+            for (s = 0; s < timeLine.length; s++) {
+                for (ss = 0; ss < timeLine[s].Meses.length; ss++) {
+                    var totalMonto = 0;
+                    var totalHM = 0;
+                    var totalIva = 0;
+                    for (sss = 0; sss < timeLine[s].Meses[ss].Data.length; sss++) {
+                        timeLine[s].Meses[ss].Data[sss].MontoText = timeLine[s].Meses[ss].Data[sss].Monto.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                        timeLine[s].Meses[ss].Data[sss].IVAText = timeLine[s].Meses[ss].Data[sss].IVA.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                        timeLine[s].Meses[ss].Data[sss].TotalText= timeLine[s].Meses[ss].Data[sss].Total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+                        timeLine[s].Meses[ss].Data[sss].CreditoText= timeLine[s].Meses[ss].Data[sss].Credito ? timeLine[s].Meses[ss].Data[sss].Credito.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') : "0,00";
+                        timeLine[s].Meses[ss].Data[sss].DebitoText= timeLine[s].Meses[ss].Data[sss].Debito ? timeLine[s].Meses[ss].Data[sss].Debito.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') : "0,00";
+
+                        totalMonto = totalMonto + timeLine[s].Meses[ss].Data[sss].Monto;
+                        totalIva = totalIva + timeLine[s].Meses[ss].Data[sss].IVA;
+                    }
+                    timeLine[s].Meses[ss].TotalMonto = totalMonto.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                    timeLine[s].Meses[ss].TotalIva = totalIva.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                    timeLine[s].Meses[ss].Total = (totalMonto - totalIva).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                }
+            }
+            console.log(timeLine);
+            $scope.jSON = timeLine;
+            console.log($scope.jSON);
+            if (!$scope.$$phase)
+                $scope.$apply();
+        }
+    });
+}
+function ConvertISOToDate(stringIso, hours) {
+    if (stringIso != "") {
+        var date = new Date(stringIso);
+        if(hours)
+            return date.format("dd/MM/yyyy HH:mm");
+        else
+            return date.format("dd/MM/yyyy");
+    }
+    return "";
+    }
+function GenerarCamlQuery(oNodos) {
+    var inicioQ = "<View><Query><Where>";
+    var abroA = "<And>";
+    var cierroA = "</And>";
+    var finQ = "</Where></Query></View>";
+    var Nodos = oNodos;
+    var cont = 0;
+    var arregloY = [];
+    var nodo = "";
+    //Este algoritmo agrupa los nodos de a pares uniendolos con "<And>" recursivamente
+    for (k = 0; k < Nodos.length; k++) {
+        cont++;
+        if (cont == 1) {
+            nodo = Nodos[k];
+            if (k == (Nodos.length - 1))
+                arregloY.push(nodo);
+        }
+        if (cont == 2) {
+            nodo = abroA + nodo + Nodos[k] + cierroA;
+            arregloY.push(nodo);
+            nodo = "";
+            cont = 0;
+        }
+        if (k == (Nodos.length - 1)) {
+            Nodos = arregloY;
+            if (arregloY.length == 1)
+                break;
+            k = -1;
+            cont = 0;
+            arregloY = [];
+        }
+    }
+    if (arregloY.length > 0)
+        inicioQ = inicioQ + arregloY[0];
+
+    inicioQ = inicioQ + finQ;
+    datos = inicioQ;
+    return inicioQ;
+}
+    function DevolverNodos() {
+        var nodos = [];
+        var date = new Date();
+        date = date.format("yyyy-MM-dd");
+        if (sp_controls.Estado.val() != "-1") {
+            nodos.push('<Contains><FieldRef Name="Estado" /><Value Type="Text">' + sp_controls.Estado.find("option:selected").text() + '</Value></Contains>');
+        }
+        if (sp_controls.Numero.val() != "") {
+            nodos.push('<Eq><FieldRef Name="Numero" /><Value Type="Number">' + sp_controls.Numero.val() + '</Value></Eq>');
+        }
+        if (sp_controls.FechaEmitidaDesde.val() != "") {
+            var desde = sp_controls.FechaEmitidaDesde.val().split('/');
+            if (desde.length == 3) {
+                desde = desde[2] + "-" + desde[1] + "-" + desde[0];
+                nodos.push('<Geq><FieldRef Name="FechaEmitida" /><Value IncludeTimeValue="False" Type="DateTime">' + desde + 'T06:53:16Z</Value></Geq>');
+            }
+        }
+        if (sp_controls.FechaEmitidaHasta.val() != "") {
+            var hasta = sp_controls.FechaEmitidaHasta.val().split('/');
+            if (hasta.length == 3) {
+                hasta = hasta[2] + "-" + hasta[1] + "-" + hasta[0];
+                nodos.push('<Leq><FieldRef Name="FechaEmitida" /><Value IncludeTimeValue="False" Type="DateTime">' + hasta + 'T06:53:16Z</Value></Leq>');
+            }
+        }
+
+
+        if (sp_controls.FechaPagoDesde.val() != "") {
+            var desde = sp_controls.FechaPagoDesde.val().split('/');
+            if (desde.length == 3) {
+                desde = desde[2] + "-" + desde[1] + "-" + desde[0];
+                nodos.push('<Geq><FieldRef Name="FechaCobro" /><Value IncludeTimeValue="False" Type="DateTime">' + desde + 'T06:53:16Z</Value></Geq>');
+            }
+        }
+        if (sp_controls.FechaPagoHasta.val() != "") {
+            var hasta = sp_controls.FechaPagoHasta.val().split('/');
+            if (hasta.length == 3) {
+                hasta = hasta[2] + "-" + hasta[1] + "-" + hasta[0];
+                nodos.push('<Leq><FieldRef Name="FechaCobro" /><Value IncludeTimeValue="False" Type="DateTime">' + hasta + 'T06:53:16Z</Value></Leq>');
+            }
+        }
+
+        if (sp_controls.TipoFactura.val() != "(Todos)") {
+            nodos.push('<Eq><FieldRef Name="TipoFactura" LookupId="TRUE" /><Value Type="Lookup">' + sp_controls.TipoFactura.val() + '</Value></Eq>');
+        }
+        if (sp_controls.Empleado.val() != "(Todos)") {
+            nodos.push('<Eq><FieldRef Name="Empleado" LookupId="TRUE" /><Value Type="Lookup">' + sp_controls.Empleado.val() + '</Value></Eq>');
+        }
+        if(sp_controls.OS.val() != "(Todos)"){
+            nodos.push('<Eq><FieldRef Name="ObraSocial" LookupId="TRUE" /><Value Type="Lookup">' + sp_controls.OS.val() + '</Value></Eq>');
+        }
+        return nodos;
+    }
+    function SPStaff_InicializarDatePickers() {
+        $('.dateInput').datepicker();
+    }
+
+</script>
+<style>
+    .metadataTd {
+        padding:6px;
+    }
+    .rotulo {
+        padding-right: 10px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: bold;
+            color: steelblue;
+    }
+    .selectMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .inputMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .actualizarGrande {
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: middle;
+        width: 21px;
+        height: 15px;
+        cursor: pointer;
+        vertical-align: middle;
+        background: url('/_layouts/15/images/spcommon.png?rev=23') no-repeat -132px -112px;
+    }
+  
+    .tdAngular {
+        /*text-align:center;*/
+    }
+    .dateInput {
+        width: 150px;
+    }
+    #customers a {
+        color: rgb(0, 114, 198)!important;
+    }
+
+    #customers {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #customers th, #customers td {
+            padding: 8px;
+        }
+
+    #customers tr:hover {
+        background-color: #ffff99;
+    }
+
+        #customers th {
+            background-color: #F2F2F2;
+            color: black;
+            padding: 10px;
+            font-weight:normal!important;
+        }
+    .centerAlign {
+        text-align: center;
+    }
+</style>
+        
+<div ng-app="miApp" class="row">
+    <div ng-controller="spResultado" class="span10">
+        <table>
+            <tr>
+                <td colspan="4" style="text-align:right"></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Número:</label></td>
+                <td class="metadataTd"><input id="SR_Numero" type="number" class="inputMetadata"/></td>
+                <td class="metadataTd"></td>
+                <td class="metadataTd"></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Fecha emisión:</label></td>
+                <td class="metadataTd"><nobr><input class="dateInput" id="emisionDesde"/>&nbsp;&nbsp;<label class="rotulo">hasta:</label>&nbsp;&nbsp;<input class="dateInput" id="emisionHasta"/></nobr></td>
+                <td class="metadataTd"></td>
+                <td class="metadataTd"></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Fecha de pago:</label></td>
+                <td class="metadataTd"><nobr><input class="dateInput" id="pagoDesde"/>&nbsp;&nbsp;<label class="rotulo">hasta:</label>&nbsp;&nbsp;<input class="dateInput" id="pagoHasta"/></nobr></td>
+                <td class="metadataTd"></td>
+                <td class="metadataTd"></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Estado:</label></td>
+                <td class="metadataTd" id="stockEstados"></td>
+                <td class="metadataTd"><label class="rotulo">Tipo:</label></td>
+                <td class="metadataTd"><select class="selectMetadata" id="SR_TipoFactura"><option value="(Todos)">(Todos)</option></select></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Empresa:</label></td>
+                <td class="metadataTd"><select class="selectMetadata" id="SR_Empleado"><option value="(Todos)">(Todos)</option></select></td>
+                <td class="metadataTd"><label class="rotulo">Prestador:</label></td>
+                <td class="metadataTd"><select class="selectMetadata" id="SP_OS"  onchange="_evento_cambiarOs()"><option value="(Todos)">(Todos)</option><option value="(Todos)" style="color:red;font-weight:bolder">(Excluir)</option></select></td>
+            </tr>
+            <tr>
+                <td  class="metadataTd"><label class="rotulo">Prestadores excluidos:</label></td>
+                <td  class="metadataTd multiOsTD"><b>Ninguno</b></td>
+                <td></td>
+                <td style="text-align: right; padding-top: 30px;">
+                    <button class="add" id="linkActualizar" ng-click="ejecutarWS()" onclick="event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: white;cursor:pointer;font-size:12px;font-weight:bold;color:black;border:1px solid lightgrey" ><i class="fa fa-search"></i>&nbsp;Buscar elementos</button>
+                    <button id="linkActualizar" onclick="CreateElement();event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: steelblue;cursor:pointer;font-size:12px;font-weight:bold" ><i class="fa fa-plus"></i>&nbsp;Crear nuevo</button>
+                    <button onclick="_evento_reporteTotal(); event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: green;cursor:pointer;font-size:12px;font-weight:bold" ><i class="fa fa-file-excel-o fa-lg"></i>&nbsp;Reporte total</button>
+                    <button onclick="_evento_reporteMensual(); event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: green;cursor:pointer;font-size:12px;font-weight:bold" ><i class="fa fa-file-excel-o fa-lg"></i>&nbsp;Reporte mensual</button>
+
+                </td>
+            </tr>
+        </table>
+    <br />
+    <br />
+        <div id='cargandoPagina' ng-show="showLoading">
+            <div id="progreso" style="width:100%">
+                <div id="DeltaPageStatusBar"><div id="pageStatusBar" class="ms-status-blue" aria-live="polite" aria-relevant="all" style="display: block;"><span id="status_33" class="ms-status-status" role="alert" tabindex="0"><span id="status_33_hiddenPriMsg" class="ms-accessible">Cargando información</span><span class="ms-status-iconSpan"><img class="ms-status-iconImg" src="/_layouts/15/images/spcommon.png" data-themekey="#"></span><span class="ms-bold ms-status-title"><label id="palabraCargando" style="vertical-align:baseline;">Cargando información...</label></span><span class="ms-status-body" id="status_33_body"><img src="/_Layouts/Images/progress.gif" data-themekey="#"></span><br></span></div></div>
+            </div>
+        </div>
+        <div ng-show="Duplicados" style="background: yellow;" ng-repeat="dup in facturasDuplicadas">
+            <i class="fa fa-warning fa-lg" style="padding-right:10px;"></i>{{dup.result}}
+        </div>
+        <div ng-repeat="timeLine in jSON">
+            <div ng-show="timeLine.CountAnio > 0">
+                <h1>{{timeLine.Anio}}</h1>
+                <div ng-repeat="monthData in timeLine.Meses" ng-hide="monthData.CountMes === 0" style="padding-top:10px;padding-bottom:10px;">
+                    <h2>
+                        {{monthData.Mes}}
+                    </h2>
+                    <div ng-show="monthData.CountMes === 0">
+                        No hay elementos para mostrar
+                    </div>
+                    <div ng-show="monthData.CountMes > 0">
+                        <table id="customers" style="border-collapse: collapse">
+                        <thead>
+                            <tr style="text-align:center;vertical-align:top;">
+                                <th></th>
+                                <th></th>
+                                <th>N°</th>
+                                <th>Tipo</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                                <th>Fecha de pago</th>
+                                <th>Prestador<br /><input type="text" class="secondFilter" ng-change="currentPage = 1" ng-model="sr_obrasocial"/></th>
+                                <th>Monto</th>
+                                <th>IVA</th>
+                                <th>Total</th>
+                                <th>Crédito</th>
+                                <th>Débito</th>
+                            </tr>
+                        </thead>
+                        <tr ng-repeat="factura in monthData.Data |orderBy:sortKey:reverse|filter:{ObraSocialNombre: sr_obrasocial}" current-page="currentPage">
+                            <td style="width:85px;">
+                                <button id="{{factura.Id}}" onclick="RemoveElement($(this).attr('Id'));event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;color: red;cursor:pointer;padding: 2px;"><i class="fa fa-trash fa-lg"></i></button>  
+                                <button id="{{factura.Id}}" onclick="UpdateElement($(this).attr('Id'));event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;color: steelblue;cursor:pointer;padding: 2px;"><i class="fa fa-edit fa-lg"></i></button>
+                            </td>
+                            <td  ng-class="{ ANDREA: factura.EmpleadoId == 1,CRISTIAN: factura.EmpleadoId == 2, SINEMPLEADO: factura.EmpleadoId == null }"><nobr>{{factura.EmpleadoNombre}}</nobr></td>
+                            <td class="tdAngular" style="text-align:left;"><a style="cursor:pointer;" id="{{factura.Id}}" onclick="UpdateElement($(this).attr('Id'))">{{factura.Numero}}</a></td>
+                            <td><nobr>{{factura.TipoFacturaNombre}}</nobr></td>
+                            <td ng-class="{PENDIENTE: factura.Estado == 'Pendiente [P]',ANULADA: factura.Estado == 'Anulada [A]',  COBRADA: factura.Estado == 'Cobrada [C]'}"><nobr>{{factura.Estado}}</nobr></td>
+                            <td style="text-align:center">{{factura.FechaEmitida}}</td>
+                            <td style="text-align:center">{{factura.FechaCobro}}</td>
+                            <td>{{factura.ObraSocialNombre}}</td>
+                            <td style="text-align:center;background:green;color:white;"><nobr>$ {{factura.MontoText}}</nobr></td>
+                            <td style="text-align:center;background:red;color:white;"><nobr>$ {{factura.IVAText}}</nobr></td>
+                            <td style="text-align:center;background:green;color:white;"><nobr>$ {{factura.TotalText}}</nobr></td>
+                            <td style="text-align:center;"><nobr>$ {{factura.CreditoText}}</nobr></td>
+                            <td style="text-align:center;"><nobr>$ {{factura.DebitoText}}</nobr></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                            <td style="text-align:center;background:mediumseagreen;color:white;"><nobr>$ {{monthData.TotalMonto}}</nobr></td>
+                            <td style="text-align:center;background:orangered;color:white;"><nobr>$ {{monthData.TotalIva}}</nobr></td>
+                            <td style="text-align:center;background:mediumseagreen;color:white;"><nobr>$ {{monthData.Total}}</nobr></td><td></td><td></td>
+                        </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+  </div>
+</div>
+<style>
+    .ANULADA{
+        background: yellow;
+        font-weight: bolder;
+    }
+    .PENDIENTE{
+        background: orange;
+        font-weight: bolder;
+    }
+    .COBRADA{
+        background: greenyellow;
+        font-weight: bolder;
+    }
+    .ANDREA {
+        color:blue;
+        font-weight: bolder;
+    }
+    .CRISTIAN {
+        color:green;
+        font-weight: bolder;
+    }
+    .SINEMPLEADO {
+        background: grey;
+        font-weight: bolder;
+    }
+</style>
+<script>
+      //Helper
+    function init_ConsultaLicencias(){
+        $('#DeltaPlaceHolderPageTitleInTitleArea').html("Facturas COMPRAS");
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("font-weight", "bold")
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("color", "steelblue")
+
+        $('.pagination').css("display", "flex")
+        $('.pagination li').css("padding", "5px")
+        $('.pagination li').css("list-style", "none")
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+              event.preventDefault();
+              $('.add').click();
+              return false;
+            }
+        });
+        inicializarControles();
+    }
+    if (_spBodyOnLoadFunctionNames) {
+        _spBodyOnLoadFunctionNames.push("init_ConsultaLicencias");
+    }
+    else {
+        $(document).ready(function () {
+            init_ConsultaLicencias();
+        });
+    }
+    function UpdateElement(idx) {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/FacturaCompra/EditForm.aspx?ID=" + idx;
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function CreateElement() {
+
+        var extension = sp_controls.Empleado.val() != "(Todos)" ? "?empleado=" + sp_controls.Empleado.val() : "";
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/FacturaCompra/NewForm.aspx" + extension;
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function _callbackRespuesta(result){
+            switch(result) {
+            case SP.UI.DialogResult.OK:
+                console.log("You clicked OK");
+                $('#linkActualizar').click();
+                // reload data as necessary here
+                break;
+            case SP.UI.DialogResult.cancel:
+                console.log("You clicked cancel or close.");
+                break;
+        }
+    }
+    function RemoveElement(idx) {
+       var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/FacturaCompra/DispForm.aspx?ID=" + idx+ "&Source=" + window.location.href;
+        var options = {
+            title: "",
+            autoSize: true,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+
+    var obrasocial = [];
+    var tipoFactura = [];
+    var empleados = [];
+    function _evento_obtener_Empleado(idx) {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where></Query></View>"
+        }
+
+        if (empleados.length == 0)
+            empleados = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_EMPLEADO, viewXml).results;
+        for (r = 0; r < empleados.length; r++) {
+            if (empleados[r].Id == idx)
+                return empleados[r].Descripcion;
+        }
+
+        return "";
+    }
+    function _evento_obtener_tipoFactura(idx) {
+        if (tipoFactura.length == 0)
+             tipoFactura = SPD_GetListItems(_spPageContextInfo.webAbsoluteUrl, MD_TIPOFACTURA).results;
+        for (r = 0; r < tipoFactura.length; r++) {
+            if (tipoFactura[r].Id == idx)
+                return tipoFactura[r].Title;
+        }
+        return "";
+    }
+
+    function _evento_obtener_os(idx) {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where></Query></View>"
+        }
+
+        if (obrasocial.length == 0)
+             obrasocial = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_OS,viewXml).results;
+        for (r = 0; r < obrasocial.length; r++) {
+            if (obrasocial[r].Id == idx)
+                return obrasocial[r].Nombre;
+        }
+        return "";
+    }
+    var sp_controls = {};
+    function inicializarControles() {
+
+        $('#stockEstados').append(ObtenerComboEstados("SR_Estado"));
+        SPStaff_InicializarDatePickers();
+
+        sp_controls.Numero = $("#SR_Numero");
+        sp_controls.TipoFactura = $("#SR_TipoFactura");
+        sp_controls.Estado = $("#SR_Estado");
+        sp_controls.FechaEmitidaDesde = $("#emisionDesde");
+        sp_controls.FechaEmitidaHasta = $("#emisionHasta");
+        sp_controls.FechaPagoDesde = $("#pagoDesde");
+        sp_controls.FechaPagoHasta = $("#pagoHasta");
+
+        sp_controls.Empleado = $("#SR_Empleado");
+        sp_controls.OS = $("#SP_OS");
+
+        _evento_inicializarEmpleado();
+        _evento_inicializarOS();
+
+        _evento_inicializarTipoFactura();
+        initControlesFormulario();
+        proponerEjecucion();
+    }
+    function _evento_inicializarOS() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Nombre' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+        var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_OS, viewXml).results;
+
+        for (ins = 0; ins < oItems.length; ins++) {
+            sp_controls.OS.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].Nombre + "</option>");
+        }
+        multiOsElements = oItems;
+
+    }
+    function proponerEjecucion() {
+        var currentDate = new Date();
+        sp_controls.FechaEmitidaDesde.val(currentDate.format("01/MM/yyyy"));
+
+        if (getUrlParameter("empresa") != undefined && getUrlParameter("empresa") != "")
+            sp_controls.Empleado.val(getUrlParameter("empresa"));
+
+        setTimeout(function () {
+            $('#linkActualizar').click();
+        }, 1000);
+    }
+     function ObtenerComboEstados(idx) {
+         var selectFields = "<br/><select class='selectMetadata' id='" + idx + "'><option value='-1'>Todos</option>";
+         var stockFields = SPD_GetListFields(_spPageContextInfo.webAbsoluteUrl, "b2eef159-f5c2-4542-864b-0366056f6608").results
+         var estadoField;
+         for (tt = 0; tt < stockFields.length; tt++) {
+             if (stockFields[tt].InternalName == "Estado") {
+                 estadoField = stockFields[tt];
+             }
+         }
+
+         if (estadoField != null) {
+             var choices = estadoField.Choices.results;
+             for (tt = 0 ; tt < choices.length; tt++) {
+                 selectFields = selectFields + "<option value='" + choices[tt] + "'>" + choices[tt] + "</option>";
+             }
+         }
+         selectFields = selectFields + "</select>";
+
+         return selectFields;
+    }
+     function _evento_inicializarEmpleado() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Descripcion' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+         var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_EMPLEADO, viewXml).results;
+
+         for (ins = 0; ins < oItems.length; ins++) {
+             if(oItems[ins].Id == 1 || oItems[ins].Id == 2)
+                sp_controls.Empleado.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].Descripcion + "</option>");
+        }
+
+    }
+     function _evento_inicializarTipoFactura() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Title' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+         var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_TIPOFACTURA, viewXml).results;
+
+         for (ins = 0; ins < oItems.length; ins++) {
+             sp_controls.TipoFactura.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].Title + "</option>");
+        }
+
+    }
+    function _evento_inicializarObraSocial() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Nombre' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+        var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_OS, viewXml).results;
+
+        for (ins = 0; ins < oItems.length; ins++) {
+            sp_controls.ObraSocial.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].Nombre + "</option>");
+        }
+
+    }
+    
+</script>
+<style>
+    #customers th, #customers td {
+        padding: 0px;
+        font-size: 11px;
+        padding-left:1px;
+        padding-right:1px;
+    }
+    #customers img {
+        width:10px;
+    }
+    #customers th {
+        color: black;
+        padding: 0px;
+    }
+    .paginacion a {
+        color: steelblue!important;
+        float: left;
+        padding: 2px 5px;
+        text-decoration: none;
+        border: none;
+    }
+    .secondFilter{
+        border: 1px solid black;
+        background: white;
+        color: black;
+        text-align: center;
+        text-align-last: center;
+        font-weight: bold;
+        width: 100%;
+    }
+</style>
+<script>
+    var multiOsElements = [];
+    var multiOsSelected = [];
+    function inicializarMultiOs() {
+
+        var tag = '<div id="SR_OS_MULTI" style="overflow: scroll;height: 500px;">';
+        tag = tag + '<input id="checkText" onkeyup="_evento_multi_texto()" placeHolder="Ingrese texto para filtrar"/>';
+        tag = tag + '<input id="checkTodes" onclick="_evento_multi_todos(true)" type="radio" name="oRadio" checked="checked"/>Todos<input type="radio" name="oRadio" onclick="_evento_multi_todos(false)"/>Ninguno<br/>';
+
+        for (ins = 0; ins < multiOsElements.length; ins++) {
+            tag = tag + "<div class='padreNodoMulti' style='FONT-SIZE: 11px;font-weight: bold;'><input class='oChecked' type='checkbox' checked='checked' id='os" + multiOsElements[ins].Id + "'/><label>" + multiOsElements[ins].Nombre + "</label></div>";
+        }
+
+        SPD_CrearCuadroModal(2, 800, 1500, "Prestadores incluidos", tag + "</div>", "CallBackModal()");
+
+    }
+    var multiOsRemoved = [];
+    function CallBackModal() {
+        $('.oChecked').each(function () {
+            if (!$(this).prop("checked")) {
+                multiOsSelected.push({ id: $(this).prop("id").split("os")[1] });
+                multiOsRemoved.push($(this).first().next().text());
+            }
+
+        });
+
+        if (multiOsRemoved.length == 0) {
+            $('.multiOsTD').html("<b>Ninguno</b>");
+        }
+        else {
+            if (multiOsRemoved.length < 6) {
+                $('.multiOsTD').html("");
+                for (j = 0; j < multiOsRemoved.length; j++) {
+                    $('.multiOsTD').append("<b>" + multiOsRemoved[j] + "</b><br/>");
+                }
+            }
+            else {
+                $('.multiOsTD').html("<a style='cursor:pointer;' onclick='_evento_verMasMultiOsRemoved();'>Ver más</a>");
+            }
+        }
+
+        SPD_CerrarCuadroModal();
+    }
+    function _evento_verMasMultiOsRemoved() {
+        var tag = '<div style="overflow: scroll;height: 500px;">';
+
+
+        for (ins = 0; ins < multiOsElements.length; ins++) {
+
+            var rta = false;
+            for (ins2 = 0; ins2 < multiOsRemoved.length; ins2++) {
+                if (multiOsRemoved[ins2] == multiOsElements[ins].Nombre) {
+                    rta = true;
+                }
+            }
+            if (!rta) {
+                tag = tag + "<b style='color:green'>" + multiOsElements[ins].Nombre + " (INCLUIDO)</b><br/>"
+            }
+            else {
+                tag = tag + "<b  style='color:red'>" + multiOsElements[ins].Nombre + "</b><br/>"
+            }
+
+        }
+
+        SPD_CrearCuadroModal(1, 800, 1500, "Prestadores excluidos", tag + "</div>", false);
+    }
+    function reiniciarMultiOs() {
+        $('.oChecked').prop("checked", true);
+    }
+    function _evento_cambiarOs() {
+        multiOsSelected = [];
+        multiOsRemoved = [];
+        if (sp_controls.OS.find("option:selected").text() == "(Excluir)") {
+            inicializarMultiOs();
+        }
+        else {
+            $('.multiOsTD').html("<b>Ninguno</b>");
+        }
+    }
+    function _evento_multi_todos(todes) {
+        $('.oChecked').prop("checked", todes);
+    }
+    function _evento_multi_texto() {
+        var currentVal = $('#checkText').val();
+        if (currentVal != "") {
+            $('#SR_OS_MULTI').find("label").each(function () {
+
+                if ($(this).text().toUpperCase().indexOf(currentVal.toUpperCase()) == -1) {
+                    $(this).parent().hide();
+                }
+
+            });
+        }
+        else {
+            $('.padreNodoMulti').show();
+        }
+    }
+</script>
+<script type="text/javascript">
+    function _evento_reporteMensual() {
+
+        var vistas = SPD_GetLisViews(_spPageContextInfo.webAbsoluteUrl, "b2eef159-f5c2-4542-864b-0366056f6608").results;
+        var guid = "";
+        var url = "/Lists/FacturaCompra/MedilifeMensual.aspx";
+        if ($("#SR_Empleado").val() == "2")
+            url = "/Lists/FacturaCompra/DFMedicMensual.aspx";
+        if ($("#SR_Empleado").val() == "(Todos)")
+            url = "/Lists/FacturaCompra/TodosMensual.aspx";
+
+        for (d = 0; d < vistas.length; d++) {
+            if (vistas[d].ServerRelativeUrl.indexOf(url) != -1) {
+                console.log(vistas[d].ServerRelativeUrl)
+                guid = "{" + vistas[d].Id + "}";
+            }
+        }
+
+        var exporturl = _spPageContextInfo.webAbsoluteUrl + "/_vti_bin/owssvr.dll?CS=109&Using=_layouts/query.iqy&List={b2eef159-f5c2-4542-864b-0366056f6608}" + "&View=" + guid + "&CacheControl=1";
+        window.location.href = exporturl;
+    }
+    function _evento_reporteTotal() {
+
+        var vistas = SPD_GetLisViews(_spPageContextInfo.webAbsoluteUrl, "b2eef159-f5c2-4542-864b-0366056f6608").results;
+        var url = "/Lists/FacturaCompra/MedilifeTotal.aspx";
+        if ($("#SR_Empleado").val() == "2")
+            url = "/Lists/FacturaCompra/DFMedicTotal.aspx";
+        if ($("#SR_Empleado").val()  == "(Todos)")
+            url = "/Lists/FacturaCompra/TodosTotal.aspx";
+
+        for (d = 0; d < vistas.length; d++) {
+            if (vistas[d].ServerRelativeUrl.indexOf(url) != -1) {
+                console.log(vistas[d].ServerRelativeUrl)
+                guid = "{" + vistas[d].Id + "}";
+            }
+        }
+
+        var exporturl = _spPageContextInfo.webAbsoluteUrl + "/_vti_bin/owssvr.dll?CS=109&Using=_layouts/query.iqy&List={b2eef159-f5c2-4542-864b-0366056f6608}" + "&View=" + guid + "&CacheControl=1";
+        window.location.href = exporturl;
+
+    }
+</script>
+<script>
+    setInterval(function () {
+        if ($('#sideNavBox').length > 0) {
+            $('#sideNavBox').remove();
+            $('#contentBox').css("margin-left", "100px");
+        }
+    }, 600);
+</script>

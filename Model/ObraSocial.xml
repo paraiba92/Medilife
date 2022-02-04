@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/"  xmlns:splog="http://emmsa.net/schemas/splog/">
+	<EnsureList name="ObraSocial" title="Obra social" description="Control de obras sociales">	
+	
+    <EnsureTextField internalName="Nombre" displayName="Obra Social" siteColumn="FALSE" />
+    <EnsureTextField internalName="Cuit" displayName="Cuit" siteColumn="FALSE" />
+    <EnsureTextField internalName="Telefono" displayName="Tel/Fax" siteColumn="FALSE" />
+    <EnsureTextField internalName="Direccion" displayName="Dirección" siteColumn="FALSE" />
+    <EnsureTextField internalName="Email" displayName="Email" siteColumn="FALSE" />
+    <EnsureMultiLineTextField internalName="Comentario" displayName="Comentario" siteColumn="FALSE"/>
+
+    <EnsureContentType name="Item" parentContentType="System">
+			<AddFieldToContentType name="Title" required="FALSE" showInDisplayForm="FALSE" showInNewForm="FALSE" showInEditForm="FALSE"/>
+			<AddFieldToContentType name="Nombre" required="TRUE"/>
+     	<AddFieldToContentType name="Cuit" required="FALSE"/>
+      <AddFieldToContentType name="Email" required="FALSE"/>
+			<AddFieldToContentType name="Telefono" required="FALSE"/>
+			<AddFieldToContentType name="Direccion" required="FALSE"/>
+      <AddFieldToContentType name="Comentario" required="FALSE"/>
+      <ReorderFields />
+		</EnsureContentType>
+    
+		<EnsureView name="AllItems" title="Todos los elementos" default="TRUE" status="Skip">
+			<na:ViewFields>
+				<na:FieldRef name="Nombre"/>
+				<na:FieldRef name="Telefono"/>
+				<na:FieldRef name="Direccion"/>
+				<na:FieldRef name="Email"/>
+				<na:FieldRef name="Cuit"/>
+        <na:FieldRef name="Comentario"/>
+        <na:FieldRef name="Modified"/>
+				<na:FieldRef name="Editor"/>
+				<na:FieldRef name="Edit"/>
+			</na:ViewFields>
+		</EnsureView>
+
+    <LoadItems filePath="~this\ObraSocial.xlsx" syncMode="LoadIfEmpty"/>
+
+  </EnsureList>
+</Root>

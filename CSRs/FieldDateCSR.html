@@ -1,0 +1,30 @@
+﻿<script type="text/javascript">
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/presupuesto.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQ.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js")+"'><"+"/script>");
+	document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.js")+"'><"+"/script>");
+</script>
+<script type="text/javascript">
+    SP.SOD.executeFunc("clienttemplates.js", "SPClientTemplates", function () {
+        function init() {
+            var templates = {};
+            SPClientTemplates.TemplateManager.RegisterTemplateOverrides({
+                OnPreRender: CSROnPreRender,
+                OnPostRender: CSROnPostRender
+            });
+        }
+        RegisterModuleInit(SPClientTemplates.Utility.ReplaceUrlTokens("~siteCollection/Style Library/customlayout.js"), init);
+        init();
+    });
+
+    function onPostRenderFunction(ctx) {
+        SPStaff_initDateTimePikers();
+    }
+    function SPStaff_InicializarDatePickers() {
+        $('.dateInput').datepicker();
+    }
+</script>

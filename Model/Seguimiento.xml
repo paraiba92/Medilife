@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/"  xmlns:splog="http://emmsa.net/schemas/splog/">
+	<EnsureList name="Seguimiento" title="Seguimiento" description="Seguimiento">
+
+    <LoadItems filePath="~this\Seguimiento.xlsx" syncMode="LoadIfEmpty"/>
+
+    <EnsureTextField internalName="Concepto" displayName="Concepto" siteColumn="FALSE" />
+    <EnsureLookupField internalName="ObraSocial" displayName="Proveedor" listName="ObraSocial" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureLookupField internalName="Factura" displayName="Factura" listName="Factura" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureMultiLineTextField internalName="Descripcion" displayName="Descripcion" siteColumn="FALSE"/>
+    <EnsureDateField internalName="Fecha" displayName="Fecha" siteColumn="FALSE" time="FALSE" />
+    <EnsureNumberField internalName="Credito" displayName="Crédito $" defaultValue="0" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Debito" displayName="Débito $" defaultValue="0" decimalPlaces="2" siteColumn="FALSE" />
+
+    <EnsureContentType name="Item" parentContentType="System">
+      <AddFieldToContentType name="Title" required="FALSE" showInDisplayForm="FALSE" showInNewForm="FALSE" showInEditForm="FALSE"/>
+      <AddFieldToContentType name="ObraSocial" required="FALSE"/>
+      <AddFieldToContentType name="Factura" required="FALSE"/>
+      <AddFieldToContentType name="Descripcion" required="FALSE"/>
+      <AddFieldToContentType name="Fecha" required="FALSE"/>
+      <AddFieldToContentType name="Credito" required="FALSE"/>
+      <AddFieldToContentType name="Debito" required="FALSE"/>
+      <AddFieldToContentType name="Concepto" required="FALSE"/>
+      <ReorderFields />
+		</EnsureContentType>
+    
+		<EnsureView name="AllItems" title="Todos los elementos" default="TRUE">
+			<na:ViewFields>
+				<na:FieldRef name="Descripcion"/>
+        <na:FieldRef name="Credito"/>
+        <na:FieldRef name="Debito"/>
+      </na:ViewFields>
+		</EnsureView>
+    
+	</EnsureList>
+</Root>

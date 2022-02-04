@@ -1,0 +1,382 @@
+<link  rel="stylesheet" href="/sites/MedilifeHome/SiteAssets/JQUI.css"/>
+<link  rel="stylesheet" href="/sites/MedilifeHome/SiteAssets/FontAwesome/css/font-awesome.css"/>
+<link  rel="stylesheet" href="/sites/MedilifeHome/SiteAssets/"/>
+<script src="/sites/MedilifeHome/SiteAssets/JQ.js"></script>
+<script src="/sites/MedilifeHome/SiteAssets/JQUI.js"></script>
+<script src="/sites/MedilifeHome/SiteAssets/SPD_Helper_1.5.js"></script>
+<script src="/sites/MedilifeHome/SiteAssets/Medilife_Settings.js"></script>
+<script src="https://kendo.cdn.telerik.com/2017.2.621/js/jszip.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2017.2.621/js/kendo.all.min.js"></script>
+<style>
+    .metadataTd {
+        padding:6px;
+    }
+    .rotulo {
+        padding-right: 10px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: bold;
+            color: steelblue;
+    }
+    .selectMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .inputMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .actualizarGrande {
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: middle;
+        width: 21px;
+        height: 15px;
+        cursor: pointer;
+        vertical-align: middle;
+        background: url('/_layouts/15/images/spcommon.png?rev=23') no-repeat -132px -112px;
+    }
+  
+    .tdAngular {
+        /*text-align:center;*/
+    }
+    .dateInput {
+        width: 150px;
+    }
+    #customers a {
+        color: rgb(0, 114, 198)!important;
+    }
+
+    #customers {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #customers th, #customers td {
+            padding-left: 8px;
+            padding-right: 8px;
+            padding-bottom: 1px;
+            padding-top: 1px;
+        }
+
+    #customers tr:hover {
+        background-color: #ffff99;
+    }
+
+        #customers th {
+            background-color: #F2F2F2;
+            color: grey;
+        }
+    .centerAlign {
+        text-align: center;
+    }
+    .span10 > label {
+    width: 140px;
+    font-weight: bold;
+    color: grey;
+}
+</style>
+<div class="row">
+    <div class="span10">
+        <table>
+            <tr>
+                <td colspan="4" style="text-align:right"></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><input type="button" value="Realizar backup general" onclick="_initBKP()"/></td>
+                <td class="metadataTd"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    /*
+;*/
+    function inicializar_comboLista() {
+        $('#SR_LISTAS').append("<option value='" + MD_EMPLEADO + "'>EMPLEADO</option>");
+        $('#SR_LISTAS').append("<option value='" + MD_FACTURA + "'>FACTURA</option>");
+        $('#SR_LISTAS').append("<option value='" + MD_GASTOSINFORMALES + "'>GASTOS INFORMALES</option>");
+        $('#SR_LISTAS').append("<option value='" + MD_INSTITUCION + "'>INSTITUCION</option>");
+        $('#SR_LISTAS').append("<option value='" + MD_OS + "'>OBRA SOCIAL</option>");
+        $('#SR_LISTAS').append("<option value='" + MD_Presupuestos + "'>PRESUPUESTO</option>");
+        $('#SR_LISTAS').append("<option value='" + MD_RECORDATORIO + "'>RECORDATORIO</option>");
+        $('#SR_LISTAS').append("<option value='" + MD_REMITO + "'>REMITO</option>");
+        $('#SR_LISTAS').append("<option value='" + MD_SEGUIMIENTO + "'>SEGUIMIENTO</option>");
+        $('#SR_LISTAS').append("<option value='" + MD_STOCK + "'>STOCK</option>");
+    }
+    var data = {};
+    function _initBKP() {
+        $('#divToExport ul').html("");
+        bk_empleados();
+        bk_institucion();
+        bk_Recordatorio();
+        bk_OS();
+        bk_GastoInformal();
+        bk_Stock();
+        bk_Factura();
+        bk_Presupuesto();
+        bk_remito();
+    }
+    function bk_empleados() {
+
+        var ViewXml = {
+            ViewXml : "<View><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where></Where></Query></View>"
+        }
+        var _items = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_EMPLEADO, ViewXml).results;
+        data = [];
+        for (i = 0; i < _items.length; i++) {
+            var _item = {
+                Cuit: _items[i].Cuit,
+                Descripcion: _items[i].Descripcion,
+                Direccion: _items[i].Direccion,
+                Email: _items[i].Email,
+                ID: _items[i].ID,
+                NombreEmpleado: _items[i].NombreEmpleado,
+                NombreEmpresa: _items[i].NombreEmpresa,
+                Telefono: _items[i].Telefono,
+                Title : _items[i].Title
+            }
+            data.push(_item);
+        }
+        saveData(data, "BKP_Empleado_" + new Date().format("ddMMyyyy"));
+        $('#divToExport ul').append("<li style='color:green;'>Backup empleado ok</li>");
+    }
+    function bk_institucion() {
+        var ViewXml = {
+            ViewXml : "<View><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where></Where></Query></View>"
+        }
+        var _items = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_INSTITUCION, ViewXml).results;
+        data = [];
+        for (i = 0; i < _items.length; i++) {
+            var _item = {
+                Cuit: _items[i].Cuit,
+                Direccion: _items[i].Direccion,
+                Email: _items[i].Email,
+                ID: _items[i].ID,
+                NombreInstitucion: _items[i].NombreInstitucion,
+                Telefono: _items[i].Telefono,
+                Title: _items[i].Title
+            }
+            data.push(_item);
+        }
+        saveData(data, "BKP_Institucion_" + new Date().format("ddMMyyyy"));
+        $('#divToExport ul').append("<li style='color:green;'>Backup institución ok</li>");
+    }
+    function bk_Recordatorio() {
+        var ViewXml = {
+            ViewXml : "<View><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where></Where></Query></View>"
+        }
+        var _items = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_RECORDATORIO, ViewXml).results;
+        data = [];
+        for (i = 0; i < _items.length; i++) {
+            var _item = {
+                FechaAvisoDesde: _items[i].FechaAvisoDesde,
+                FechaAvisoHasta: _items[i].FechaAvisoHasta,
+                Completado: _items[i].Completado,
+                ID: _items[i].ID,
+                Recordatorio: _items[i].Recordatorio,
+                Title: _items[i].Title
+            }
+            data.push(_item);
+        }
+        saveData(data, "BKP_Recordatorio_" + new Date().format("ddMMyyyy"));
+        $('#divToExport ul').append("<li style='color:green;'>Backup recordatorio ok</li>");
+    }
+    function bk_OS() {
+        var ViewXml = {
+            ViewXml : "<View><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where></Where></Query></View>"
+        }
+        var _items = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_OS, ViewXml).results;
+        data = [];
+        for (i = 0; i < _items.length; i++) {
+            var _item = {
+                Comentario: _items[i].Comentario,
+                Cuit: _items[i].Cuit,
+                Direccion: _items[i].Direccion,
+                Email: _items[i].Email,
+                ID: _items[i].ID,
+                Nombre: _items[i].Nombre,
+                Telefono: _items[i].Telefono,
+                Title: _items[i].Title,
+            }
+            data.push(_item);
+        }
+        saveData(data, "BKP_OS_" + new Date().format("ddMMyyyy"));
+        $('#divToExport ul').append("<li style='color:green;'>Backup obra social ok</li>");
+    }
+    function bk_GastoInformal() {
+        var ViewXml = {
+            ViewXml : "<View><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where></Where></Query></View>"
+        }
+        var _items = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_GASTOSINFORMALES, ViewXml).results;
+        data = [];
+        for (i = 0; i < _items.length; i++) {
+            var _item = {
+                Concepto: _items[i].Concepto,
+                Credito: _items[i].Credito,
+                Debito: _items[i].Debito,
+                EmpleadoId: _items[i].EmpleadoId,
+                Fecha: _items[i].Fecha,
+                ID: _items[i].ID,
+                Title: _items[i].Title
+            }
+            data.push(_item);
+        }
+        saveData(data, "BKP_GastoInformal_" + new Date().format("ddMMyyyy"));
+        $('#divToExport ul').append("<li style='color:green;'>Backup gastos informales ok</li>");
+    }
+    function bk_Stock() {
+        var ViewXml = {
+            ViewXml : "<View><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where></Where></Query></View>"
+        }
+        var _items = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_STOCK, ViewXml).results;
+        data = [];
+        for (i = 0; i < _items.length; i++) {
+            var _item = {
+                Comentario: _items[i].Comentario,
+                ConsignadoOtros: _items[i].ConsignadoOtros,
+                DescripcionProducto: _items[i].DescripcionProducto,
+                EmpresaTransportadora: _items[i].EmpresaTransportadora,
+                Estado: _items[i].Estado,
+                FacturaProveedor: _items[i].FacturaProveedor,
+                FechaCompraStock: _items[i].FechaCompraStock,
+                FechaDevolucion: _items[i].FechaDevolucion,
+                FechaIngresoStock: _items[i].FechaIngresoStock,
+                FechaRemito: _items[i].FechaRemito,
+                FechaVencimientoStock: _items[i].FechaVencimientoStock,
+                GETIN: _items[i].GETIN,
+                ID: _items[i].ID,
+                InstitucionId: _items[i].InstitucionId,
+                Institucion_EstadoId: _items[i].Institucion_EstadoId,
+                LOT: _items[i].LOT,
+                Marca: _items[i].Marca,
+                Medida: _items[i].Medida,
+                NROSerie: _items[i].NROSerie,
+                NombreStock: _items[i].NombreStock,
+                NumeroRemito: _items[i].NumeroRemito,
+                ProveedorRemito: _items[i].ProveedorRemito,
+                REF: _items[i].REF,
+                RemitoRelacionadoId: _items[i].RemitoRelacionadoId,
+                SN: _items[i].SN,
+                Title: _items[i].Title
+            }
+            data.push(_item);
+        }
+        saveData(data, "BKP_Stock_" + new Date().format("ddMMyyyy"));
+        $('#divToExport ul').append("<li style='color:green;'>Backup stock ok</li>");
+    }
+    function bk_Factura() {
+        var ViewXml = {
+            ViewXml : "<View><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where></Where></Query></View>"
+        }
+        var _items = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_FACTURA, ViewXml).results;
+        data = [];
+        for (i = 0; i < _items.length; i++) {
+            var _item = {
+                Cabecera: _items[i].Cabecera,
+                Credito: _items[i].Credito,
+                Debito: _items[i].Debito,
+                Detalle: _items[i].Detalle,
+                Doctor: _items[i].Doctor,
+                FechaEmitida: _items[i].FechaEmitida,
+                FechaPago: _items[i].FechaPago,
+                FechaVencimiento: _items[i].FechaVencimiento,
+                HonorariosMedicos: _items[i].HonorariosMedicos,
+                ID: _items[i].ID,
+                IVA: _items[i].IVA,
+                InstitucionId: _items[i].InstitucionId,
+                Numero: _items[i].Numero,
+                ObraSocialId: _items[i].ObraSocialId,
+                Paciente: _items[i].Paciente,
+                StockId: _items[i].StockId,
+                TipoFactura: _items[i].TipoFactura,
+                Title: _items[i].Title
+            }
+            data.push(_item);
+        }
+        saveData(data, "BKP_Factura_" + new Date().format("ddMMyyyy"));
+        $('#divToExport ul').append("<li style='color:green;'>Backup factura ok</li>");
+    }
+    function bk_Presupuesto() {
+        var ViewXml = {
+            ViewXml : "<View><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where></Where></Query></View>"
+        }
+        var _items = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_Presupuestos, ViewXml).results;
+        data = [];
+        for (i = 0; i < _items.length; i++) {
+            var _item = {
+                Cantidad: _items[i].Cantidad,
+                Descripcion: _items[i].Descripcion,
+                Doctor: _items[i].Doctor,
+                EmpleadoId: _items[i].EmpleadoId,
+                FechaE: _items[i].FechaE,
+                ID: _items[i].ID,
+                InstitucionId: _items[i].InstitucionId,
+                Numero: _items[i].Numero,
+                ObraSocialId: _items[i].ObraSocialId,
+                Paciente: _items[i].Paciente,
+                PagoA: _items[i].PagoA,
+                PrecioT: _items[i].PrecioT,
+                PrecioU: _items[i].PrecioU,
+                Title: _items[i].Title
+            }
+            data.push(_item);
+        }
+        saveData(data, "BKP_Presupuesto_" + new Date().format("ddMMyyyy"));
+        $('#divToExport ul').append("<li style='color:green;'>Backup presupuesto ok</li>");
+    }
+    function bk_remito() {
+        var ViewXml = {
+            ViewXml : "<View><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where></Where></Query></View>"
+        }
+        var _items = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_REMITO, ViewXml).results;
+        data = [];
+        for (i = 0; i < _items.length; i++) {
+            var _item = {
+                Cantidad: _items[i].Cantidad,
+                Descripcion: _items[i].Descripcion,
+                Doctor: _items[i].Doctor,
+                EmpleadoId: _items[i].EmpleadoId,
+                FacturaId: _items[i].FacturaId,
+                FechaE: _items[i].FechaE,
+                ID: _items[i].ID,
+                InstitucionId: _items[i].InstitucionId,
+                Numero: _items[i].Numero,
+                ObraSocialId: _items[i].ObraSocialId,
+                Paciente: _items[i].Paciente,
+                PagoA: _items[i].PagoA,
+                PrecioT: _items[i].PrecioT,
+                PrecioU: _items[i].PrecioU,
+                PresupuestoAsociadoId: _items[i].PresupuestoAsociadoId,
+                StockId: _items[i].StockId,
+                Title: _items[i].Title,
+                TransportadorId: _items[i].TransportadorId
+            }
+            data.push(_item);
+        }
+        saveData(data, "BKP_Remito" + new Date().format("ddMMyyyy"));
+        $('#divToExport ul').append("<li style='color:green;'>Backup remito ok</li>");
+    }
+
+    var saveData = (function () {
+var a = document.createElement("a");
+document.body.appendChild(a);
+a.style = "display: none";
+return function (data, fileName) {
+    var json = JSON.stringify(data),
+        blob = new Blob([json], {type: "octet/stream"}),
+        url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    window.URL.revokeObjectURL(url);
+};
+}());
+
+var data = { fechaBKP : new Date() }
+
+</script>
+<div id="divToExport">
+    <ul></ul>
+</div>

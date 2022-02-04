@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/"  xmlns:splog="http://emmsa.net/schemas/splog/">
+	<EnsureList name="Stock" title="Stock Medilife" description="Empleado Medilife">
+
+    <ActionsGroup status="Skip">
+    
+      <EnsureTextField internalName="NombreStock" displayName="Nombre" siteColumn="FALSE" />
+      <EnsureTextField internalName="IdentificadorUnico" displayName="Identificador único" description="Indique si quiere agregar un identificador único para futuras consultas" siteColumn="FALSE" />
+      <EnsureTextField internalName="LOT" displayName="Lote" siteColumn="FALSE" />
+      <EnsureTextField internalName="REF" displayName="Ref" siteColumn="FALSE" />
+      <EnsureTextField internalName="NumeroRemito" displayName="N° de remito COMPRAS" siteColumn="FALSE" />
+      <EnsureDateField internalName="FechaRemito" displayName="Fecha del remito" siteColumn="FALSE" time="FALSE" />
+
+      <EnsureTextField internalName="Medida" displayName="Medidas" siteColumn="FALSE" />
+      <EnsureDateField internalName="FechaVencimientoStock" displayName="Fecha de vencimiento" siteColumn="FALSE" time="FALSE" />
+      <EnsureDateField internalName="FechaCompraStock" displayName="Fecha de compra" siteColumn="FALSE" time="FALSE" />
+      <EnsureTextField internalName="Comentario" displayName="Comentario" siteColumn="FALSE" />
+      <!--<EnsureTextField internalName="Marca" displayName="Marca" siteColumn="FALSE" /> Se va a agregar manualmente marca-->
+      <EnsureTextField internalName="SN" displayName="SN" siteColumn="FALSE" />
+      <EnsureTextField internalName="GETIN" displayName="GETIN" siteColumn="FALSE" />
+      <EnsureTextField internalName="NROSerie" displayName="N° de serie" siteColumn="FALSE" />
+      <EnsureTextField internalName="DescripcionProducto" displayName="Descripción producto" siteColumn="FALSE" />
+      <EnsureTextField internalName="EmpresaTransportadora" displayName="Empresa que tranporta" siteColumn="FALSE" />
+      <EnsureDateField internalName="FechaIngresoStock" displayName="Fecha de ingreso" siteColumn="FALSE" time="FALSE" />
+      <EnsureTextField internalName="ProveedorRemito" displayName="Proveedor y n° de remito" siteColumn="FALSE" />
+      <EnsureTextField internalName="FacturaProveedor" displayName="N° de factura del proveedor" siteColumn="FALSE" />
+      <EnsureLookupField internalName="Institucion" displayName="Institución (consignado)" listName="Institucion" indexed="TRUE" siteColumn="FALSE" />
+      <EnsureTextField internalName="ConsignadoOtros" displayName="Institución (consignado) OTROS" siteColumn="FALSE" />
+      <EnsureLookupField internalName="Institucion_Estado" description="Cuando el estado sea en 'institucion' agregue la institución aquí" displayName="Institución" listName="Institucion" indexed="TRUE" siteColumn="FALSE" />
+      <EnsureLookupField internalName="Remito" displayName="Remito asociado" description="Puede asociar un remito si se encuentra cargado en el sistema" listName="Remito" indexed="TRUE" siteColumn="FALSE" />
+      <EnsureLookupField internalName="NuevaMarca" displayName="Marca" listName="Marca" indexed="TRUE" siteColumn="FALSE" />
+      <EnsureBooleanField internalName="EnConsignacion" displayName="En consignacion" defaultValue="false" siteColumn="FALSE" />
+      <EnsureNumberField internalName="CantidadCopias" description="Indique cantidad de copias a crear" displayName="Cantidad de copias a crear" defaultValue="0" decimalPlaces="0" minValue="0" maxValue="200" siteColumn="FALSE" />
+		<EnsureTextField internalName="Title" displayName="Medida" siteColumn="FALSE" />
+		<EnsureTextField internalName="Largo" displayName="Largo" siteColumn="FALSE" />
+		<EnsureTextField internalName="Diametro" displayName="Diametro" siteColumn="FALSE" />
+		<EnsureChoiceField internalName="TipoMedida" displayName="Tipo de medida" siteColumn="FALSE" defaultValue="D">
+			<na:Choice value="ml">ml</na:Choice>
+			<na:Choice value="ml2">ml2</na:Choice>
+			<na:Choice value="cm">cm</na:Choice>
+			<na:Choice value="cm2">cm2</na:Choice>
+			<na:Choice value="fr">fr</na:Choice>
+		</EnsureChoiceField>
+    </ActionsGroup>
+    <EnsureChoiceField internalName="Estado" displayName="Estado" siteColumn="FALSE" defaultValue="D">
+      <na:Choice value="D">En depósito</na:Choice>
+      <na:Choice value="P">Pendiente de entrega</na:Choice>
+      <na:Choice value="F">Facturado</na:Choice>
+      <na:Choice value="EN">Entregado</na:Choice>
+      <na:Choice value="E">Entregado y usado</na:Choice>
+      <na:Choice value="EI">Entregado institución</na:Choice>
+    </EnsureChoiceField>
+    <EnsureLookupField internalName="RemitoRelacionado" displayName="Remito relacionado" listName="Remito" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureDateField internalName="FechaDevolucion" displayName="Fecha de devolución" siteColumn="FALSE" time="FALSE" />
+
+    <EnsureContentType name="Item" parentContentType="System">
+      <ActionsGroup status="Skip">
+        <AddFieldToContentType name="Title" required="FALSE" showInDisplayForm="FALSE" showInNewForm="FALSE" showInEditForm="FALSE"/>
+        <AddFieldToContentType name="NombreStock" required="TRUE"/>
+        <AddFieldToContentType name="DescripcionProducto" required="FALSE"/>
+        <AddFieldToContentType name="Estado" required="TRUE"/>
+        <AddFieldToContentType name="Institucion_Estado" required="FALSE"/>
+
+        <AddFieldToContentType name="NuevaMarca" required="FALSE"/>
+        <AddFieldToContentType name="Marca" required="FALSE"/>
+        <AddFieldToContentType name="LOT" required="FALSE"/>
+        <AddFieldToContentType name="REF" required="FALSE"/>
+        <AddFieldToContentType name="SN" required="FALSE"/>
+        <AddFieldToContentType name="GETIN" required="FALSE"/>
+        <AddFieldToContentType name="NROSerie" required="FALSE"/>
+        <AddFieldToContentType name="Medida" required="FALSE" showInNewForm="FALSE" showInEditForm="FALSE"/>
+		  <AddFieldToContentType name="Title" required="true"/>
+		  <AddFieldToContentType name="Longitud" required="true"/>
+		  <AddFieldToContentType name="Diametro" required="true"/>
+		  <AddFieldToContentType name="TipoMedida" required="true"/>
+
+		  <AddFieldToContentType name="FechaCompraStock" required="FALSE"/>
+        <AddFieldToContentType name="FechaIngresoStock" required="FALSE"/>
+        <AddFieldToContentType name="FechaVencimientoStock" required="FALSE"/>
+        <AddFieldToContentType name="NumeroRemito" required="FALSE"/>
+        <AddFieldToContentType name="FechaRemito" required="FALSE"/>
+        <AddFieldToContentType name="ProveedorRemito" required="FALSE"/>
+        <AddFieldToContentType name="FacturaProveedor" required="FALSE"/>
+        <AddFieldToContentType name="Institucion" required="FALSE"/>
+        <AddFieldToContentType name="ConsignadoOtros" required="FALSE"/>
+        <AddFieldToContentType name="Comentario" required="FALSE"/>
+        <AddFieldToContentType name="EmpresaTransportadora" required="FALSE"/>
+        <AddFieldToContentType name="IdentificadorUnico" required="FALSE"/>
+        <AddFieldToContentType name="Remito" required="FALSE" showInNewForm="FALSE" showInEditForm="FALSE"/>
+        <AddFieldToContentType name="EnConsignacion" required="FALSE"/>
+        <AddFieldToContentType name="CantidadCopias" required="FALSE"/>
+        <ReorderFields />
+      </ActionsGroup>
+      
+      <AddFieldToContentType name="RemitoRelacionado" required="FALSE"/>
+      <AddFieldToContentType name="FechaDevolucion" required="FALSE"/>
+
+    </EnsureContentType>
+    
+		<EnsureView name="AllItems" title="Todos los elementos" default="TRUE">
+			<na:ViewFields>
+				<na:FieldRef name="NombreStock"/>
+        <na:FieldRef name="LOT"/>
+        <na:FieldRef name="REF"/>
+        <na:FieldRef name="Medida"/>
+        <na:FieldRef name="FechaVencimientoStock"/>
+        <na:FieldRef name="Comentario"/>
+        <na:FieldRef name="Edit"/>
+			</na:ViewFields>
+		</EnsureView>		
+  
+	</EnsureList>
+</Root>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/"  xmlns:splog="http://emmsa.net/schemas/splog/">
+	<EnsureList name="Marca" title="Marca">	
+	
+    <EnsureTextField internalName="Title" unique="TRUE" displayName="Marca" siteColumn="FALSE" />
+    
+		<EnsureContentType name="Item" parentContentType="System">
+			<AddFieldToContentType name="Title" required="true"/>
+      <ReorderFields />
+		</EnsureContentType>
+    
+		<EnsureView name="AllItems" title="Todos los elementos" default="TRUE">
+			<na:ViewFields>
+				<na:FieldRef name="Title"/>
+				<na:FieldRef name="Modified"/>
+				<na:FieldRef name="Editor"/>
+				<na:FieldRef name="Edit"/>
+			</na:ViewFields>
+		</EnsureView>
+
+    <LoadItems filePath="~this\Marca.xlsx" syncMode="LoadIfEmpty"/>
+
+  </EnsureList>
+</Root>

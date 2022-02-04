@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/"  xmlns:splog="http://emmsa.net/schemas/splog/">
+	<EnsureList name="GastoInformal" title="Gastos informales" description="Gastos diarios informales">
+
+    <EnsureTextField internalName="Concepto" displayName="Concepto" siteColumn="FALSE" />
+    <EnsureLookupField internalName="Empleado" displayName="Empleado" listName="Empleado" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Credito" displayName="Crédito $" defaultValue="0" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Debito" displayName="Débito $" defaultValue="0" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureDateField internalName="Fecha" displayName="Fecha" siteColumn="FALSE" time="FALSE" />
+
+    <EnsureContentType name="Item" parentContentType="System">
+			<AddFieldToContentType name="Title" required="FALSE" showInDisplayForm="FALSE" showInNewForm="FALSE" showInEditForm="FALSE"/>
+			<AddFieldToContentType name="Concepto" required="TRUE"/>
+      <AddFieldToContentType name="Fecha" required="TRUE"/>
+      <AddFieldToContentType name="Empleado" required="FALSE"/>
+      <AddFieldToContentType name="Credito" required="FALSE"/>
+      <AddFieldToContentType name="Debito" required="FALSE"/>
+      <ReorderFields />
+		</EnsureContentType>
+    
+		<EnsureView name="AllItems" title="Todos los elementos" default="TRUE">
+			<na:ViewFields>
+				<na:FieldRef name="Concepto"/>
+        <na:FieldRef name="Empleado"/>
+        <na:FieldRef name="Credito"/>
+        <na:FieldRef name="Debito"/>
+        <na:FieldRef name="Fecha"/>
+			</na:ViewFields>
+		</EnsureView>		
+  
+	</EnsureList>
+</Root>

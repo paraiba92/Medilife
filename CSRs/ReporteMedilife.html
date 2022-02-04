@@ -1,0 +1,53 @@
+﻿<script type="text/javascript">
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/presupuesto.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQ.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js")+"'><"+"/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/ComponenteAdd.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings.js") + "'><" + "/script>");
+</script>
+<script type="text/javascript">
+      SP.SOD.executeFunc("clienttemplates.js", "SPClientTemplates", function () {
+        function init() {
+            var templates = {};
+            SPClientTemplates.TemplateManager.RegisterTemplateOverrides({
+                OnPreRender: CSROnPreRender,
+                OnPostRender: CSROnPostRender
+            });
+        }
+        RegisterModuleInit(SPClientTemplates.Utility.ReplaceUrlTokens("~siteCollection/Style Library/customlayout.js"), init);
+        init();
+    });
+    var _cols = {};
+    function inicializar_Columnas() {
+        _cols.Title = $("[id^='Title'][id$='TextField']");
+        _cols.Fecha = $("[id^='FechaDesde'][id$='DateTimeFieldDate']");
+        _cols.EnEjecucion = $("[id^='EnEjecucion'][id$='BooleanField']");
+
+        var date = new Date()
+        _cols.Title.val(date.format("yyyMMddHHmmss"));
+        _cols.Title.prop("disabled", true);
+        _cols.Title.closest("tr").hide();
+        _cols.EnEjecucion.closest("tr").hide();
+        _cols.Fecha.val(date.format("01/MM/yyyy"));
+
+        _cols.Empleado = $("[id^='Empleado'][id$='LookupField']");
+        if (getUrlParameter("empleado") != undefined && getUrlParameter("empleado") != "")
+            _cols.Empleado.val(getUrlParameter("empleado"));
+
+         if (getUrlParameter("fechaDesde") != undefined && getUrlParameter("fechaDesde") != "")
+            _cols.Fecha.val(getUrlParameter("fechaDesde"));
+
+        setTimeout(function () {
+            SPStaff_initDateTimePikers();
+        }, 500);
+        $('.ms-cui-tabBody').hide();
+    }
+    function onPostRenderFunction(ctx) {
+        inicializar_Columnas();
+    }
+</script>

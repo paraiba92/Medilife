@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/"  xmlns:splog="http://emmsa.net/schemas/splog/">
+	<EnsureList name="RecordatorioOrdenCompra" title="Recordatorios ordenes de compra" description="Recordatorios simples">	
+	
+    <EnsureMultiLineTextField internalName="Recordatorio" displayName="Recordatorio" siteColumn="FALSE" />
+    <EnsureDateField internalName="FechaAvisoDesde" displayName="Aviso desde" siteColumn="FALSE" time="FALSE" />
+    <EnsureDateField internalName="FechaAvisoHasta" displayName="Aviso hasta" siteColumn="FALSE" time="FALSE" />
+    <EnsureBooleanField internalName="Completado" displayName="Completado" defaultValue="FALSE" siteColumn="FALSE"/>
+    
+  <EnsureContentType name="Item" parentContentType="System">
+			<AddFieldToContentType name="Title" required="FALSE" showInDisplayForm="FALSE" showInNewForm="FALSE" showInEditForm="FALSE"/>
+      <AddFieldToContentType name="Recordatorio" required="TRUE"/>
+			<AddFieldToContentType name="FechaAvisoDesde" required="TRUE"/>
+      <AddFieldToContentType name="FechaAvisoHasta" required="TRUE"/>
+      <AddFieldToContentType name="Completado" required="TRUE"/>
+      <ReorderFields />
+		</EnsureContentType>
+    
+		<EnsureView name="AllItems" title="Todos los elementos" default="TRUE">
+			<na:ViewFields>
+				<na:FieldRef name="Recordatorio"/>
+        <na:FieldRef name="FechaAvisoDesde"/>
+        <na:FieldRef name="FechaAvisoHasta"/>
+
+			</na:ViewFields>
+		</EnsureView>		
+  
+	</EnsureList>
+</Root>

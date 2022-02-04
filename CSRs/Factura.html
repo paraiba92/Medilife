@@ -1,0 +1,377 @@
+<script type="text/javascript">
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/presupuesto.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQ.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js")+"'><"+"/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/ComponenteAdd.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings.js") + "'><" + "/script>");
+</script>
+<script type="text/javascript">
+    SP.SOD.executeFunc("clienttemplates.js", "SPClientTemplates", function () {
+        function init() {
+            var templates = {};
+            SPClientTemplates.TemplateManager.RegisterTemplateOverrides({
+                OnPreRender: CSROnPreRender,
+                OnPostRender: CSROnPostRender
+            });
+        }
+        RegisterModuleInit(SPClientTemplates.Utility.ReplaceUrlTokens("~siteCollection/Style Library/customlayout.js"), init);
+        init();
+    });
+    var _cols = {};
+    var _stock = [];
+    function inicializar_Columnas() {
+        _cols.ObraSocial = $("[id^='ObraSocial'][id$='LookupField']");
+        _cols.TipoFactura = $("[id^='TipoFactura'][id$='LookupField']");
+        _cols.Medico = $("[id^='Medico'][id$='LookupField']");
+        _cols.IVA = $("[id^='IVA'][id$='NumberField']");
+        _cols.Monto = $("[id^='Monto'][id$='NumberField']");
+        _cols.Institucion = $("[id^='Institucion'][id$='LookupField']");
+        _cols.Producto = $("[id^='Producto'][id$='TextField']");
+        _cols.Medida = $("[id^='Medida'][id$='TextField']");
+        _cols.Unidades = $("[id^='Unidades'][id$='NumberField']");
+
+        _cols.IVA.parent().before("<i class='fa fa-calculator' onclick='calcularIVA()' style='padding-right:5px;cursor:pointer;'></i>")
+
+        $("[id^='NuevaMarca'][id$='_MultiLookup_topTable']").find("select").css("width", "300px");
+        $("[id^='NuevaMarca'][id$='_MultiLookup_topTable']").find("select").css("height", "300px");
+        $("[id^='NuevaMarca'][id$='_MultiLookup_topTable']").closest("tr").hide();
+
+        $("[id^='Stock'][id$='_MultiLookup_topTable']").find("select").css("width", "450px");
+        $("[id^='Stock'][id$='_MultiLookup_topTable']").find("select").last().css("width", "250px");
+        $("[id^='Stock'][id$='_MultiLookup_topTable']").find("select").css("height", "300px");
+
+        $("[id^='Stock'][id$='_MultiLookup_topTable']").closest("tr").find("td").first().remove()
+        $("[id^='Stock'][id$='_MultiLookup_topTable']").closest("tr").find("td").first().attr('colspan',2);
+
+        _cols.Empleado = $("[id^='Empleado'][id$='LookupField']");
+
+        if (getUrlParameter("empleado") != undefined && getUrlParameter("empleado") != "")
+            _cols.Empleado.val(getUrlParameter("empleado"));
+
+        ComponenteAdd_Plus(_cols.ObraSocial, "ObraSocial", MD_OS, "ObraSocial");
+        ComponenteAdd_Plus(_cols.TipoFactura, "TipoFactura", MD_TIPOFACTURA, "TipoFactura");
+        ComponenteAdd_Plus(_cols.Medico, "Medico", MD_MEDICO, "Medico");
+        ComponenteAdd_Plus(_cols.Institucion, "Institucion", MD_INSTITUCION, "Institucion");
+
+        setTimeout(function () {
+            SPStaff_initDateTimePikers();
+        }, 500);
+
+        _cols.Marca = $("[id^='Marca'][id$='TextField']");
+        _cols.Marca.closest("tr").hide();
+        _cols.Producto.closest("tr").hide()
+        _cols.Medida.closest("tr").hide()
+        _cols.Unidades.closest("tr").hide()
+
+        $('li[id="Ribbon.ListForm.Edit.Commit"]').hide();
+        $('li[id="Ribbon.ListForm.Edit.Clipboard"]').hide();
+        $('li[id="Ribbon.ListForm.Edit.SpellCheck"]').hide();
+        $('a[id="Ribbon.ListForm.Edit.Actions.DeleteItem-Large"]').hide();
+        $("[id^='Stock'][id$='_AddButton']").parent().prepend("<input type='button' value='info' onclick='_evento_infoStock();'/><br/><br/>");
+    }
+    function _inicializar_metadata() {
+        var viewXml = {
+            ViewXml: "<View><Query><Where></Where></Query></View>"
+        }
+        _stock = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_STOCK, viewXml).results;
+         var viewXml = {
+            ViewXml: "<View><Query><Where></Where></Query></View>"
+        }
+        marcas = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_MARCA, viewXml).results;
+
+        _evento_inicializarFiltrosStock();
+    }
+    function calcularIVA() {
+        var result = (parseFloat((_cols.Monto.val().replace(",",".")) / 1.21) * 0.21).toFixed(2).toString();
+        _cols.IVA.val(result.replace(".",","));
+    }
+    function onPostRenderFunction(ctx) {
+        inicializar_Columnas();
+        _inicializar_metadata();
+        _evento_inicializarRemitos();
+    }
+
+
+</script>
+<script type="text/javascript">
+    var marcas = [];
+     function _evento_obtener_stock(idx) {
+        var viewXml = {
+            ViewXml: "<View><Query><Where></Where></Query></View>"
+        }
+        if (_stock.length == 0) {
+            _stock = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_STOCK, viewXml).results;
+        }
+
+        for (r = 0; r < _stock.length; r++) {
+            if (_stock[r].Id == idx) {
+                return _stock[r];
+            }
+        }
+        return "";
+    }
+    function _evento_mostrarTodo() {
+
+        $('#filtroMarca').val("-1");
+        $('#filtroEstado').val("-1");
+        $('#filtroSN').val("");
+        $('#filtroLOT').val("");
+        $('#filtroREF').val("");
+        $('#filtroNombre').val("");
+
+
+        $("[id^='Stock'][id$='_SelectCandidate']").find("option").each(function () {
+            $(this).show();
+        });
+    }
+    function _evento_buscarStock(nombre, marca, estado, lot, ref, sn) {
+
+        $("[id^='Stock'][id$='_SelectCandidate']").find("option").each(function () {
+            $(this).hide();
+        });
+
+        $("[id^='Stock'][id$='_SelectCandidate']").find("option").each(function () {
+
+            var current = _evento_obtener_stock($(this).val());
+            var rta = true;
+            if (current != '') {
+                if (marca != "-1") {
+                    if (current.NuevaMarcaId != null && current.NuevaMarcaId != undefined) {
+                        if (current.NuevaMarcaId != marca)
+                            rta = false
+                    }
+                    else {
+                        rta = false
+                    }
+                }
+                if (estado != "-1") {
+                    if (current.Estado.toUpperCase() != estado.toUpperCase())
+                        rta = false;
+                }
+                if (lot != "") {
+                    if (current.LOT != null && current.LOT != undefined) {
+                        if (current.LOT.toUpperCase().indexOf(lot.toUpperCase()) == -1)
+                            rta = false;
+                    }
+                    else {
+                        rta = false
+                    }
+                }
+                if (ref != "") {
+                    if (current.REF != null && current.REF != undefined) {
+                        if (current.REF.toUpperCase().indexOf(ref.toUpperCase()) == -1)
+                            rta = false;
+                    }
+                    else {
+                        rta = false
+                    }
+                }
+                if (sn != "") {
+                    if (current.SN != null && current.SN != undefined) {
+                        if (current.SN.toUpperCase().indexOf(sn.toUpperCase()) == -1)
+                            rta = false;
+                    }
+                    else {
+                        rta = false
+                    }
+                }
+                if (sn != "") {
+                    if (current.NROSerie != null && current.NROSerie != undefined) {
+                        if (current.NROSerie.toUpperCase().indexOf(sn.toUpperCase()) == -1)
+                            rta = false;
+                    }
+                    else {
+                        rta = false
+                    }
+                }
+                if (nombre != "") {
+                    if (current.NombreStock != null && current.NombreStock != undefined) {
+                        if (current.NombreStock.toUpperCase().indexOf(nombre.toUpperCase()) == -1)
+                            rta = false;
+                    }
+                    else {
+                        rta = false
+                    }
+                }
+            }
+            if (rta) {
+                $(this).show();
+            }
+        });
+    }
+    function _evento_renderizarMultiStock(controlId) {
+        if ($("[id^='Stock'][id$='" + controlId + "']").find("option").first().text().length < 10) {
+            $("[id^='Stock'][id$='" + controlId + "']").find("option").each(function () {
+                var current = _evento_obtener_stock($(this).html());
+                if (current != '') {
+                    var sn = current.SN != "" && current.SN != null ? current.SN : (current.NROSerie != "" && current.NROSerie != null ? current.NROSerie : "sin valor");
+                    var marca = _evento_obtener_Marca(current.NuevaMarcaId);
+                    var _nuevaDesc = "(" + current.Estado.split(" [")[0] + ") Nombre (" + current.NombreStock + ") Marca (" + (marca != "" ? marca : "sin valor") + ") LOT (" + (current.LOT != null ? current.LOT : "sin valor") + ") REF (" + (current.REF != null ? current.REF : "sin valor") + ")  SN (" + sn + ") ";
+                    $(this).html(_nuevaDesc);
+                    if (current.Estado.indexOf("[D]") != -1) {
+                        $(this).css("color", "green");
+                    }
+                    if (current.Estado.indexOf("[EN]") != -1) {
+                        $(this).css("color", "red");
+                    }
+                    if (current.Estado.indexOf("[DP]") != -1) {
+                        $(this).css("color", "grey");
+                    }
+                    if (current.Estado.indexOf("[U]") != -1) {
+                        $(this).css("color", "blue");
+                    }
+                    $(this).css("font-size", "11px");
+                }
+            })
+        }
+    }
+    setInterval(function () {
+        _evento_renderizarMultiStock("_SelectCandidate");
+    }, 2500);
+    function _evento_inicializarFiltrosStock() {
+        $("[id^='Stock'][id$='_MultiLookup_topTable']").closest("td").prepend("Stock<br/><br/>"+
+            "<input id='filtroNombre' type='text' placeholder='Filtro Nombre'/>" +
+            "<input id='filtroLOT' type='text' placeholder='Filtro LOT'/>" +
+            "<input id='filtroREF' type='text' placeholder='Filtro REF'/>" +
+            "<input id='filtroSN' type='text' placeholder='Filtro SN'/><br/>" +
+            "<select id='filtroMarca'><option value='-1'>Seleccione Marca</option></select>" +
+            "<select id='filtroEstado'><option value='-1'>Seleccione Estado</option></select><br/>" +
+            "<a onclick='_evento_filtrar()' style='cursor:pointer;'><i class='fa fa-filter fa-lg'></i> Filtrar</a>" +
+            " <a onclick='_evento_mostrarTodo()' style='cursor:pointer;'><i class='fa fa-filter fa-lg'></i> Limpiar</a><br/>" +
+            "<br/><br/>");
+
+        for (ins = 0; ins < marcas.length; ins++) {
+            $('#filtroMarca').append("<option value='" + marcas[ins].Id + "'>" + marcas[ins].Title + "</option>");
+        }
+
+         var stockFields = SPD_GetListFields(_spPageContextInfo.webAbsoluteUrl, MD_STOCK).results
+         var estadoField;
+         for (tt = 0; tt < stockFields.length; tt++) {
+             if (stockFields[tt].InternalName == "Estado") {
+                 estadoField = stockFields[tt];
+             }
+         }
+
+        if (estadoField != null) {
+            var choices = estadoField.Choices.results;
+            for (tt = 0; tt < choices.length; tt++) {
+                $('#filtroEstado').append("<option value='" + choices[tt] + "'>" + choices[tt] + "</option>");
+            }
+        }
+
+    }
+    function _evento_obtener_Marca(idx) {
+
+        if (marcas.length == 0) {
+            var viewXml = {
+                ViewXml: "<View><Query><Where></Where></Query></View>"
+            }
+            marcas = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_MARCA, viewXml).results
+        }
+
+        for (r = 0; r < marcas.length; r++) {
+            if (marcas[r].Id == idx) {
+                return marcas[r].Title;
+            }
+        }
+
+        return "";
+    }
+    function _evento_filtrar() {
+        var marca = $('#filtroMarca').find("option:selected").val();
+        var estado = $('#filtroEstado').find("option:selected").val();
+        var sn = $('#filtroSN').val();
+        var lot = $('#filtroLOT').val();
+        var ref = $('#filtroREF').val();
+        var nombre =  $('#filtroNombre').val();
+        if (nombre != "" ||  marca != "-1" || estado != "-1" || lot != "" || ref != "" || sn != "") {
+            _evento_buscarStock(nombre,marca, estado, lot, ref, sn);
+        }
+        else {
+            _evento_mostrarTodo();
+        }
+    }
+    function _evento_infoStock() {
+        var selected = $("[id^='Stock'][id$='_SelectCandidate']").find("option:selected");
+        var _render = "<table style='font-size: 10px;'><tr><th>Nombre</th><th>Estado</th><th>LOT</th><th>REF</th><th>SN</th><th>GETIN</th><th>Marca</th><th>Medida</th><th>Institución actual</th><th>Remito asociado</th><th>Comentario</th></tr>";
+        if (selected.length > 0) {
+            $("[id^='Stock'][id$='_SelectCandidate']").find("option:selected").each(function () {
+                var current = _evento_obtener_stock($(this).val());
+                if (current != '') {
+
+
+                current.InstitucionNombre = "";
+
+                if (current.InstitucionId != null) {
+                   current.InstitucionNombre = _evento_obtener_Institucion(current.InstitucionId);
+                    }
+                    var _remito = _buscarRemito(current.RemitoRelacionadoId);
+                    var _remitoControl = "";
+                    if (_remito != "" && _remito != null) {
+                        _remitoControl = "<a href='" + _spPageContextInfo.webAbsoluteUrl + "/SitePages/ReporteRemitos.aspx?remitoId=" + _remito.Numero + "' target='_blank' style='cursor:pointer;'>Info</a>";
+                    }
+                    
+                    _render = _render + "<tr><td><nobr>" + current.NombreStock + "</nobr></td>" +
+                        "<td>" + current.Estado + "</td>" +
+                        "<td>" + current.LOT + "</td>" +
+                        "<td>" + current.REF + "</td>" +
+                        "<td>" + (current.SN != null ? current.SN : (current.NROSerie != null ? current.NROSerie : "")) + "</td>" +
+                        "<td>" + (current.GETIN != null ? current.GETIN : "sin valor") + "</td>"+
+                        "<td>" + current.Marca + "</td>" +
+                        "<td>" + current.Medida + "</td>" +
+                        "<td>" + current.InstitucionNombre + "</td>" +
+                        "<td style='text-align:center;'>" + _remitoControl + "</td>" +
+                        "<td>" + (current.Comentario != null ? current.Comentario : "sin comentario") + "</td></tr>";
+                }
+            });
+        }
+        _render = _render + "</table><br/>";
+         SPD_CrearCuadroModal(2, 800, 1500, "Material",_render);
+
+    }
+    var insituciones = [];
+    function _evento_obtener_Institucion(idx) {
+        if (insituciones.length == 0) {
+            var viewXml = {
+                ViewXml: "<View><Query><Where></Where></Query></View>"
+            }
+            insituciones = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_INSTITUCION, viewXml).results
+        }
+
+        for (r = 0; r < insituciones.length; r++) {
+            if (insituciones[r].Id == idx) {
+                return insituciones[r].NombreInstitucion;
+            }
+        }
+
+        return "";
+    }
+    var _Remitos = [];
+
+     function _evento_inicializarRemitos() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Numero' Ascending='False' /></OrderBy></Query></View>"
+        }
+
+        _Remitos = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_REMITO, viewXml).results;
+
+         for (ins = 0; ins < _Remitos.length; ins++) {
+             sp_controls.Remito.append("<option value='" + _Remitos[ins].Id + "'>" + _Remitos[ins].Numero + "</option>");
+        }
+    }
+    function _buscarRemito(idx) {
+        for (v = 0; v < _Remitos.length; v++) {
+            if (_Remitos[v].ID == idx) {
+                return _Remitos[v];
+            }
+        }
+        return null;
+    }
+</script>

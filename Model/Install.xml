@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/" xmlns:splog="http://emmsa.net/schemas/splog/">
+	<!-- EMMSA SharePoint Online (Desarrollo) -->
+
+	<!-- Linde @ EMMSA 
+	<InputParamValue name="CustomsPath" defaultValue="~this/Customs/Linde" const="true" />
+	<InputParamValue name="SiteName" defaultValue="rrhh" const="true" />
+	<InputParamValue name="SiteTitle" defaultValue="Recursos Humanos" const="true" />
+	<InputParamValue name="ClientId" defaultValue="11a80c7d-f83c-4c98-aba8-b349f9beb634" const="true" />
+	<InputParamValue name="ClientSecret" defaultValue="yir+OMtgaraXIsC4N9xSK5sCCdc7tQkG8ZVQTCdmJew=" const="true" />
+	<InputParamValue name="AppUserId" defaultValue="12" const="true" />
+	<InputParamValue name="AppUserLoginName" defaultValue="wsuser@emmsa.onmicrosoft.com" const="true" />
+	<InputParamValue name="AppUserLoginPassword" defaultValue="Xum40572" const="true" />
+	<InputParamValue name="ConnectionString" defaultValue="Data Source=DEV2K14;Initial Catalog=Linde_SPStaff;User ID=stduser;Password=redrain;" const="true" />
+	<InputParamValue name="SPLogConnectionString" defaultValue="Data Source=DEV2K14;Initial Catalog=Linde_SPStaff;User ID=stduser;Password=redrain;" const="true" />
+	-->
+	<!-- Aseguradora de Cauciones 
+	<InputParamValue name="CustomsPath" defaultValue="~this/Customs/Cauciones" const="true" />
+	<Include file="~this\Customs\Cauciones\InputParams.xml" />
+	-->
+	<!-- Linde 
+	<InputParamValue name="CustomsPath" defaultValue="~this/Customs/Linde" const="true" />
+	<Include file="~this\Customs\Linde\InputParams.xml" />
+	-->
+	<!-- Afianzadora 
+	<InputParamValue name="CustomsPath" defaultValue="~this/Customs/AFZ" const="true" />
+	<Include file="~this\Customs\AFZ\InputParams.xml" />
+	-->
+	<!-- EMMSA Intranet 
+	<InputParamValue name="CustomsPath" defaultValue="C:\OD4B\EMMSA\Administrator IT EMMSA - IT\Intranet\spstaff\Customs" const="true" />
+	<Include file="C:\OD4B\EMMSA\Administrator IT EMMSA - IT\Intranet\spstaff\Customs\InputParams.xml" />
+	-->
+	<GetWeb Url="https://medilifesalud.sharepoint.com/sites/MedilifeHome">	
+    <ActionsGroup name="Características" status="Skip">
+			<AlterFeature name="PublishingSite" scope="Site" />
+			<AlterFeature name="PublishingWeb" scope="Web" />
+			<AlterFeature name="PublishingWeb" scope="RootWeb" />
+			<AlterFeature name="SiteNotebook" scope="Web" enable="false"/>
+			<AlterFeature name="ClassicUI" scope="Web" enable="true"/>
+			<AlterFeature name="WorkflowAppStep" scope="Web" enable="true"/>
+			<AlterFeature name="MobileView" scope="Web" enable="false"/>
+		</ActionsGroup>
+		<ActionsGroup name="Carga de archivos requeridos" status2="Skip">
+			<!--<EnsurePage file="~this\SitePages\SPStaff_Config.html"></EnsurePage>-->
+			<!--<ActionsGroup status="Skip">
+				<LoadFiles from="~this\SiteAssets" to="~assets"/>
+				<EnsureFolder url="~assets/CSRViews"/>
+				<LoadFiles from="~this\CSRViews" to="~assets/CSRViews"/>
+			</ActionsGroup>-->
+			<SetScriptLink url="~assets/JQ.js"/>
+			<SetScriptLink url="~assets/Medilife_Settings_v3.js"/>
+		</ActionsGroup>
+		<ActionsGroup name="Listas de configuración">
+			<Include file="~this\ObraSocial.xml" status="Skip"/>
+      <Include file="~this\Empleado.xml" status="Skip"/>
+      <Include file="~this\InstitucionMedica.xml" status="Skip"/>
+      <Include file="~this\Stock.xml" status="Skip"/>
+      <Include file="~this\Presupuesto.xml" status="Skip"/>
+      <Include file="~this\Recordatorio.xml" status="Skip"/>
+      <Include file="~this\GastoInformal.xml" status="Skip"/>
+      <Include file="~this\Remito.xml" status="Skip"/>
+      <Include file="~this\Medico.xml" status="Skip"/>
+      <Include file="~this\TipoFactura.xml" status="Skip"/>
+      <Include file="~this\Factura.xml" status="Skip"/>
+      <Include file="~this\FacturaCompras.xml" status="Skip"/>
+      <Include file="~this\ReciboSueldo.xml" status="Skip"/>
+      <Include file="~this\Marca.xml" status="Skip"/>
+      <Include file="~this\RecordatorioOrdenCompra.xml" status="Skip"/>
+    </ActionsGroup>
+
+	</GetWeb>
+</Root>

@@ -1,0 +1,86 @@
+div[data-role="form"]{
+	width:1100px;
+}
+
+.my-formfield {
+   padding: 10px 0 10px 0;
+}
+.my-formfield > label {
+	width:180px;
+    display: inline-block;
+	font-family:"Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+	font-size:13px;
+	vertical-align:top;
+}
+
+.my-formfield > div {
+	float:right;
+}
+
+.my-formfield > span {
+    display: inline-block;
+}
+
+.row { 
+	display: table-row; 
+	margin-bottom:15px;
+}
+	
+.cell { 
+	display: table-cell; 
+}
+	
+.verticalAlign{
+	vertical-align:middle;
+}
+
+/* Se corrigen algunos defectos propios de SharePoint */
+div[id$='$TextField_inplacerte']{ 
+	border: 1px solid #ABABAB /*Se corrige el bug de la falta del borde para campos de texto del tipo "Rich Text" */
+}
+
+
+span[id$='$ClientPeoplePicker_InitialHelpText']{
+	font-size:12px; /* Se achica el tipo de letra en la descripción de los campos PeoplePicker */
+}
+
+/* Se moficia el estilo por default de las solapas de jQuery */
+.ui-tabs-anchor:active, .ui-tabs-anchor:focus{
+     outline:none;
+}
+
+.ui-tabs .ui-tabs-nav li {
+ border:none;
+}
+
+.ui-tabs .ui-tabs-panel {
+    padding: 16px 8px;
+}
+
+/* Tabs */
+#formtabs {
+	border:none;
+	width:100%; /**/
+}
+
+#formtabs ul {
+	border:none;
+	background:white;
+}
+
+#formtabs > ul > li > a {
+    border: 1px solid #ddd;
+    padding: 10px 15px;
+    color: #666;
+    text-decoration: none;
+	font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+	background-color: rgba( 239, 239, 239, 0.78);
+}
+
+#formtabs > ul > li.ui-state-active > a,
+#formtabs > ul > li.ui-state-active > a:hover,
+#formtabs > ul > li.ui-state-active> a:focus {
+    font-weight: bold;
+    background-color: white;
+    cursor: default;
+}

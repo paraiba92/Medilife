@@ -1,0 +1,127 @@
+@font-face {
+	font-family:SPO365Icons;
+	src:url('//~webApp///cdn.sharepointonline.com/15772/_layouts/15/fonts/Office365Icons.eot');
+	src:url('//~webApp///cdn.sharepointonline.com/15772/_layouts/15/fonts/Office365Icons.eot?#iefix') format('embedded-opentype'),
+		url('//~webApp///cdn.sharepointonline.com/15772/_layouts/15/fonts/Office365Icons.woff') format('woff'),
+		url('//~webApp///cdn.sharepointonline.com/15772/_layouts/15/fonts/Office365Icons.ttf') format('truetype'),
+		url('//~webApp///cdn.sharepointonline.com/15772/_layouts/15/fonts/Office365Icons.svg#web') format('svg');
+	font-style:normal;
+	font-weight:400;
+}
+
+.ms-listview-glyph {
+    font-family: "SPO365Icons";
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.ms-listview-glyph-withmargin {
+    font-family: "SPO365Icons";
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 21px;
+    position: relative;
+    top: 2px;
+}
+
+.ms-qcb-zone {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+}
+
+.ms-qcb-leftzone {
+    float: left;
+}
+
+.ms-qcb-rightzone {
+    float: right;
+    text-align: right;
+}
+
+.ms-qcb-item {
+    display: inline-block;
+    list-style-type: none;
+}
+
+.ms-qcb-button {
+    border: 0;
+    background: none;
+    cursor: pointer;
+    padding: 3px 20px 5px 10px;
+    margin: 0px;
+    min-width: 0px;
+    text-align: left;
+    position: relative;
+}
+
+.ms-qcb-buttons-alignmentfix {
+    top: -1px
+}
+
+.ms-qcb-button:hover {
+    background: none;
+}
+
+.ms-qcb-leftzone {
+    margin-left: -10px;
+}
+
+button.ms-qcb-button[disabled=disabled] {
+    background-color: transparent;
+    cursor: default;
+}
+
+.ms-qcb-clearSeparator {
+    visibility: hidden;
+    clear: both;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.ms-contextmenu-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #fff;
+    filter: alpha(opacity=0);
+    -ms-filter: "alpha(opacity=0)";
+    opacity: 0;
+}
+
+
+.circle-icon:after {
+	font-family: SPO365Icons;
+    content: "\e000";
+}
+
+.plus-icon:after {
+	font-family: SPO365Icons;
+    content: "\e004";
+}
+
+.user-icon:after {
+	font-family: SPO365Icons;
+    content: "\e00e";
+}
+
+.lock-icon:after {
+	font-family: SPO365Icons;
+    content: "\e038";
+}
+
+.ellipsis-icon:after {
+	font-family: SPO365Icons;
+    content: "\e045";
+}
+
+.trash-icon:after {
+	font-family: SPO365Icons;
+    content: "\e026";
+}
+
+

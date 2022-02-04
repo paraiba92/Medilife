@@ -1,0 +1,253 @@
+<script type="text/javascript" src="/_layouts/15/ScriptResx.ashx?name=sp.res&culture=es-es"></script>
+<script type="text/javascript" src="/_layouts/15/sp.init.js"></script>
+<script type="text/javascript" src="/_layouts/15/MicrosoftAjax.js"></script>
+<script type="text/javascript" src="/_layouts/15/3082/strings.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.runtime.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.dialog.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientforms.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientpeoplepicker.js"></script>
+<script type="text/javascript" src="/_layouts/15/clienttemplates.js"></script>
+<script type="text/javascript" src="/_layouts/15/autofill.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.taxonomy.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.taxonomy.js"></script>
+<script type="text/javascript" src="/_layouts/15/core.js"></script>
+
+<script type="text/javascript">
+
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/paginacion.css") + "'></link>");
+
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-ui/css/base/jquery-ui-1.10.4.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-1.7.1.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-ui/js/jquery-ui-1.10.4.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-1.4.8.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-route.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-locale_es-es.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/Angular/dirPagination.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/ReporteTipoFactura.js") + "'><" + "/script>");
+    
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/RemoveComponent.js") + "'><" + "/script>");
+
+</script>
+<style>
+    .metadataTd {
+        padding:6px;
+    }
+    .rotulo {
+        padding-right: 10px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: bold;
+            color: steelblue;
+    }
+    .selectMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .inputMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .actualizarGrande {
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: middle;
+        width: 21px;
+        height: 15px;
+        cursor: pointer;
+        vertical-align: middle;
+        background: url('/_layouts/15/images/spcommon.png?rev=23') no-repeat -132px -112px;
+    }
+  
+    .tdAngular {
+        /*text-align:center;*/
+    }
+    .dateInput {
+        width: 150px;
+    }
+    #customers a {
+        color: rgb(0, 114, 198)!important;
+    }
+
+    #customers {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #customers th, #customers td {
+            padding: 8px;
+        }
+
+    #customers tr:hover {
+        background-color: #ffff99;
+    }
+
+        #customers th {
+            background-color: #F2F2F2;
+            color: black;
+            padding: 10px;
+            font-weight:normal!important;
+        }
+    .centerAlign {
+        text-align: center;
+    }
+</style>
+        
+<div ng-app="miApp" class="row">
+    <div ng-controller="spResultado" class="span10">
+        <table>
+            <tr>
+                <td colspan="4" style="text-align:right"></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Nombre:</label></td>
+                <td class="metadataTd"><input id="SR_Nombre" class="inputMetadata"/></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="text-align: right; padding-top: 30px;">
+                    <button class="add" id="linkActualizar" ng-click="ejecutarWS()" onclick="event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: white;cursor:pointer;font-size:12px;font-weight:bold;color:black;border:1px solid lightgrey" ><i class="fa fa-search"></i>&nbsp;Buscar elementos</button>
+                    <button id="linkActualizar" onclick="CreateElement();event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: steelblue;cursor:pointer;font-size:12px;font-weight:bold" ><i class="fa fa-plus"></i>&nbsp;Crear nuevo</button>
+                </td>
+            </tr>
+        </table>
+    <br />
+    <br />
+        <div id='cargandoPagina' ng-show="showLoading">
+            <div id="progreso" style="width:100%">
+                <div id="DeltaPageStatusBar"><div id="pageStatusBar" class="ms-status-blue" aria-live="polite" aria-relevant="all" style="display: block;"><span id="status_33" class="ms-status-status" role="alert" tabindex="0"><span id="status_33_hiddenPriMsg" class="ms-accessible">Cargando información</span><span class="ms-status-iconSpan"><img class="ms-status-iconImg" src="/_layouts/15/images/spcommon.png" data-themekey="#"></span><span class="ms-bold ms-status-title"><label id="palabraCargando" style="vertical-align:baseline;">Cargando información...</label></span><span class="ms-status-body" id="status_33_body"><img src="/_Layouts/Images/progress.gif" data-themekey="#"></span><br></span></div></div>
+            </div>
+        </div>
+        <div ng-show="jSON.length === 0">
+            No hay elementos para mostrar
+        </div>
+        <div ng-hide="jSON.length === 0">
+            <b><i>{{jSON.length}} registro(s) encontrado(s)</i>
+            <button ng-click="resetFilters()" onclick="event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: orangered;cursor:pointer;font-size:12px;font-weight:bold"><i class="fa fa-refresh fa-lg"></i>&nbsp;Limpiar filtros grilla</button></b>
+            <br /><br/>
+        </div>
+        <table id="customers" ng-hide="jSON.length === 0" style="border-collapse: collapse">
+            <thead>
+                <tr style="text-align:center;">
+                    <th></th>
+                    <th style="text-align:left"><i class="fa fa-sort" ng-click="sort('Title')" style="cursor:pointer;color:black;"></i>Nombre<br /><input type="text" class="secondFilter" ng-change="currentPage = 1" ng-model="sr_Title"/></th>
+                </tr>
+            </thead>
+            <tr dir-paginate="legajo in jSON|orderBy:sortKey:reverse|filter:{Title: sr_Title}|itemsPerPage:registrosPagina" current-page="currentPage">
+                <td style="width:100px;">
+                    <button id="{{legajo.Id}}" onclick="RemoveElement($(this).attr('Id'));event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;color: red;cursor:pointer;padding: 2px;"><i class="fa fa-trash fa-lg"></i></button>  
+                    <button id="{{legajo.Id}}" onclick="UpdateElement($(this).attr('Id'));event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;color: steelblue;cursor:pointer;padding: 2px;"><i class="fa fa-edit fa-lg"></i></button>
+                </td>
+                <td class="tdAngular" style="text-align:left;"><a style="cursor:pointer;" id="{{legajo.Id}}" onclick="UpdateElement($(this).attr('Id'))">{{legajo.Title}}</a></td>
+            </tr>
+        </table>
+        <dir-pagination-controls class="paginacion" max-size="5" direction-links="true" boundary-links="true"></dir-pagination-controls>
+</div>
+</div>
+<script>
+      //Helper
+    function init_ConsultaLicencias(){
+        $('#DeltaPlaceHolderPageTitleInTitleArea').html("Tipos de factura");
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("font-weight", "bold")
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("color", "steelblue")
+
+        $('.pagination').css("display", "flex")
+        $('.pagination li').css("padding", "5px")
+        $('.pagination li').css("list-style", "none")
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+              event.preventDefault();
+              $('.add').click();
+              return false;
+            }
+          });
+    }
+    if (_spBodyOnLoadFunctionNames) {
+        _spBodyOnLoadFunctionNames.push("init_ConsultaLicencias");
+    }
+    else {
+        $(document).ready(function () {
+            init_ConsultaLicencias();
+        });
+    }
+    function UpdateElement(idx) {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/TipoFactura/EditForm.aspx?ID=" + idx;
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function CreateElement() {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/TipoFactura/NewForm.aspx";
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function _callbackRespuesta(result){
+            switch(result) {
+            case SP.UI.DialogResult.OK:
+                console.log("You clicked OK");
+                $('#linkActualizar').click();
+                // reload data as necessary here
+                break;
+            case SP.UI.DialogResult.cancel:
+                console.log("You clicked cancel or close.");
+                break;
+        }
+    }
+    function RemoveElement(idx) {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/TipoFactura/DispForm.aspx?ID=" + idx + "&Source=" + window.location.href;
+        var options = {
+            title: "",
+            autoSize: true,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+</script>
+<style>
+    #customers th, #customers td {
+        padding: 0px;
+        font-size: 11px;
+    }
+    #customers img {
+        width:10px;
+    }
+    #customers th {
+        color: black;
+        padding: 0px;
+    }
+        .paginacion a {
+        color: steelblue!important;
+        float: left;
+        padding: 2px 5px;
+        text-decoration: none;
+        border: none;
+    }
+    .secondFilter{
+        border: 1px solid black;
+        background: white;
+        color: black;
+        text-align: left;
+        text-align-last: left;
+        font-weight: bold;
+        width: 100%;
+    }
+</style>

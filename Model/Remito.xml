@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/"  xmlns:splog="http://emmsa.net/schemas/splog/">
+	<EnsureList name="Remito" title="Remitos" description="Remitos">
+
+    <EnsureNumberField internalName="Numero" displayName="Remito n°" defaultValue="0" decimalPlaces="0" minValue="0" siteColumn="FALSE" />
+    <EnsureLookupField internalName="Transportador" displayName="Quien llevó el material?" listName="Empleado" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureMultiLineTextField internalName="Descripcion" displayName="Descripción" description="Descripción" siteColumn="FALSE"/>
+    <EnsureTextField internalName="Doctor" displayName="Doctor" siteColumn="FALSE" />
+    <EnsureDateField internalName="FechaE" displayName="Fecha" siteColumn="FALSE" time="FALSE" />
+    <EnsureLookupField internalName="Institucion" displayName="Institución" listName="Institucion" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Numero" displayName="Presupuesto n°" defaultValue="0" decimalPlaces="0" minValue="0" siteColumn="FALSE" />
+    <EnsureLookupField internalName="ObraSocial" displayName="Obra social" listName="ObraSocial" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureTextField internalName="Paciente" displayName="Paciente" siteColumn="FALSE" />
+    <EnsureLookupField internalName="Empleado" displayName="Razón social" description="De este campo se van a extraer los datos para renderizar el remito (razon social, tel, dir cuit, etc)" listName="Empleado" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureLookupField internalName="PresupuestoAsociado" displayName="Presupuesto asociado" listName="Presupuesto" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureLookupField internalName="Factura" displayName="Factura asociada" listName="Factura" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureLookupField internalName="Stock" displayName="Stock" listName="Stock" DisplayField="NombreStock" AllowMultipleValues="TRUE" siteColumn="FALSE" />
+    <EnsureMultiLineTextField internalName="PrecioT" displayName="Total" siteColumn="FALSE" />
+    <EnsureMultiLineTextField internalName="PrecioU" displayName="Precio (u)" siteColumn="FALSE" />
+    <EnsureTextField internalName="PagoA" displayName="Pago a" siteColumn="FALSE" />
+    <EnsureMultiLineTextField internalName="Descripcion" displayName="Descripción" description="Descripción" siteColumn="FALSE"/>
+    <EnsureMultiLineTextField internalName="Cantidad" displayName="Cantidad" description="Cantidad" siteColumn="FALSE"/>
+
+    <EnsureContentType name="Item" parentContentType="System">
+      <AddFieldToContentType name="Title" required="FALSE" showInDisplayForm="FALSE" showInNewForm="FALSE" showInEditForm="FALSE"/>
+      <AddFieldToContentType name="Numero" required="TRUE"/>
+      <AddFieldToContentType name="Transportador" required="FALSE"/>
+      <AddFieldToContentType name="FechaE" required="FALSE"/>
+      <AddFieldToContentType name="Empleado" required="TRUE"/>
+      <AddFieldToContentType name="ObraSocial" required="FALSE"/>
+      <AddFieldToContentType name="Institucion" required="FALSE"/>
+      <AddFieldToContentType name="Paciente" required="FALSE"/>
+      <AddFieldToContentType name="Doctor" required="FALSE"/>
+
+      <AddFieldToContentType name="Descripcion" required="FALSE"/>
+      <AddFieldToContentType name="PresupuestoAsociado" required="FALSE"/>
+      <AddFieldToContentType name="Stock" required="FALSE"/>
+      <AddFieldToContentType name="Factura" required="FALSE"/>
+
+      <AddFieldToContentType name="Descripcion" required="FALSE"/>
+      <AddFieldToContentType name="PrecioT" required="FALSE"/>
+      <AddFieldToContentType name="PrecioU" required="FALSE"/>
+      <AddFieldToContentType name="PagoA" required="FALSE"/>
+      <AddFieldToContentType name="Cantidad" required="FALSE"/>
+      
+      <ReorderFields />
+		</EnsureContentType>
+    
+		<EnsureView name="AllItems" title="Todos los elementos" default="TRUE">
+			<na:ViewFields>
+				<na:FieldRef name="Descripcion"/>
+			</na:ViewFields>
+		</EnsureView>
+
+    
+	</EnsureList>
+</Root>

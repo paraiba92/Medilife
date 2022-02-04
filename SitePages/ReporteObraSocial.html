@@ -1,0 +1,377 @@
+<script type="text/javascript" src="/_layouts/15/ScriptResx.ashx?name=sp.res&culture=es-es"></script>
+<script type="text/javascript" src="/_layouts/15/sp.init.js"></script>
+<script type="text/javascript" src="/_layouts/15/MicrosoftAjax.js"></script>
+<script type="text/javascript" src="/_layouts/15/3082/strings.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.runtime.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.dialog.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientforms.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientpeoplepicker.js"></script>
+<script type="text/javascript" src="/_layouts/15/clienttemplates.js"></script>
+<script type="text/javascript" src="/_layouts/15/autofill.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.taxonomy.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.taxonomy.js"></script>
+<script type="text/javascript" src="/_layouts/15/core.js"></script>
+
+<script type="text/javascript">
+
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/paginacion.css") + "'></link>");
+
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-ui/css/base/jquery-ui-1.10.4.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-1.7.1.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-ui/js/jquery-ui-1.10.4.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-1.4.8.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-route.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-locale_es-es.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/Angular/dirPagination.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js") + "'><" + "/script>");
+    
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/RemoveComponent.js") + "'><" + "/script>");
+
+</script>
+<script type="text/javascript">
+var myAngApp = angular.module('miApp', ['ngRoute', 'angularUtils.directives.dirPagination']).config(['$compileProvider', function ($compileProvider) {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|skype|chrome-extension):/);
+}]);
+
+var gUsuarioAccountName;
+function init() {
+    AngularController();
+};
+init();
+function AngularController() {
+
+    myAngApp.controller('spResultado', function ($scope, $location, $http, $anchorScroll, $timeout) {
+       
+        $scope.showSection = false;
+        $scope.showLoading = false;
+        $scope.jSON = [];
+        $scope.sortingOrder = "None"; //orden por default
+        $scope.reverse = false;
+        $scope.currentPage = 1;
+        $scope.registrosPagina = 20;
+
+        $scope.sortBy = function (sortType) {
+            if ($scope.sortingOrder == sortType) {
+                $scope.reverse = !$scope.reverse;
+            }
+            $scope.sortingOrder = sortType;
+        };
+        $scope.ejecutarWS = function () {
+            $scope.showLoading = true;
+            $timeout(function () {
+                var viewXml = {
+                    ViewXml: "<View><Query><Where>" +
+                        "</Where><OrderBy><FieldRef Name='Nombre' Ascending='True' /></OrderBy></Query></View>"
+                }
+
+                var elementos = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_OS, viewXml).results
+                procesarJSON(elementos);
+                $scope.showLoading = false;
+
+                var element = document.getElementById("customers");
+
+                element.scrollIntoView();
+
+            })
+        }
+        function procesarJSON(elementos) {
+
+           var filterNombre = $('#SR_Nombre').val();
+           var filterEmail = $('#SR_Email').val();
+           var filterCuit = $('#SR_Cuit').val();
+
+           $scope.jSON = [];
+
+           for(rec=0; rec < elementos.length; rec++) {
+                var rta = true;
+                if(filterNombre != "") {
+                    if(elementos[rec].Nombre.toUpperCase().indexOf(filterNombre.toUpperCase()) == -1){
+                           rta = false;
+                    }
+                }
+                if(filterEmail != "") {
+                    if(elementos[rec].Email == undefined){
+                        rta = false;
+                    }
+                    else {
+                        if(elementos[rec].Email.toUpperCase().indexOf(filterEmail.toUpperCase()) == -1){
+                               rta = false;
+                        }
+                    }
+                }                
+                if(filterCuit != "") {
+                    if(elementos[rec].Cuit == undefined){
+                        rta = false;
+                    }
+                    else {
+                        if(elementos[rec].Cuit.toUpperCase().indexOf(filterCuit.toUpperCase()) == -1){
+                               rta = false;
+                        }
+                    }
+                }
+                if(rta){
+                    $scope.jSON.push(elementos[rec]);
+                }
+           }
+           if (!$scope.$$phase)
+                $scope.$apply();
+        }
+    });
+}
+function ConvertISOToDate(stringIso, hours) {
+    if (stringIso != "") {
+        var date = new Date(stringIso);
+        if(hours)
+            return date.format("dd/MM/yyyy HH:mm");
+        else
+            return date.format("dd/MM/yyyy");
+    }
+    return "";
+}
+</script>
+
+
+<style>
+    .metadataTd {
+        padding:6px;
+    }
+    .rotulo {
+        padding-right: 10px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: bold;
+            color: steelblue;
+    }
+    .selectMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .inputMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .actualizarGrande {
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: middle;
+        width: 21px;
+        height: 15px;
+        cursor: pointer;
+        vertical-align: middle;
+        background: url('/_layouts/15/images/spcommon.png?rev=23') no-repeat -132px -112px;
+    }
+  
+    .tdAngular {
+        /*text-align:center;*/
+    }
+    .dateInput {
+        width: 150px;
+    }
+    #customers a {
+        color: rgb(0, 114, 198)!important;
+    }
+
+    #customers {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #customers th, #customers td {
+            padding: 8px;
+        }
+
+    #customers tr:hover {
+        background-color: #ffff99;
+    }
+
+        #customers th {
+            background-color: #F2F2F2;
+            color: black;
+            padding: 10px;
+            font-weight:normal!important;
+        }
+    .centerAlign {
+        text-align: center;
+    }
+</style>
+        
+<div ng-app="miApp" class="row">
+    <div ng-controller="spResultado" class="span10">
+        <table>
+            <tr>
+                <td colspan="4" style="text-align:right"></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Nombre:</label></td>
+                <td class="metadataTd"><input id="SR_Nombre" class="inputMetadata"/></td>
+                <td class="metadataTd"><label class="rotulo">Cuit:</label></td>
+                <td class="metadataTd"><input id="SR_Cuit" class="inputMetadata"/></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Email:</label></td>
+                <td class="metadataTd"><input id="SR_Email" class="inputMetadata"/></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style="text-align: right; padding-top: 30px;">
+                    <button class="add" id="linkActualizar" ng-click="ejecutarWS()" onclick="event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: white;cursor:pointer;font-size:12px;font-weight:bold;color:black;border:1px solid lightgrey" ><i class="fa fa-search"></i>&nbsp;Buscar elementos</button>
+                    <button id="linkActualizar" onclick="CreateElement();event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: steelblue;cursor:pointer;font-size:12px;font-weight:bold" ><i class="fa fa-plus"></i>&nbsp;Crear nuevo</button>
+                </td>
+            </tr>
+        </table>
+    <br />
+    <br />
+        <div id='cargandoPagina' ng-show="showLoading">
+            <div id="progreso" style="width:100%">
+                <div id="DeltaPageStatusBar"><div id="pageStatusBar" class="ms-status-blue" aria-live="polite" aria-relevant="all" style="display: block;"><span id="status_33" class="ms-status-status" role="alert" tabindex="0"><span id="status_33_hiddenPriMsg" class="ms-accessible">Cargando información</span><span class="ms-status-iconSpan"><img class="ms-status-iconImg" src="/_layouts/15/images/spcommon.png" data-themekey="#"></span><span class="ms-bold ms-status-title"><label id="palabraCargando" style="vertical-align:baseline;">Cargando información...</label></span><span class="ms-status-body" id="status_33_body"><img src="/_Layouts/Images/progress.gif" data-themekey="#"></span><br></span></div></div>
+            </div>
+        </div>
+        <div ng-show="jSON.length === 0">
+            No hay elementos para mostrar
+        </div>
+        <div ng-hide="jSON.length === 0">
+            <b><i>{{jSON.length}} registro(s) encontrado(s)</i></b>
+            <br /><br/>
+        </div>
+        <table id="customers" ng-hide="jSON.length === 0" style="border-collapse: collapse">
+            <thead>
+                <tr style="text-align:center;">
+                    <th></th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Dirección</th>
+                    <th>Teléfono</th>
+                    <th>CUIT</th>
+                    <th>Comentario</th>
+                </tr>
+            </thead>
+            <tr dir-paginate="legajo in jSON|orderBy:sortKey:reverse|filter:search|itemsPerPage:registrosPagina" current-page="currentPage">
+                <td style="min-width: 85px;">
+                    <button id="{{legajo.Id}}" onclick="RemoveElement($(this).attr('Id'));event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;color: red;cursor:pointer;padding: 2px;"><i class="fa fa-trash fa-lg"></i></button>  
+                    <button id="{{legajo.Id}}" onclick="UpdateElement($(this).attr('Id'));event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;color: steelblue;cursor:pointer;padding: 2px;"><i class="fa fa-edit fa-lg"></i></button>
+                </td>                
+                <td class="tdAngular" style="text-align:center;"><a style="cursor:pointer;" id="{{legajo.Id}}" onclick="UpdateElement($(this).attr('Id'))">{{legajo.Nombre}}</a></td>
+                <td class="tdAngular" style="text-align:center;color:blue;">{{legajo.Email}}</td>
+                <td class="tdAngular" style="text-align:center;">{{legajo.Direccion}}</td>
+                <td class="tdAngular" style="text-align:center;">{{legajo.Telefono}}</td>
+                <td class="tdAngular" style="text-align:center;">{{legajo.Cuit}}</td>
+                <td class="tdAngular" style="text-align:center;"><button style="border-radius: 5px;color: white;min-width: 30px!important;border: none;color:steelblue;cursor:pointer;background:transparent" id="{{legajo.Id}}" onclick="ShowComentario($(this).attr('Id'));event.preventDefault()"><i class="fa fa-info-circle"></i></button></td>
+            </tr>
+        </table>
+        <dir-pagination-controls class="paginacion" max-size="5" direction-links="true" boundary-links="true"></dir-pagination-controls>
+</div>
+</div>
+<script>
+    //Helper
+    function init_ConsultaLicencias(){
+        $('#DeltaPlaceHolderPageTitleInTitleArea').html("Consulta de obras sociales");
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("font-weight", "bold")
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("color", "steelblue")
+
+        $('.pagination').css("display", "flex")
+        $('.pagination li').css("padding", "5px")
+        $('.pagination li').css("list-style", "none")
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+              event.preventDefault();
+              $('.add').click();
+              return false;
+            }
+          });
+    }
+    if (_spBodyOnLoadFunctionNames) {
+        _spBodyOnLoadFunctionNames.push("init_ConsultaLicencias");
+    }
+    else {
+        $(document).ready(function () {
+            init_ConsultaLicencias();
+        });
+    }
+    function UpdateElement(idx) {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/ObraSocial/EditForm.aspx?ID=" + idx;
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function CreateElement() {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/ObraSocial/NewForm.aspx";
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function _callbackRespuesta(result){
+            switch(result) {
+            case SP.UI.DialogResult.OK:
+                console.log("You clicked OK");
+                $('#linkActualizar').click();
+                // reload data as necessary here
+                break;
+            case SP.UI.DialogResult.cancel:
+                console.log("You clicked cancel or close.");
+                break;
+        }
+    }
+    function ShowComentario(idx) {
+       var oItem = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_OS, idx);
+        if(oItem) { 
+            if(oItem.Comentario == null)
+             SPD_CrearCuadroModal(1, 800, 600, "Comentario", "<p style='padding-right:20px;'>Sin comentario</p>",false);
+           else
+             SPD_CrearCuadroModal(1, 800, 600, "Comentario", "<p style='padding-right:20px;'>"+ oItem.Comentario +"</p>",false);
+
+        }
+    }
+    function RemoveElement(idx) {
+       var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/ObraSocial/DispForm.aspx?ID=" + idx+ "&Source=" + window.location.href;
+        var options = {
+            title: "",
+            autoSize: true,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+</script>
+<style>
+    #customers th, #customers td {
+        padding: 0px;
+        font-size: 11px;
+        padding-left:1px;
+        padding-right:1px;
+    }
+    #customers img {
+        width:10px;
+    }
+    #customers th {
+        color: black;
+        padding: 0px;
+    }
+    .secondFilter{
+        border: 1px solid black;
+        background: white;
+        color: black;
+        text-align: center;
+        text-align-last: center;
+        font-weight: bold;
+        width: 100%;
+    }
+</style>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/"  xmlns:splog="http://emmsa.net/schemas/splog/">
+	<EnsureList name="FacturaMedilife" title="Factura Medilife">
+    <ActionsGroup status="Skip">
+    <EnsureLookupField internalName="TipoFactura" displayName="Tipo factura" listName="TipoFactura" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Numero" displayName="N°" defaultValue="0" decimalPlaces="0" minValue="0" siteColumn="FALSE" />
+    <EnsureDateField internalName="FechaEmitida" displayName="Fecha de emision" siteColumn="FALSE" time="FALSE" />
+    <EnsureDateField internalName="FechaCobro" displayName="Fecha de cobro" description="Indica si la factura se cobró/pagó" siteColumn="FALSE" time="FALSE" />
+    <EnsureTextField internalName="NumeroRecibo" displayName="Número recibo" siteColumn="FALSE" />
+    <EnsureLookupField internalName="ObraSocial" displayName="Proveedor" listName="ObraSocial" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Monto" displayName="Monto $" defaultValue="0" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureNumberField internalName="IVA" displayName="IVA" defaultValue="0" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureNumberField internalName="HonorariosMedicos" displayName="Honorarios médicos" defaultValue="0" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureTextField internalName="Producto" displayName="Producto" siteColumn="FALSE" />
+    <EnsureTextField internalName="Marca" displayName="Marca" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Unidades" displayName="Unidades" defaultValue="0" decimalPlaces="0" siteColumn="FALSE" />
+    <EnsureTextField internalName="Medida" displayName="Medida" siteColumn="FALSE" />
+    <EnsureLookupField internalName="Medico" displayName="Médico" listName="Medico" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureLookupField internalName="Institucion" displayName="Institución" listName="Institucion" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureTextField internalName="Paciente" displayName="Paciente" siteColumn="FALSE" />
+    <EnsureMultiLineTextField internalName="Comentario" displayName="Comentarios" description="Indique un comentario si es necesario alguna aclaración" siteColumn="FALSE"/>
+    <EnsureLookupField internalName="Remito" displayName="Remito asociado" description="Puede asociar un remito si se encuentra cargado en el sistema" listName="Remito" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureLookupField internalName="Presupuesto" displayName="Presupuesto asociado" description="Puede asociar un presupuesto si se encuentra cargado en el sistema" listName="Presupuesto" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureLookupField internalName="Empleado" displayName="Empresa" description="Usuario asociado" listName="Empleado" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureLookupField internalName="NuevaMarca" allowmultivalues="True" displayName="Marca" listName="Marca" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureTextField internalName="RemitoExterno" displayName="Remito Externo" siteColumn="FALSE" />
+
+      <EnsureChoiceField internalName="Estado" displayName="Estado" siteColumn="FALSE" defaultValue="P">
+      <na:Choice value="A">Anulada</na:Choice>
+      <na:Choice value="C">Cobrada</na:Choice>
+      <na:Choice value="P">Pendiente</na:Choice>
+    </EnsureChoiceField>
+    <EnsureTextField internalName="NroOrdenCompra" displayName="Numero de orden de compra" siteColumn="FALSE" />
+    <EnsureLookupField internalName="Stock" displayName="Stock"  listName="Stock" AllowMultipleValues="TRUE"  indexed="TRUE" siteColumn="FALSE" />
+    <EnsureMultiLineTextField internalName="StockNoRegistrado" displayName="Stock no registrado" description="Complete el campo si el stock no se encuentra en sistema" siteColumn="FALSE"/>
+
+    </ActionsGroup>
+     <EnsureNumberField internalName="Credito" displayName="Crédito $" defaultValue="0" decimalPlaces="2" siteColumn="FALSE" />
+     <EnsureNumberField internalName="Debito" displayName="Débito $" defaultValue="0" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureBooleanField internalName="PagaHonorarios" displayName="Se pagaron honorarios" defaultValue="FALSE" siteColumn="FALSE" />
+
+    <EnsureContentType name="Item" parentContentType="System">
+			<AddFieldToContentType name="Title" required="FALSE" showInDisplayForm="FALSE" showInNewForm="FALSE" showInEditForm="false"/>
+      <AddFieldToContentType name="Empleado" required="TRUE"/>
+      <AddFieldToContentType name="TipoFactura" required="TRUE"/>
+      <AddFieldToContentType name="Numero" required="TRUE"/>
+      <AddFieldToContentType name="FechaEmitida" required="TRUE"/>
+      <AddFieldToContentType name="FechaCobro" required="FALSE"/>
+      <AddFieldToContentType name="NumeroRecibo" required="FALSE"/>
+      <AddFieldToContentType name="Monto" required="TRUE"/>
+      <AddFieldToContentType name="IVA" required="TRUE"/>
+        
+      <AddFieldToContentType name="Credito" required="TRUE"/>
+      <AddFieldToContentType name="Debito" required="TRUE"/>
+
+      <AddFieldToContentType name="HonorariosMedicos" required="TRUE"/>
+      <AddFieldToContentType name="PagaHonorarios" required="TRUE"/>
+
+      <AddFieldToContentType name="ObraSocial" required="FALSE"/>
+      <AddFieldToContentType name="Institucion" required="FALSE"/>
+      <AddFieldToContentType name="Medico" required="FALSE"/>
+      <AddFieldToContentType name="Paciente" required="FALSE"/>      
+      <AddFieldToContentType name="Remito" required="FALSE"/>
+      <AddFieldToContentType name="Presupuesto" required="FALSE"/>
+      <AddFieldToContentType name="Producto" required="FALSE"/>
+      <AddFieldToContentType name="Unidades" required="FALSE"/>
+      <AddFieldToContentType name="NuevaMarca" required="FALSE"/>
+      <AddFieldToContentType name="Marca" required="FALSE"/>
+      <AddFieldToContentType name="Medida" required="FALSE"/>
+      <AddFieldToContentType name="Comentario" required="FALSE"/>
+      <AddFieldToContentType name="Estado" required="FALSE"/>
+      <AddFieldToContentType name="NroOrdenCompra" required="FALSE"/>
+      <AddFieldToContentType name="Stock" required="FALSE"/>
+      <AddFieldToContentType name="StockNoRegistrado" required="FALSE"/>
+      <AddFieldToContentType name="RemitoExterno" required="FALSE"/>
+
+      <ReorderFields />
+		</EnsureContentType>
+    
+		<EnsureView name="AllItems" title="Todos los elementos" default="TRUE">
+			<na:ViewFields>
+        <na:FieldRef name="Title"/>
+      </na:ViewFields>
+		</EnsureView>
+    
+    <!--<LoadItems filePath="~this\Factura.xlsx" syncMode="LoadIfEmpty"/>-->
+
+  </EnsureList>
+</Root>

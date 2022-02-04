@@ -1,0 +1,1793 @@
+<div data-role="form"><div id="FORMULARIO_REMITO" style="padding-top: 15px;"><label></label></div></div> 
+<script type="text/javascript" src="/_layouts/15/ScriptResx.ashx?name=sp.res&culture=es-es"></script>
+<script type="text/javascript" src="/_layouts/15/sp.init.js"></script>
+<script type="text/javascript" src="/_layouts/15/MicrosoftAjax.js"></script>
+<script type="text/javascript" src="/_layouts/15/3082/strings.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.runtime.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.dialog.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientforms.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientpeoplepicker.js"></script>
+<script type="text/javascript" src="/_layouts/15/clienttemplates.js"></script>
+<script type="text/javascript" src="/_layouts/15/autofill.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.taxonomy.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.taxonomy.js"></script>
+<script type="text/javascript" src="/_layouts/15/core.js"></script>
+<script type="text/javascript">
+
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/paginacion.css") + "'></link>");
+
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-ui/css/base/jquery-ui-1.10.4.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-1.7.1.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-ui/js/jquery-ui-1.10.4.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-1.4.8.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-route.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-locale_es-es.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/Angular/dirPagination.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings_v2.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/RemoveComponent.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/NumeroLetra.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FormularioCSR_Helper.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Canvas.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/MaestroFichero.js") + "'><" + "/script>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/MaestroFichero.css") + "'></link>");
+
+</script>
+<script>
+
+    var _elementosRecuperados = [];
+
+var myAngApp = angular.module('miApp', ['ngRoute', 'angularUtils.directives.dirPagination']).config(['$compileProvider', function ($compileProvider) {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|skype|chrome-extension):/);
+}]);
+
+var gUsuarioAccountName;
+function init() {
+    AngularController();
+};
+init();
+function AngularController() {
+
+    myAngApp.controller('spResultado', function ($scope, $location, $http, $anchorScroll, $timeout) {
+        $scope.verMasCol = true;
+        $scope.Duplicados = false;
+        $scope.facturasDuplicadas = [];
+        $scope.showSection = false;
+        $scope.showLoading = false;
+        $scope.jSON = [];
+        $scope.sortingOrder = "None"; //orden por default
+        $scope.reverse = false;
+        $scope.currentPage = 1;
+        $scope.registrosPagina = 20;
+        $scope.sortKey = 'Numero';
+            $scope.Definitivo = {
+                Total: "0",
+                TotalCompras: "0",
+                TotalIva: "0",
+                TotalIvaCompras: "0",
+                TotalFactura: "0",
+                TotalFacturaCompras :"0"
+            };
+        $scope.resetFilters = function () {
+            $scope.sr_Title = "";
+        };
+        $scope.verMasColumnas = function () {
+            $scope.verMasCol = !$scope.verMasCol;
+        }
+        $scope.sort = function (keyname) {
+            $scope.sortKey = keyname;
+            $scope.reverse = !$scope.reverse;
+            $scope.currentPage = 1;
+        };
+        $scope.resetFilters = function () {
+            $scope.sr_institucion = "";
+            $scope.sr_obrasocial = "";
+            $scope.sr_paciente = "";
+            $scope.sr_numeroremito = "";
+            $scope.sr_medico = "";
+            $scope.sr_numerorecibo = "";
+            $scope.sr_marca = "";
+        };
+        $scope.ejecutarWS = function () {
+            $scope.showLoading = true;
+            $timeout(function () {
+
+                var viewXml = {
+                    ViewXml: GenerarCamlQuery(DevolverNodos())
+                }
+
+                var elementos = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, "731f7218-0ba3-494d-b6ef-7b150bd42de1", viewXml).results;
+
+                viewXml_Compras = {
+                    ViewXml: GenerarCamlQuery(DevolverNodos(true))
+                }
+
+                var nuevoElementos = [];
+
+                if (sp_controls.Marca.val() != "(Todos)") {
+                    for (k = 0; k < elementos.length; k++) {
+                        var rta = false;
+                        if (elementos[k].NuevaMarcaId != null && elementos[k].NuevaMarcaId.results.length > 0) {
+                            
+                            for (l = 0; l < elementos[k].NuevaMarcaId.results.length; l++) {
+                                if (elementos[k].NuevaMarcaId.results[l] == sp_controls.Marca.val())
+                                    rta = true;
+                            }
+                        }
+                        if (rta) {
+                            nuevoElementos.push(elementos[k]);
+                        }
+                    }
+                    elementos = nuevoElementos;
+                }
+
+                _Compras = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, "b2eef159-f5c2-4542-864b-0366056f6608", viewXml_Compras).results;
+
+
+                procesarJSON(elementos);
+                $scope.showLoading = false;
+
+            })
+        }
+        function procesarMulti(elementos, multiSelected, guidId) {
+            var multi = multiSelected;
+            if (multi.length > 0) {
+                var nuevosElementos = [];
+                for (rec = 0; rec < elementos.length; rec++) {
+                    var rta = false;
+                    for (rec2 = 0; rec2 < multi.length; rec2++) {
+                        if (elementos[rec][guidId] == multi[rec2].id)
+                            rta = true;
+                    }
+                    if (!rta)
+                        nuevosElementos.push(elementos[rec]);
+                }
+                elementos = nuevosElementos;
+            }
+            return elementos;
+        }
+        function procesarMultiMarcas(elementos, multiSelected, guidId) {
+            var multi = multiSelected;
+            if (multi.length > 0) {
+                var nuevosElementos = [];
+                for (rec = 0; rec < elementos.length; rec++) {
+                    var rta = false;
+                    for (rec2 = 0; rec2 < multi.length; rec2++) {
+                        var nuevasMarcas = elementos[rec][guidId].results;
+                        if (nuevasMarcas.length > 0) {
+                            for (mar = 0; mar < nuevasMarcas.length; mar++) {
+                                if (nuevasMarcas[mar] == multi[rec2].id)
+                                    rta = true;
+                            }
+                        }
+                    }
+                    if (!rta)
+                        nuevosElementos.push(elementos[rec]);
+                }
+                elementos = nuevosElementos;
+            }
+            return elementos;
+        }
+        function procesarPacientes(elementos) {
+            var pacientes = devolver_Pacientes();
+            var nuevosElementos = [];
+
+            for (rec = 0; rec < elementos.length; rec++) {
+                var rta = false;
+
+                for (u = 0; u < pacientes.length; u++) {
+                    if (elementos[rec].Paciente != "" && elementos[rec].Paciente != undefined) {
+                        if (elementos[rec].Paciente.toUpperCase().indexOf(pacientes[u].toUpperCase()) != -1) {
+                            rta = true;
+                        }
+                    }
+                }
+                if (rta)
+                    nuevosElementos.push(elementos[rec]);
+            }
+            elementos = nuevosElementos;
+            return elementos;
+        }
+        function prcesarMultiStock_filtrada(elementos) {
+            var nuevosElementos = [];
+            for (rec = 0; rec < elementos.length; rec++) {
+                var rta = true;
+                if (elementos[rec].StockId != null && elementos[rec].StockId.results.length > 0) {
+                    rta = false;
+                    var idss = elementos[rec].StockId.results;
+                    for (w = 0; w < idss.length; w++) {
+                        var _currStock = _evento_obtener_stock(idss[w]);
+                        if (sp_controls.Marca.val() != "(Todos)") {
+
+                            if (_currStock.NuevaMarcaId == sp_controls.Marca.val())
+                                rta = true;
+
+                        }
+                        else {
+                            var rta_2 = true;
+                            for (gg = 0; gg < multiMarcaSelected.length; gg++) {
+                                if (multiMarcaSelected[gg].id == _currStock.NuevaMarcaId) {
+                                    rta_2 = false;
+                                }
+                            }
+                            if (rta_2)
+                                rta = true;
+                        }
+                    }
+                }
+                if (rta)
+                    nuevosElementos.push(elementos[rec]);
+            }
+            elementos = nuevosElementos;
+            return elementos;
+        }
+        function procesarJSON(elementos) {
+
+            $scope.Definitivo.TotalFactura = "0"
+            $scope.Definitivo.TotalIva ="0"
+            $scope.Definitivo.TotalIvaCompras = "0"
+            $scope.Definitivo.TotalFacturaCompras ="0"
+            $scope.Definitivo.Total = "0"
+            $scope.Definitivo.TotalCompras ="0"
+            $scope.Duplicados = false;
+
+            elementos = procesarMulti(elementos, multiOsSelected, "ObraSocialId");
+            elementos = procesarMulti(elementos, multiMedicoSelected, "MedicoId");
+            elementos = procesarMultiMarcas(elementos, multiMarcaSelected, "NuevaMarcaId");
+            elementos = prcesarMultiStock_filtrada(elementos);
+
+
+            if (hayMultiplesPacientes)
+                elementos = procesarPacientes(elementos);
+
+            $scope.facturasDuplicadas = [];
+
+            for (rec = 0; rec < elementos.length; rec++) {
+                for (rec2 = 0; rec2 < elementos.length; rec2++) {
+                    if (elementos[rec].Id != elementos[rec2].Id && elementos[rec].Numero == elementos[rec2].Numero && elementos[rec].TipoFacturaId == elementos[rec2].TipoFacturaId && elementos[rec].EmpleadoId == elementos[rec2].EmpleadoId) {
+                        $scope.Duplicados = true;
+                        var _tipoFacturaNombre = _evento_obtener_tipoFactura(elementos[rec].TipoFacturaId);
+                        var _empleadoNombre = _evento_obtener_Empleado(elementos[rec].EmpleadoId);
+
+                        var _warning = "La factura de tipo " + _tipoFacturaNombre + " y N°:" + elementos[rec].Numero + " se encuentra duplicada. EMPRESA: " + _empleadoNombre;
+
+                        var _noRepeat = false;
+                        for (k = 0; k < $scope.facturasDuplicadas.length; k++) {
+                            if (_warning == $scope.facturasDuplicadas[k].result) {
+                                _noRepeat = true;
+                            }
+                        }
+                        if (!_noRepeat)
+                            $scope.facturasDuplicadas.push({ result : _warning});
+                    }
+                }
+            }
+            for (rec = 0; rec < elementos.length; rec++) {
+                elementos[rec].ObraSocialNombre = "";
+                if (elementos[rec].ObraSocialId != null) {
+                    elementos[rec].ObraSocialNombre = _evento_obtener_os(elementos[rec].ObraSocialId);
+                }
+                elementos[rec].MedicoNombre = "";
+                if (elementos[rec].MedicoId != null) {
+                    elementos[rec].MedicoNombre = _evento_obtener_medico(elementos[rec].MedicoId);
+                }
+                elementos[rec].TipoFacturaNombre = "";
+                if (elementos[rec].TipoFacturaId != null) {
+                    elementos[rec].TipoFacturaNombre = _evento_obtener_tipoFactura(elementos[rec].TipoFacturaId);
+                }
+                elementos[rec].EmpleadoNombre = "Sin definir";
+                if (elementos[rec].EmpleadoId != null) {
+                    elementos[rec].EmpleadoNombre = _evento_obtener_Empleado(elementos[rec].EmpleadoId);
+                }
+
+                elementos[rec].MarcaNombres = [];
+                if (elementos[rec].NuevaMarcaId != null && elementos[rec].NuevaMarcaId.results.length > 0) {
+
+                    for (w = 0; w < elementos[rec].NuevaMarcaId.results.length; w++) {
+                        elementos[rec].MarcaNombres.push(_evento_obtener_Marca(elementos[rec].NuevaMarcaId.results[w]));
+                    }
+
+                }
+                elementos[rec].InstitucionNombre = "";
+                if (elementos[rec].InstitucionId != null) {
+                    elementos[rec].InstitucionNombre = _evento_obtener_Institucion(elementos[rec].InstitucionId);
+                }
+            }
+            _elementosRecuperados = elementos;
+            $scope.jSON = [];
+            var anios = ["2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"];
+            var meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            var timeLine = [];
+
+            for (s = 0; s < anios.length; s++) {
+                timeLine.push({
+                    Anio: anios[s],
+                    CountAnio: 0,
+                    Meses: []
+                });
+                for (ss = 0; ss < meses.length; ss++) {
+                    timeLine[timeLine.length - 1].Meses.push({
+                        Mes: meses[ss],
+                        CountMes: 0,
+                        Data: [],
+                        Compras: []
+                    });
+                }
+            }
+            for (s = 0; s < timeLine.length; s++) {
+                for (rec = 0; rec < elementos.length; rec++) {
+                    var year = new Date(elementos[rec].FechaEmitida).format("yyyy");
+                    var monthIndex = new Date(elementos[rec].FechaEmitida).getMonth();
+
+                    var totalMonto = 0;
+                    var totalHM = 0;
+                    var totalIva = 0;
+
+                    if (year == timeLine[s].Anio) {
+
+                        timeLine[s].CountAnio = timeLine[s].CountAnio + 1;
+                        timeLine[s].Meses[monthIndex].CountMes = timeLine[s].Meses[monthIndex].CountMes + 1;
+
+                        if (elementos[rec].FechaEmitida != null) {
+                            elementos[rec].FechaEmitida = new Date(elementos[rec].FechaEmitida).format("dd/MM/yyyy");
+                        }
+                        if (elementos[rec].FechaCobro != null) {
+                            elementos[rec].FechaCobro = new Date(elementos[rec].FechaCobro).format("dd/MM/yyyy");
+                        }
+
+                        elementos[rec].Total = elementos[rec].Monto - elementos[rec].IVA - elementos[rec].HonorariosMedicos;
+                        timeLine[s].Meses[monthIndex].Data.push(elementos[rec]);
+                    }
+                }
+                for (rec = 0; rec < _Compras.length; rec++) {
+                    var year = new Date(_Compras[rec].FechaEmitida).format("yyyy");
+                    var monthIndex = new Date(_Compras[rec].FechaEmitida).getMonth();
+                    var totalMonto = 0;
+                    var totalIva = 0;
+                    if (year == timeLine[s].Anio) {
+                        _Compras[rec].Total = _Compras[rec].Monto - _Compras[rec].IVA;
+                        timeLine[s].Meses[monthIndex].Compras.push(_Compras[rec]);
+                    }
+                }
+            }
+
+            var definitivoTotal = 0;
+            var definitivoIva = 0;        
+            var definitivoComprasTotal = 0;
+            var definitivoComprasIva = 0;
+
+            for (s = 0; s < timeLine.length; s++) {
+
+                var _totalidadFacturas = 0;
+                var _totalidadCompras = 0;
+                var _totalidadHM = 0;
+                var _totalidadIvaFacturas = 0;
+                var _totalidadIvaCompras = 0;
+                var _totalidadMontoFacturas = 0;
+                var _totalidadMontoCompras = 0;
+
+                for (ss = 0; ss < timeLine[s].Meses.length; ss++) {
+                    var totalMonto = 0;
+                    var totalHM = 0;
+                    var totalIva = 0;
+
+                    var totalMontoCompras = 0;
+                    var totalIvaCompras = 0;
+
+                    for (sss = 0; sss < timeLine[s].Meses[ss].Data.length; sss++) {
+                        timeLine[s].Meses[ss].Data[sss].MontoText = timeLine[s].Meses[ss].Data[sss].Monto.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                        timeLine[s].Meses[ss].Data[sss].HonorariosMedicosText = timeLine[s].Meses[ss].Data[sss].HonorariosMedicos.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                        timeLine[s].Meses[ss].Data[sss].IVAText = timeLine[s].Meses[ss].Data[sss].IVA.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                        timeLine[s].Meses[ss].Data[sss].TotalText= timeLine[s].Meses[ss].Data[sss].Total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+                        timeLine[s].Meses[ss].Data[sss].CreditoText= timeLine[s].Meses[ss].Data[sss].Credito ? timeLine[s].Meses[ss].Data[sss].Credito.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') : "0,00";
+                        timeLine[s].Meses[ss].Data[sss].DebitoText= timeLine[s].Meses[ss].Data[sss].Debito ? timeLine[s].Meses[ss].Data[sss].Debito.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') : "0,00";
+
+                        totalMonto = totalMonto + timeLine[s].Meses[ss].Data[sss].Monto;
+                        totalHM = totalHM + timeLine[s].Meses[ss].Data[sss].HonorariosMedicos;
+                        totalIva = totalIva + timeLine[s].Meses[ss].Data[sss].IVA;
+                    }
+
+                    for (sss = 0; sss < timeLine[s].Meses[ss].Compras.length; sss++) {
+                        timeLine[s].Meses[ss].Compras[sss].MontoText = timeLine[s].Meses[ss].Compras[sss].Monto.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                        timeLine[s].Meses[ss].Compras[sss].IVAText = timeLine[s].Meses[ss].Compras[sss].IVA.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                        timeLine[s].Meses[ss].Compras[sss].TotalText= timeLine[s].Meses[ss].Compras[sss].Total.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+                        totalMontoCompras = totalMontoCompras + timeLine[s].Meses[ss].Compras[sss].Monto;
+                        totalIvaCompras = totalIvaCompras + timeLine[s].Meses[ss].Compras[sss].IVA;
+                    }
+
+                    timeLine[s].Meses[ss].TotalMonto = totalMonto.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                    timeLine[s].Meses[ss].TotalHM = totalHM.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                    timeLine[s].Meses[ss].TotalIva = totalIva.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                    timeLine[s].Meses[ss].Total = (totalMonto - totalHM - totalIva).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+                    timeLine[s].Meses[ss].TotalMontoCompras = totalMontoCompras.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                    timeLine[s].Meses[ss].TotalIvaCompras = totalIvaCompras.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                    timeLine[s].Meses[ss].TotalCompras = (totalMontoCompras - totalIvaCompras).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+                    timeLine[s].Meses[ss].TotalTotalIva = (totalIva - totalIvaCompras).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+                    _totalidadFacturas = _totalidadFacturas + (totalMonto - totalHM - totalIva);
+                    _totalidadCompras = _totalidadCompras + (totalMontoCompras - totalIvaCompras);
+                    _totalidadIvaCompras = _totalidadIvaCompras + totalIvaCompras;
+                    _totalidadIvaFacturas = _totalidadIvaFacturas + totalIva;
+                    _totalidadMontoCompras = _totalidadMontoCompras + totalMontoCompras;
+                    _totalidadMontoFacturas = _totalidadMontoFacturas + totalMonto;
+                    _totalidadHM = _totalidadHM + totalHM; 
+                }
+
+                timeLine[s].TotalMontoCompras = _totalidadMontoCompras.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                timeLine[s].TotalMonto = _totalidadMontoFacturas.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                timeLine[s].TotalIva = _totalidadIvaFacturas.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                timeLine[s].TotalHM = _totalidadHM.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+                timeLine[s].TotalIvaCompras = _totalidadIvaCompras.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                timeLine[s].Total = _totalidadFacturas.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+                timeLine[s].TotalCompras = _totalidadCompras.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+                timeLine[s].TotalTotalIva = (_totalidadIvaFacturas - _totalidadIvaCompras).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+                definitivoTotal =  definitivoTotal + _totalidadMontoFacturas;
+                definitivoIva =  definitivoIva + _totalidadIvaFacturas;
+                definitivoComprasTotal =  definitivoComprasTotal + _totalidadMontoCompras;
+                definitivoComprasIva =  definitivoComprasIva + _totalidadIvaCompras;
+            }
+            $scope.Definitivo.TotalFactura = definitivoTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            $scope.Definitivo.TotalIva = definitivoIva.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            $scope.Definitivo.TotalIvaCompras = definitivoComprasIva.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            $scope.Definitivo.TotalFacturaCompras = definitivoComprasTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            $scope.Definitivo.Total =  (definitivoTotal - definitivoIva).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            $scope.Definitivo.TotalCompras = (definitivoComprasTotal - definitivoComprasIva).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+
+            console.log(timeLine);
+            $scope.jSON = timeLine;
+            console.log($scope.jSON);
+            if (!$scope.$$phase)
+                $scope.$apply();
+        }
+    });
+}
+function ConvertISOToDate(stringIso, hours) {
+    if (stringIso != "") {
+        var date = new Date(stringIso);
+        if (hours)
+            return date.format("dd/MM/yyyy HH:mm");
+        else
+            return date.format("dd/MM/yyyy");
+    }
+    return "";
+}
+function GenerarCamlQuery(oNodos) {
+    var inicioQ = "<View><Query><Where>";
+    var abroA = "<And>";
+    var cierroA = "</And>";
+    var finQ = "</Where></Query></View>";
+    var Nodos = oNodos;
+    var cont = 0;
+    var arregloY = [];
+    var nodo = "";
+    //Este algoritmo agrupa los nodos de a pares uniendolos con "<And>" recursivamente
+    for (k = 0; k < Nodos.length; k++) {
+        cont++;
+        if (cont == 1) {
+            nodo = Nodos[k];
+            if (k == (Nodos.length - 1))
+                arregloY.push(nodo);
+        }
+        if (cont == 2) {
+            nodo = abroA + nodo + Nodos[k] + cierroA;
+            arregloY.push(nodo);
+            nodo = "";
+            cont = 0;
+        }
+        if (k == (Nodos.length - 1)) {
+            Nodos = arregloY;
+            if (arregloY.length == 1)
+                break;
+            k = -1;
+            cont = 0;
+            arregloY = [];
+        }
+    }
+    if (arregloY.length > 0)
+        inicioQ = inicioQ + arregloY[0];
+
+    inicioQ = inicioQ + finQ;
+    datos = inicioQ;
+    return inicioQ;
+    }
+    var hayMultiplesPacientes = false;
+    function DevolverNodos(onlyDates) {
+        var nodos = [];
+        var date = new Date();
+        date = date.format("yyyy-MM-dd");
+        if (!onlyDates) {
+            hayMultiplesPacientes = false;
+
+            if (sp_controls.TipoFactura.val() != "(Todos)") {
+                nodos.push('<Eq><FieldRef Name="TipoFactura" LookupId="TRUE" /><Value Type="Lookup">' + sp_controls.TipoFactura.val() + '</Value></Eq>');
+            }
+            if (sp_controls.Estado.val() != "-1") {
+                nodos.push('<Contains><FieldRef Name="Estado" /><Value Type="Text">' + sp_controls.Estado.find("option:selected").text() + '</Value></Contains>');
+            }
+            if (sp_controls.Numero.val() != "") {
+                nodos.push('<Eq><FieldRef Name="Numero" /><Value Type="Number">' + sp_controls.Numero.val() + '</Value></Eq>');
+            }
+            //busco 1 paciente si no hay múltiples
+            var pacientes = devolver_Pacientes();
+            if (pacientes.length == 1) {
+                nodos.push('<Contains><FieldRef Name="Paciente" /><Value Type="Text">' + pacientes[0] + '</Value></Contains>');
+            }
+            if (pacientes.length > 1) {
+                hayMultiplesPacientes = true;
+            }
+            if (sp_controls.Medico.val() != "(Todos)") {
+                nodos.push('<Eq><FieldRef Name="Medico" LookupId="TRUE" /><Value Type="Lookup">' + sp_controls.Medico.val() + '</Value></Eq>');
+            }
+        }
+        if (sp_controls.Empleado.val() != "(Todos)") {
+            nodos.push('<Eq><FieldRef Name="Empleado" LookupId="TRUE" /><Value Type="Lookup">' + sp_controls.Empleado.val() + '</Value></Eq>');
+        }
+        if (sp_controls.FechaEmitidaDesde.val() != "") {
+            var desde = sp_controls.FechaEmitidaDesde.val().split('/');
+            if (desde.length == 3) {
+                desde = desde[2] + "-" + desde[1] + "-" + desde[0];
+                nodos.push('<Geq><FieldRef Name="FechaEmitida" /><Value IncludeTimeValue="False" Type="DateTime">' + desde + 'T06:53:16Z</Value></Geq>');
+            }
+        }
+        if (sp_controls.FechaEmitidaHasta.val() != "") {
+            var hasta = sp_controls.FechaEmitidaHasta.val().split('/');
+            if (hasta.length == 3) {
+                hasta = hasta[2] + "-" + hasta[1] + "-" + hasta[0];
+                nodos.push('<Leq><FieldRef Name="FechaEmitida" /><Value IncludeTimeValue="False" Type="DateTime">' + hasta + 'T06:53:16Z</Value></Leq>');
+            }
+        }
+        if(sp_controls.OS.val() != "(Todos)"){
+            nodos.push('<Eq><FieldRef Name="ObraSocial" LookupId="TRUE" /><Value Type="Lookup">' + sp_controls.OS.val() + '</Value></Eq>');
+        }
+        return nodos;
+    }
+    function SPStaff_InicializarDatePickers() {
+        $('.dateInput').datepicker();
+    }
+</script>
+<style>
+    .metadataTd {
+        padding:6px;
+    }
+    .rotulo {
+        padding-right: 10px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: bold;
+            color: steelblue;
+    }
+    .selectMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .inputMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .actualizarGrande {
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: middle;
+        width: 21px;
+        height: 15px;
+        cursor: pointer;
+        vertical-align: middle;
+        background: url('/_layouts/15/images/spcommon.png?rev=23') no-repeat -132px -112px;
+    }
+  
+    .tdAngular {
+        /*text-align:center;*/
+    }
+    .dateInput {
+        width: 150px;
+    }
+    #customers a {
+        color: rgb(0, 114, 198)!important;
+    }
+
+    #customers {
+        border-collapse: collapse;
+        width: 120%;
+    }
+
+        #customers th, #customers td {
+            padding: 8px;
+        }
+
+    #customers tr:hover {
+        background-color: #ffff99;
+    }
+
+        #customers th {
+            background-color: #F2F2F2;
+            color: black;
+            padding: 10px;
+            font-weight:normal!important;
+        }
+    .centerAlign {
+        text-align: center;
+    }
+</style>
+<div ng-app="miApp" class="row">
+    <div ng-controller="spResultado" class="span10">
+        <table>
+            <tr>
+                <td colspan="4" style="text-align:right"></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Número:</label></td>
+                <td class="metadataTd"><input id="SR_Numero" type="number" class="inputMetadata"/></td>
+                <td class="metadataTd"><label class="rotulo">Fecha emisión:</label></td>
+                <td class="metadataTd"><nobr><input class="dateInput" id="emisionDesde"/>&nbsp;&nbsp;<label class="rotulo">hasta:</label>&nbsp;&nbsp;<input class="dateInput" id="emisionHasta"/></nobr></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Estado:</label></td>
+                <td class="metadataTd" id="stockEstados"></td>
+                <td class="metadataTd"><label class="rotulo">Tipo:</label></td>
+                <td class="metadataTd"><select class="selectMetadata" id="SR_TipoFactura"><option value="(Todos)">(Todos)</option></select></td>
+            </tr>
+            <tr style="vertical-align:top;">
+                <td class="metadataTd"><label class="rotulo">Empresa:</label></td>
+                <td class="metadataTd"><select class="selectMetadata" id="SR_Empleado"><option value="(Todos)">(Todos)</option></select></td>
+                <td class="metadataTd"></td>
+                <td class="metadataTd"></td>
+            </tr>
+            <tr style="vertical-align:top;">
+                <td class="metadataTd"><label class="rotulo">Prestador:</label></td>
+                <td class="metadataTd"><select class="selectMetadata" id="SP_OS" onchange="_evento_cambiarOs()"><option value="(Todos)">(Todos)</option><option value="(Todos)" style="color:red;font-weight:bolder">(Excluir)</option></select></td>
+                <td  class="metadataTd"><label class="rotulo">Prestadores excluidos:</label></td>
+                <td  class="metadataTd multiOsTD"><b>Ninguno</b></td>
+            </tr>
+            <tr style="vertical-align:top;">
+                <td class="metadataTd"><label class="rotulo">Médico:</label></td>
+                <td class="metadataTd"><select class="selectMetadata" id="SR_Medico"  onchange="_evento_cambiarMedico()"><option value="(Todos)">(Todos)</option><option value="(Todos)" style="color:red;font-weight:bolder">(Excluir)</option></select></td>
+                <td  class="metadataTd"><label class="rotulo">Médicos excluidos:</label></td>
+                <td  class="metadataTd multiMedicoTD"><b>Ninguno</b></td>
+            </tr>
+            <tr style="vertical-align:top;">
+                <td class="metadataTd"><label class="rotulo">Marca:</label></td>
+                <td class="metadataTd"><select class="selectMetadata" id="SR_MARCA" onchange="_evento_cambiarMarca()" ><option value="(Todos)">(Todos)</option><option value="(Todos)" style="color:red;font-weight:bolder">(Excluir)</option></select></td>
+                <td  class="metadataTd"><label class="rotulo">Marcas excluidas:</label></td>
+                <td  class="metadataTd multiMarcaTD"><b>Ninguno</b></td>
+            </tr>
+            <tr style="vertical-align:top;">
+                <td class="metadataTd"><label class="rotulo">Paciente:</label></td>
+                <td class="metadataTd" id="tdPacientes"><input id="SR_Paciente" type="text" class="inputMetadata multiPaciente"/><i class="fa fa-plus" style="padding-left: 2px;" onclick="_evento_agregarPaciente()"></i></td>
+                <td class="metadataTd"></td>
+                <td class="metadataTd"></td>
+            </tr>
+            <tr style="vertical-align:top;">
+                <td class="metadataTd"></td>
+                <td class="metadataTd"></td>
+                <td></td>
+                <td style="text-align: right; padding-top: 30px;">
+                    <button onclick="EnviarReporte();event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: lightgreen;cursor:pointer;font-size:12px;font-weight:bold;color:black;border:1px solid lightgrey" ><i class="fa fa-file"></i>&nbsp;Enviar Reporte</button>
+                    <button class="add" id="linkActualizar" ng-click="ejecutarWS()" onclick="event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: white;cursor:pointer;font-size:12px;font-weight:bold;color:black;border:1px solid lightgrey" ><i class="fa fa-search"></i>&nbsp;Buscar elementos</button>
+                    <button id="linkActualizar" onclick="CreateElement();event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: steelblue;cursor:pointer;font-size:12px;font-weight:bold" ><i class="fa fa-plus"></i>&nbsp;Crear nuevo</button><br /><br />
+                    <button ng-show="verMasCol" ng-click="verMasColumnas()" onclick="event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: green;cursor:pointer;font-size:12px;font-weight:bold"><i class="fa fa-minus fa-lg"></i>&nbsp;Ocultar columnas</button>
+                    <button ng-show="!verMasCol"  ng-click="verMasColumnas()" onclick="event.preventDefault()" style="border-radius: 5px;color: green;min-width: 30px!important;border: 1px solid green;background: white;cursor:pointer;font-size:12px;font-weight:bold"><i class="fa fa-plus fa-lg"></i>&nbsp;Ver más columnas</button>
+                    <button  onclick="_evento_fullscreen();event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: darksalmon;cursor:pointer;font-size:12px;font-weight:bold"><i class="fa fa-expand fa-lg"></i>&nbsp;Ver en pantalla completa</button>
+                    <button onclick="_evento_reporteTotal(); event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: green;cursor:pointer;font-size:12px;font-weight:bold" ><i class="fa fa-file-excel-o fa-lg"></i>&nbsp;Reporte total</button>
+                    <button onclick="_evento_reporteMensual(); event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: green;cursor:pointer;font-size:12px;font-weight:bold" ><i class="fa fa-file-excel-o fa-lg"></i>&nbsp;Reporte mensual</button>
+                </td>
+            </tr>
+        </table>
+    <br />
+    <br />
+        <div id='cargandoPagina' ng-show="showLoading">
+            <div id="progreso" style="width:100%">
+                <div id="DeltaPageStatusBar"><div id="pageStatusBar" class="ms-status-blue" aria-live="polite" aria-relevant="all" style="display: block;"><span id="status_33" class="ms-status-status" role="alert" tabindex="0"><span id="status_33_hiddenPriMsg" class="ms-accessible">Cargando información</span><span class="ms-status-iconSpan"><img class="ms-status-iconImg" src="/_layouts/15/images/spcommon.png" data-themekey="#"></span><span class="ms-bold ms-status-title"><label id="palabraCargando" style="vertical-align:baseline;">Cargando información...</label></span><span class="ms-status-body" id="status_33_body"><img src="/_Layouts/Images/progress.gif" data-themekey="#"></span><br></span></div></div>
+            </div>
+        </div>
+        <div ng-show="Duplicados" style="background: yellow;" ng-repeat="dup in facturasDuplicadas">
+            <i class="fa fa-warning fa-lg" style="padding-right:10px;"></i>{{dup.result}}
+        </div>
+
+        <div ng-repeat="timeLine in jSON">
+
+            <div ng-show="timeLine.CountAnio > 0">
+                <h1>{{timeLine.Anio}}</h1>
+                <table id="customers" style="border-collapse: collapse; width:25%!important;">
+                    <thead>
+                        <tr style="text-align:center;vertical-align:top;">
+                            <th></th>
+                            <th>Monto</th>
+                            <!--<th>HM</th>-->
+                            <th>IVA</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td style="text-align:center;">Factura</td>
+                        <td style="text-align:center;">{{timeLine.TotalMonto}}</td>
+                        <!--<td style="text-align:center;">{{timeLine.TotalHM}}</td>-->
+                        <td style="text-align:center;">{{timeLine.TotalIva}}</td>
+                        <td style="text-align:center;">{{timeLine.Total}}</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:center;">Compras</td>
+                        <td style="text-align:center;">{{timeLine.TotalMontoCompras}}</td>
+                        <!--<td></td>-->
+                        <td style="text-align:center;">{{timeLine.TotalIvaCompras}}</td>
+                        <td style="text-align:center;">{{timeLine.TotalCompras}}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <!--<td></td>-->
+                        <td style="text-align:center;">{{timeLine.TotalTotalIva}}</td>
+                        <td></td>
+                    </tr>
+                </table>
+                <div ng-repeat="monthData in timeLine.Meses" ng-hide="monthData.CountMes === 0" style="padding-top:10px;padding-bottom:10px;">
+                    <h2>
+                        {{monthData.Mes}}
+                    </h2>
+                    <div ng-show="monthData.CountMes === 0">
+                        No hay elementos para mostrar
+                    </div>
+                    <div ng-show="monthData.CountMes > 0">
+                        <table id="customers" style="border-collapse: collapse">
+                        <thead>
+                            <tr style="text-align:center;vertical-align:top;">
+                                <th></th>
+                                <th>Razón</th>
+                                <th>N°</th>
+                                <th>Tipo</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                                <th>Fecha de cobro</th>
+                                <th>Monto</th>
+                                <th>IVA</th>
+                                <th>Total</th>
+                                <th>Crédito</th>
+                                <th>Débito</th>
+                                <th ng-show="verMasCol">Remito</th>
+                                <th ng-show="verMasCol">R externo</th>
+                                <th ng-show="verMasCol">Material</th>
+                                <th ng-show="verMasCol">Prestador<br /><input ng-show="false"  type="text" class="secondFilter" ng-change="currentPage = 1" ng-model="sr_obrasocial"/></th>
+                                <th ng-show="verMasCol">Médico<br /><input ng-show="false"  type="text" class="secondFilter" ng-change="currentPage = 1" ng-model="sr_medico"/></th>
+                                <th ng-show="verMasCol">Institución<br /><input ng-show="false"  type="text" class="secondFilter" ng-change="currentPage = 1" ng-model="sr_institucion"/></th>
+                                <th ng-show="verMasCol">Pcte<br /><input ng-show="false"  type="text" class="secondFilter" ng-change="currentPage = 1" ng-model="sr_paciente"/></th>
+                            </tr>
+                        </thead>
+                        <tr ng-repeat="factura in monthData.Data |orderBy:sortKey:reverse|filter:{ Marca:sr_marca , NumeroRecibo: sr_numerorecibo, Paciente:sr_paciente, MedicoNombre:sr_medico, InstitucionNombre: sr_institucion, ObraSocialNombre: sr_obrasocial}" current-page="currentPage">
+                            <td style="width:85px;">
+                                <button id="{{factura.Id}}" onclick="RemoveElement($(this).attr('Id'));event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;color: red;cursor:pointer;padding: 2px;"><i class="fa fa-trash fa-lg"></i></button>  
+                                <button id="{{factura.Id}}" onclick="UpdateElement($(this).attr('Id'));event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;color: steelblue;cursor:pointer;padding: 2px;"><i class="fa fa-edit fa-lg"></i></button>
+                            </td>
+                            <td  ng-class="{ ANDREA: factura.EmpleadoId == 1,CRISTIAN: factura.EmpleadoId == 2, SINEMPLEADO: factura.EmpleadoId == null }"><nobr>{{factura.EmpleadoNombre}}</nobr></td>
+                            <td class="tdAngular" style="text-align:left;"><a style="cursor:pointer;" id="{{factura.Id}}" onclick="UpdateElement($(this).attr('Id'))">{{factura.Numero}}</a></td>
+                            <td><nobr>{{factura.TipoFacturaNombre}}</nobr></td>
+                            <td ng-class="{PENDIENTE: factura.Estado == 'Pendiente [P]',ANULADA: factura.Estado == 'Anulada [A]',  COBRADA: factura.Estado == 'Cobrada [C]'}"><nobr>{{factura.Estado}}</nobr></td>
+                            <td style="text-align:center">{{factura.FechaEmitida}}</td>
+                            <td style="text-align:center">{{factura.FechaCobro}}</td>
+                            <td style="text-align:center;background:green;color:white;"><nobr>$ {{factura.MontoText}}</nobr></td>
+                            <td style="text-align:center;background:red;color:white;"><nobr>$ {{factura.IVAText}}</nobr></td>
+                            <td style="text-align:center;background:green;color:white;"><nobr>$ {{factura.TotalText}}</nobr></td>
+                            <td style="text-align:center;"><nobr>$ {{factura.CreditoText}}</nobr></td>
+                            <td style="text-align:center;"><nobr>$ {{factura.DebitoText}}</nobr></td>
+                            <td ng-show="verMasCol" style="text-align:center"><span ng-show="factura.RemitoId != null" style="cursor:pointer;color:steelblue" title="Descargar remito" id="{{factura.RemitoId}}" onclick="DownloadPresupuesto($(this).attr('Id'));event.preventDefault()"><i class="fa fa-file fa-lg"></i></span></td>
+                            <td ng-show="verMasCol">{{factura.RemitoExterno}}</td>
+                            <td ng-show="verMasCol" style="text-align:center;"><a id="{{factura.Id}}" style="cursor:pointer;" onclick="_verInfoMaterial($(this).attr('Id'));event.preventDefault()"><i class="fa fa-list-alt fa-lg"></i></a></td>
+                            <td ng-show="verMasCol">{{factura.ObraSocialNombre}}</td>
+                            <td ng-show="verMasCol"><nobr>{{factura.MedicoNombre}}</nobr></td>
+                            <td ng-show="verMasCol"><nobr>{{factura.InstitucionNombre}}</nobr></td>
+                            <td ng-show="verMasCol"><nobr>{{factura.Paciente}}</nobr></td>
+                        </tr>
+                        <tr>
+                            <td ng-show="verMasCol"></td><td ng-show="verMasCol"></td><!--<td></td>--><td></td><td></td><td></td><td></td><td style="text-align:left;background:mediumseagreen;color:white;">TOTAL</td>
+                            <td style="text-align:center;background:mediumseagreen;color:white;"><nobr>$ {{monthData.TotalMonto}}</nobr></td>
+                            <td style="text-align:center;background:orangered;color:white;"><nobr>$ {{monthData.TotalIva}}</nobr></td>
+                            <td style="text-align:center;background:mediumseagreen;color:white;"><nobr>$ {{monthData.Total}}</nobr></td>
+                            <td></td><td></td><td></td><td></td><td></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                        </tr>
+                        <tr>
+                            <td ng-show="verMasCol"></td><td ng-show="verMasCol"></td><!--<td></td>--><td></td><td></td><td></td><td></td><td style="text-align:left;background:blue;color:white;">COMPRAS</td>
+                            <td style="text-align:center;background:blue;color:white;"><nobr>$ {{monthData.TotalMontoCompras}}</nobr></td>
+                            <td style="text-align:center;background:blue;color:white;"><nobr>$ {{monthData.TotalIvaCompras}}</nobr></td>
+                            <td style="text-align:center;background:blue;color:white;"><nobr>$ {{monthData.TotalCompras}}</nobr></td>
+                            <td></td><td></td><td></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                        </tr>
+                        <tr>
+                            <td ng-show="verMasCol"></td><td ng-show="verMasCol"></td><!--<td></td>--><td></td><td></td><td></td><td></td><td style="text-align:left;background:yellow;color:black;">DIF IVA</td>
+                            <td style="text-align:left;background:yellow;color:black;"></td>
+                            <td style="text-align:center;background:yellow;color:black;"><nobr>$ {{monthData.TotalTotalIva}}</nobr></td>
+                            <td><nobr></nobr></td>
+                            <td></td><td></td><td></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                            <td ng-show="verMasCol"></td>
+                        </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-show="Definitivo.Total != '0' && Definitivo.TotalCompras != '0'">
+            <h1>
+                Total
+            </h1>
+            <table id="customers" style="border-collapse: collapse; width:25%!important;background: yellowgreen;font-weight: bold;">
+            <thead>
+                <tr style="text-align:center;vertical-align:top;">
+                    <th></th>
+                    <th>Monto</th>
+                    <th>IVA</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tr>
+                <td style="text-align:center;">Factura</td>
+                <td style="text-align:center;">{{Definitivo.TotalFactura}}</td>
+                <td style="text-align:center;">{{Definitivo.TotalIva}}</td>
+                <td style="text-align:center;">{{Definitivo.Total}}</td>
+            </tr>
+            <tr>
+                <td style="text-align:center;">Compras</td>
+                <td style="text-align:center;">{{Definitivo.TotalFacturaCompras}}</td>
+                <td style="text-align:center;">{{Definitivo.TotalIvaCompras}}</td>
+                <td style="text-align:center;">{{Definitivo.TotalCompras}}</td>
+
+            </tr>
+        </table>
+     </div>
+  </div>
+</div>
+<style>
+    .ANULADA{
+        background: yellow;
+        font-weight: bolder;
+    }
+    .PENDIENTE{
+        background: orange;
+        font-weight: bolder;
+    }
+    .COBRADA{
+        background: greenyellow;
+        font-weight: bolder;
+    }
+    .ANDREA {
+        color:blue;
+        font-weight: bolder;
+    }
+    .CRISTIAN {
+        color:green;
+        font-weight: bolder;
+    }
+    .SINEMPLEADO {
+        background: grey;
+        font-weight: bolder;
+    }
+</style>
+<script>
+      //Helper
+    function init_ConsultaLicencias(){
+        $('#DeltaPlaceHolderPageTitleInTitleArea').html("Facturas");
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("font-weight", "bold")
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("color", "steelblue")
+
+        $('.pagination').css("display", "flex")
+        $('.pagination li').css("padding", "5px")
+        $('.pagination li').css("list-style", "none")
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+              event.preventDefault();
+              $('.add').click();
+              return false;
+            }
+        });
+        inicializarControles();
+    }
+    if (_spBodyOnLoadFunctionNames) {
+        _spBodyOnLoadFunctionNames.push("init_ConsultaLicencias");
+    }
+    else {
+        $(document).ready(function () {
+            init_ConsultaLicencias();
+        });
+    }
+    function UpdateElement(idx) {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/FacturaMedilife/EditForm.aspx?ID=" + idx;
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+            allowMaximize:'true',
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function CreateElement() {
+        var extension = sp_controls.Empleado.val() != "(Todos)" ? "?empleado=" + sp_controls.Empleado.val() : "";
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/FacturaMedilife/NewForm.aspx" + extension;
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.9,
+            url: urlData,
+            allowMaximize:'true',
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function EnviarReporte() {
+
+        var llamadas = SPD_GetListItems(_spPageContextInfo.webAbsoluteUrl, "47d0049f-39c6-4836-a8e9-3b12a271f567").results;
+        var reportes = false;
+
+        for (g = 0; g < llamadas.length; g++) {
+            if (llamadas[g].EnEjecucion) {
+                reportes = true;
+            }
+        }
+        if (!reportes) {
+            var extension = sp_controls.Empleado.val() != "(Todos)" ? "?empleado=" + sp_controls.Empleado.val() : "";
+            if (extension != "")
+                extension = extension + (sp_controls.FechaEmitidaDesde.val() != "" ? "&fechaDesde=" + sp_controls.FechaEmitidaDesde.val()  : "");
+
+            var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/EnvioReporte/NewForm.aspx" + extension;
+            var options = {
+                title: "",
+                width: screen.height * 0.9,
+                height: screen.width * 0.7,
+                url: urlData,
+                dialogReturnValueCallback: function (result) { _callbackRespuestaReporte(result) }
+            };
+            a = SP.UI.ModalDialog.showModalDialog(options);
+        }
+        else {
+            alert("Actualmente hay un reporte en ejecución por favor aguarde unos minutos");
+        }
+
+    }
+    function _callbackRespuestaReporte(result){
+            switch(result) {
+            case SP.UI.DialogResult.OK:
+                alert("Se ha generado un reporte Online, en unos minutos se enviará por email");
+                break;
+            case SP.UI.DialogResult.cancel:
+                console.log("Se ha cancelado la acción.");
+                break;
+        }
+    }
+    function _callbackRespuesta(result){
+            switch(result) {
+            case SP.UI.DialogResult.OK:
+                console.log("You clicked OK");
+                $('#linkActualizar').click();
+                // reload data as necessary here
+                break;
+            case SP.UI.DialogResult.cancel:
+                console.log("You clicked cancel or close.");
+                break;
+        }
+    }
+    function RemoveElement(idx) {
+       var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/FacturaMedilife/DispForm.aspx?ID=" + idx + "&Source=" + window.location.href;
+        var options = {
+            title: "",
+            autoSize: true,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+
+    var obrasocial = [];
+    var medicos = [];
+    var tipoFactura = [];
+    var insituciones = [];
+    var empleados = [];
+
+    var multiOsElements = [];
+    var multiMarcaElements = [];
+    var multiMedicoElements = [];
+
+    function _evento_obtener_Institucion(idx) {
+        
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where></Query></View>"
+        }
+
+        if (insituciones.length == 0)
+             insituciones = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_INSTITUCION,viewXml).results;
+        for (r = 0; r < insituciones.length; r++) {
+            if (insituciones[r].Id == idx)
+                return insituciones[r].NombreInstitucion;
+        }
+
+        return "";
+    }
+    function _evento_obtener_Empleado(idx) {
+        
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where></Query></View>"
+        }
+
+        if (empleados.length == 0)
+            empleados = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_EMPLEADO, viewXml).results;
+        for (r = 0; r < empleados.length; r++) {
+            if (empleados[r].Id == idx)
+                return empleados[r].Descripcion;
+        }
+
+        return "";
+    }
+    function _evento_obtener_tipoFactura(idx) {
+        if (tipoFactura.length == 0)
+             tipoFactura = SPD_GetListItems(_spPageContextInfo.webAbsoluteUrl, MD_TIPOFACTURA).results;
+        for (r = 0; r < tipoFactura.length; r++) {
+            if (tipoFactura[r].Id == idx)
+                return tipoFactura[r].Title;
+        }
+        return "";
+    }
+    function _evento_obtener_medico(idx) {
+        if (medicos.length == 0)
+             medicos = SPD_GetListItems(_spPageContextInfo.webAbsoluteUrl, MD_MEDICO).results;
+        for (r = 0; r < medicos.length; r++) {
+            if (medicos[r].Id == idx)
+                return medicos[r].Title;
+        }
+        return "";
+    }
+    function _evento_obtener_os(idx) {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where></Query></View>"
+        }
+
+        if (obrasocial.length == 0)
+             obrasocial = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_OS,viewXml).results;
+        for (r = 0; r < obrasocial.length; r++) {
+            if (obrasocial[r].Id == idx)
+                return obrasocial[r].Nombre;
+        }
+        return "";
+    }
+    var sp_controls = {};
+    function inicializarControles() {
+
+        $('#stockEstados').append(ObtenerComboEstados("SR_Estado"));
+        SPStaff_InicializarDatePickers();
+
+        sp_controls.Numero = $("#SR_Numero");
+        sp_controls.TipoFactura = $("#SR_TipoFactura");
+        sp_controls.Estado = $("#SR_Estado");
+        sp_controls.FechaEmitidaDesde = $("#emisionDesde");
+        sp_controls.FechaEmitidaHasta = $("#emisionHasta");
+        sp_controls.Institucion = $("#SR_Institucion");
+        sp_controls.Empleado = $("#SR_Empleado");
+        sp_controls.OS = $("#SP_OS");
+        sp_controls.Paciente = $(".multiPaciente");
+
+        sp_controls.Medico = $("#SR_Medico");
+        sp_controls.Marca = $("#SR_MARCA");
+
+        _evento_inicializarEmpleado();
+        _evento_inicializarTipoFactura();
+        _evento_inicializarOS();
+        _evento_inicializarMarca();
+        _evento_inicializarMedicos();
+
+
+        initControlesFormulario();
+        proponerEjecucion();
+    }
+    function _evento_inicializarMedicos() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Title' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+        var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_MEDICO, viewXml).results;
+
+        for (ins = 0; ins < oItems.length; ins++) {
+            sp_controls.Medico.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].Title + "</option>");
+        }
+
+        medicos = oItems;
+        multiMedicoElements = oItems;
+    }
+    var marcas = [];
+    function _evento_inicializarMarca() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Title' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+        var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_MARCA, viewXml).results;
+
+        for (ins = 0; ins < oItems.length; ins++) {
+            sp_controls.Marca.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].Title + "</option>");
+        }
+        marcas = oItems;
+        multiMarcaElements = oItems;
+    }
+    function _evento_inicializarOS() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Nombre' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+        var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_OS, viewXml).results;
+
+        for (ins = 0; ins < oItems.length; ins++) {
+            sp_controls.OS.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].Nombre + "</option>");
+        }
+        multiOsElements = oItems;
+    }
+    function proponerEjecucion() {
+        var currentDate = new Date();
+        sp_controls.FechaEmitidaDesde.val(currentDate.format("01/MM/yyyy"));
+
+        if (getUrlParameter("empresa") != undefined && getUrlParameter("empresa") != "")
+            sp_controls.Empleado.val(getUrlParameter("empresa"));
+
+        setTimeout(function () {
+            $('#linkActualizar').click();
+        }, 1000);
+    }
+     function ObtenerComboEstados(idx) {
+         var selectFields = "<select class='selectMetadata' id='" + idx + "'><option value='-1'>Todos</option>";
+         var stockFields = SPD_GetListFields(_spPageContextInfo.webAbsoluteUrl, "731f7218-0ba3-494d-b6ef-7b150bd42de1").results
+         var estadoField;
+         for (tt = 0; tt < stockFields.length; tt++) {
+             if (stockFields[tt].InternalName == "Estado") {
+                 estadoField = stockFields[tt];
+             }
+         }
+
+         if (estadoField != null) {
+             var choices = estadoField.Choices.results;
+             for (tt = 0 ; tt < choices.length; tt++) {
+                 selectFields = selectFields + "<option value='" + choices[tt] + "'>" + choices[tt] + "</option>";
+             }
+         }
+         selectFields = selectFields + "</select>";
+
+         return selectFields;
+    }
+     function _evento_inicializarEmpleado() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Descripcion' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+         var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_EMPLEADO, viewXml).results;
+
+         for (ins = 0; ins < oItems.length; ins++) {
+             if(oItems[ins].Id == 1 || oItems[ins].Id == 2)
+                sp_controls.Empleado.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].Descripcion + "</option>");
+        }
+
+    }
+     function _evento_inicializarTipoFactura() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Title' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+         var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_TIPOFACTURA, viewXml).results;
+
+         for (ins = 0; ins < oItems.length; ins++) {
+             sp_controls.TipoFactura.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].Title + "</option>");
+        }
+
+    }
+    function _evento_inicializarInstitucion() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='NombreInstitucion' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+        var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_INSTITUCION, viewXml).results;
+
+         for (ins = 0; ins < oItems.length; ins++) {
+             sp_controls.Institucion.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].NombreInstitucion + "</option>");
+        }
+
+    }
+    function _evento_inicializarObraSocial() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Nombre' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+         var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_OS, viewXml).results;
+
+         for (ins = 0; ins < oItems.length; ins++) {
+             sp_controls.ObraSocial.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].Nombre + "</option>");
+        }
+
+    }
+    function DownloadPresupuesto(idx) {
+        var item = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_REMITO, idx);
+        _evento_GenerarFormulario_DatosPrincipales("Descargar", item);
+        _evento_GenerarFormulario_Cuerpo(item);
+        _evento_Form_Procesar();
+    }
+    function _evento_GenerarFormulario_DatosPrincipales(tarea, item) {
+
+        var oUsuario = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_EMPLEADO, item.EmpleadoId);
+        _FormPrintData.Proveedor = "";
+        var obraSocial = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_OS, item.ObraSocialId);
+        if (obraSocial != "" && obraSocial != null)
+            _FormPrintData.Proveedor = obraSocial.Nombre;
+
+        if (item.InstitucionId != null && item.InstitucionId != undefined) {
+            _FormPrintData.Institucion = "";
+            var institucion = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_INSTITUCION, item.InstitucionId);
+            if (institucion != "" && institucion != null)
+                _FormPrintData.Institucion = institucion.NombreInstitucion;
+        }
+
+        _FormPrintData.Tarea = tarea;
+        _FormPrintData.FormId = "FORMULARIO_REMITO";
+        _FormPrintData.Tipo = "Remito";
+
+        _FormPrintData.Empresa = oUsuario.NombreEmpresa;
+        _FormPrintData.RazonSocial = oUsuario.NombreEmpleado;
+        _FormPrintData.Telefono = oUsuario.Telefono;
+        _FormPrintData.Cuit = oUsuario.Cuit;
+        _FormPrintData.Direccion = oUsuario.Direccion;
+
+        _FormPrintData.Fecha = new Date(item.FechaE).format("dd/MM/yyyy");
+
+        _FormPrintData.Numero = "000-" + item.Numero;
+
+        _FormPrintData.Doctor = item.Doctor ? item.Doctor : "";
+        _FormPrintData.Paciente = item.Paciente ? item.Paciente : "";
+        _FormPrintData.PagoA = item.PagoA;
+    }
+    function _evento_GenerarFormulario_Cuerpo(item) {
+
+        var data = [];
+        var controlDescripciones = item.Descripcion.split("#;");
+        var controlCantidades = item.Cantidad.split("#;");
+
+        var valorTotal = 0;
+
+        if (item.Descripcion != "") {
+
+            for (r = 0; r < controlDescripciones.length; r++) {
+
+                if (controlDescripciones[r] != "") {
+
+                    var cantidad = controlCantidades[r] != "0" && controlCantidades[r] != "-1" ? parseInt(controlCantidades[r]) : -1;
+
+                    data.push({
+                        Cantidad: cantidad,
+                        PU: -1,
+                        PT: -1,
+                        Descripcion: controlDescripciones[r]
+                    });
+                }
+
+            }
+        }
+        _FormPrintData.ValorTotal = valorTotal;
+        _FormPrintData.TextoTotal = NumeroALetras(valorTotal);
+        _FormPrintData.Data = data;
+
+    }
+       function _evento_descargarImagen(imagenSectionId, type) {
+
+    $('#' + imagenSectionId).show();
+    html2canvas(document.querySelector("#" + imagenSectionId), {
+        width: 775,
+        height: parseInt($("#" + imagenSectionId).css("height"))
+    }).then(canvas => {
+
+    contenedorFormulario.appendChild(canvas);
+    $("#" + imagenSectionId).hide();
+    getCanvas = canvas;
+
+    var nombreImagen = type + " N° " + _FormPrintData.Numero + " " + _FormPrintData.Proveedor;
+    var imgageData = getCanvas.toDataURL("image/png");
+    var newData = imgageData.replace(/^data:image\/png/, "data:application/octet-stream");
+    $("#btn-Convert-Html2Image").attr("download", nombreImagen + ".png").attr("href", newData);
+    $("#btn-Convert-Html2Image")[0].click();
+    $('#contenedorFormulario').html("");
+});
+    }
+
+function _FORM_INIT_BODY_CUERPE(index, tipo, cantidad, descripcion, pu, pt) {
+
+    var table = "<table><tr>";
+
+
+    $('#_FORM_TABLE').append("<tr id='_FORM_TABLE_BODY_CUERPE" + index + "'></tr>");
+
+    if (tipo == "Presupuesto") {
+        var firstTD = "<td style='min-width:50px;max-width:50px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (cantidad != -1 ? "(" + cantidad + ")" : "") + "</label></td>";
+        var secondTD = "<td class='parent-canvas' width='450' style='padding-bottom: 10px;min-width:450px;max-width:450px;;vertical-align:top;  display: inline-block;overflow: hidden;position: relative;'>" +
+            "<label class='CUERPEROTULO' style='word-break: break-all;word-break: break-all;max-width: 100%;'>" + fillText(descripcion.toUpperCase()) + "</label></td>";
+        var thirdTD = "<td style='min-width:150px;max-width:150px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (pu != -1 ? "($) " + pu : "") + "</label></td>";
+        var fourTD = "<td style='min-width:150px;max-width:150px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (pt != -1 ? "($) " + pt : "") + "</label></td>";
+
+        table = table + firstTD + secondTD + thirdTD + fourTD + "</tr></table>";
+
+
+        $('#_FORM_TABLE_BODY_CUERPE' + index).append("<td>" + table + "</td>");
+
+    }
+    else {
+        var firstTD = "<td style='min-width:50px;max-width:50px;width:50px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (cantidad != -1 ? "(" + cantidad + ")" : "") + "</label></td>";
+        var secondTD = "<td  width='700'  style='padding-bottom: 10px;word-break: break-all;vertical-align:top;min-width:700px;max-width:700px;width:700px;'>" +
+            "<label class='CUERPEROTULO'  style='word-break: break-all;'>" + fillText(descripcion.toUpperCase()) + "</label></td>";
+
+        table = table + firstTD + secondTD + "</tr></table>";
+
+        $('#_FORM_TABLE_BODY_CUERPE' + index).append("<td>" + table + "</td>");
+    }
+
+}
+
+function fillText(descripcion) {
+    var count = 110;
+    var count2 = 1;
+    var word = "";
+    for (qe = 0; qe < descripcion.length; qe++) {
+        word = word + descripcion[qe];
+        if (qe == count2 * count) {
+            word = word + "<br/>";
+            count2++;
+        }
+    }
+    return word;
+}
+</script>
+<style>
+    #customers th, #customers td {
+        padding: 0px;
+        font-size: 11px;
+        padding-left:1px;
+        padding-right:1px;
+    }
+    #customers img {
+        width:10px;
+    }
+    #customers th {
+        color: black;
+        padding: 0px;
+    }
+    .paginacion a {
+        color: steelblue!important;
+        float: left;
+        padding: 2px 0px;
+        text-decoration: none;
+        border: none;
+    }
+    .secondFilter{
+        border: 1px solid black;
+        background: white;
+        color: black;
+        text-align: center;
+        text-align-last: center;
+        font-weight: bold;
+        width: 100%;
+    }
+</style>
+<script>
+    var multiMedicoSelected = [];
+    var multiMarcaSelected = [];
+    var multiOsSelected = [];
+
+    var multiOsRemoved = [];
+    var multiMarcaRemoved = [];
+    var multiMedicoRemoved = [];
+
+    var currentType = "";
+
+    function _proceso_evento_cambiarMultiLookups(control, controlTD, type) {
+        if (control.find("option:selected").text() == "(Excluir)")
+            inicializarMultiControl(type);
+        else
+            controlTD.html("<b>Ninguno</b>");
+    }
+    function _evento_cambiarOs() {
+        multiOsSelected = [];
+        multiOsRemoved = [];
+        _proceso_evento_cambiarMultiLookups(sp_controls.OS, $('.multiOsTD'), "os");
+    }
+    function _evento_cambiarMedico() {
+        multiMedicoSelected = [];
+        multiMedicoRemoved = [];
+        _proceso_evento_cambiarMultiLookups(sp_controls.Medico, $('.multiMedicoTD'), "medico");
+    }
+    function _evento_cambiarMarca() {
+        multiMarcaSelected = [];
+        multiMarcaRemoved = [];
+        _proceso_evento_cambiarMultiLookups(sp_controls.Marca, $('.multiMarcaTD'), "marca");
+    }
+
+    function inicializarMultiControl(type) {
+
+        currentType = type;
+
+        var tag = '<div id="SR_MULTI" style="overflow: scroll;height: 500px;">';
+        tag = tag + '<input id="checkText" onkeyup="_evento_multi_texto()" placeHolder="Ingrese texto para filtrar"/>';
+        tag = tag + '<input id="checkTodes" onclick="_evento_multi_todos(true)" type="radio" name="oRadio" checked="checked"/>Todos<input type="radio" name="oRadio" onclick="_evento_multi_todos(false)"/>Ninguno<br/>';
+
+        if (type == "os") {
+            for (ins = 0; ins < multiOsElements.length; ins++) {
+                tag = tag + "<div class='padreNodoMulti' style='FONT-SIZE: 11px;font-weight: bold;'><input class='oChecked' type='checkbox' checked='checked' id='multi" + multiOsElements[ins].Id + "'/><label>" + multiOsElements[ins].Nombre + "</label></div>";
+            }
+            SPD_CrearCuadroModal(2, 800, 1500, "Prestadores incluidos", tag + "</div>", "CallBackModal()");
+
+        }
+        if (type == "marca") {
+            for (ins = 0; ins < multiMarcaElements.length; ins++) {
+                tag = tag + "<div class='padreNodoMulti' style='FONT-SIZE: 11px;font-weight: bold;'><input class='oChecked' type='checkbox' checked='checked' id='multi" + multiMarcaElements[ins].Id + "'/><label>" + multiMarcaElements[ins].Title + "</label></div>";
+            }
+            SPD_CrearCuadroModal(2, 800, 1500, "Marcas incluidas", tag + "</div>", "CallBackModal()");
+
+        }
+        if (type == "medico") {
+            for (ins = 0; ins < multiMedicoElements.length; ins++) {
+                tag = tag + "<div class='padreNodoMulti' style='FONT-SIZE: 11px;font-weight: bold;'><input class='oChecked' type='checkbox' checked='checked' id='multi" + multiMedicoElements[ins].Id + "'/><label>" + multiMedicoElements[ins].Title + "</label></div>";
+            }
+            SPD_CrearCuadroModal(2, 800, 1500, "Médicos incluidos", tag + "</div>", "CallBackModal()");
+        }
+    }
+
+
+
+
+    //function inicializarMultiOs() {
+
+    //    var tag = '<div id="SR_OS_MULTI" style="overflow: scroll;height: 500px;">';
+    //    tag = tag + '<input id="checkText" onkeyup="_evento_multi_texto()" placeHolder="Ingrese texto para filtrar"/>';
+    //    tag = tag + '<input id="checkTodes" onclick="_evento_multi_todos(true)" type="radio" name="oRadio" checked="checked"/>Todos<input type="radio" name="oRadio" onclick="_evento_multi_todos(false)"/>Ninguno<br/>';
+
+    //    for (ins = 0; ins < multiOsElements.length; ins++) {
+    //        tag = tag + "<div class='padreNodoMulti' style='FONT-SIZE: 11px;font-weight: bold;'><input class='oChecked' type='checkbox' checked='checked' id='os" + multiOsElements[ins].Id + "'/><label>" + multiOsElements[ins].Nombre + "</label></div>";
+    //    }
+
+    //    SPD_CrearCuadroModal(2, 800, 1500, "Prestadores incluidos", tag + "</div>", "CallBackModal()");
+
+    //}
+
+
+    function CallBackModal() {
+
+        var multiRemoved = [];
+        var multiTD = "";
+        if (currentType == "os")
+            multiTD = "multiOsTD";
+        if (currentType == "medico")
+            multiTD = "multiMedicoTD";
+        if (currentType == "marca")
+            multiTD = "multiMarcaTD";
+
+        $('.oChecked').each(function () {
+            if (!$(this).prop("checked")) {
+                if (currentType == "os") {
+                    multiOsSelected.push({ id: $(this).prop("id").split("multi")[1] });
+                    multiOsRemoved.push($(this).first().next().text());
+                }
+                if (currentType == "medico") {
+                    multiMedicoSelected.push({ id: $(this).prop("id").split("multi")[1] });
+                    multiMedicoRemoved.push($(this).first().next().text());
+                }
+                if (currentType == "marca") {
+                    multiMarcaSelected.push({ id: $(this).prop("id").split("multi")[1] });
+                    multiMarcaRemoved.push($(this).first().next().text());
+                }
+            }
+        });
+
+        if (currentType == "os")
+            multiRemoved = multiOsRemoved;
+        if (currentType == "medico")
+            multiRemoved = multiMedicoRemoved;
+        if (currentType == "marca")
+            multiRemoved = multiMarcaRemoved;
+
+        if (multiRemoved.length == 0) {
+            $('.' + multiTD).html("<b>Ninguno</b>");
+        }
+        else {
+            if (multiRemoved.length < 6) {
+                $('.' + multiTD).html("");
+                for (j = 0; j < multiRemoved.length; j++) {
+                    $('.' + multiTD).append("<b>" + multiRemoved[j] + "</b><br/>");
+                }
+            }
+            else {
+                if (currentType == "os")
+                    $('.' + multiTD).html("<a style='cursor:pointer;' onclick='_evento_verMasMultiRemoved(\"os\");'>Ver más</a>");
+                if (currentType == "medico")
+                    $('.' + multiTD).html("<a style='cursor:pointer;' onclick='_evento_verMasMultiRemoved(\"medico\");'>Ver más</a>");
+                if (currentType == "marca")
+                    $('.' + multiTD).html("<a style='cursor:pointer;' onclick='_evento_verMasMultiRemoved(\"marca\");'>Ver más</a>");
+            }
+        }
+
+        SPD_CerrarCuadroModal();
+    }
+    function _evento_verMasMultiRemoved(type) {
+
+        var multiRemoved = [];
+        var multiElements = [];
+
+        var textoIncluir = "";
+        if (type == "os")
+            textoIncluir = "Prestadores incluídos";
+        if (type == "medico")
+            textoIncluir = "Médicos incluídos";
+        if (type == "marca")
+            textoIncluir = "Marcas incluídos";
+
+        if (type == "os")
+            multiRemoved = multiOsRemoved;
+        if (type == "medico")
+            multiRemoved = multiMedicoRemoved;
+        if (type == "marca")
+            multiRemoved = multiMarcaRemoved;
+
+        if (type == "os")
+            multiElements = multiOsElements;
+        if (type == "medico")
+            multiElements = multiMedicoElements;
+        if (type == "marca")
+            multiElements = multiMarcaElements;
+
+        var tag = '<div style="overflow: scroll;height: 500px;">';
+        for (ins = 0; ins < multiElements.length; ins++) {
+
+            var rta = false;
+            for (ins2 = 0; ins2 < multiRemoved.length; ins2++) {
+                if ((multiElements[ins].Nombre && multiRemoved[ins2] == multiElements[ins].Nombre) || (multiElements[ins].Title && multiRemoved[ins2] == multiElements[ins].Title))
+                    rta = true;
+            }
+            if (!rta)
+                tag = tag + "<b style='color:green'>" + multiOsElements[ins].Nombre + " (INCLUIDO)</b><br/>"
+            else
+                tag = tag + "<b  style='color:red'>" + multiOsElements[ins].Nombre + "</b><br/>"
+
+        }
+        SPD_CrearCuadroModal(1, 800, 1500, textoIncluir, tag + "</div>", false);
+    }
+    function reiniciarMultiOs() {
+        $('.oChecked').prop("checked", true);
+    }
+    function _evento_multi_todos(todes) {
+        $('.oChecked').prop("checked", todes);
+    }
+    function _evento_multi_texto() {
+        var currentVal = $('#checkText').val();
+        if (currentVal != "") {
+            $('#SR_MULTI').find("label").each(function () {
+
+                if ($(this).text().toUpperCase().indexOf(currentVal.toUpperCase()) == -1)
+                    $(this).parent().hide();
+
+            });
+        }
+        else {
+            $('.padreNodoMulti').show();
+        }
+    }
+
+</script>
+<script type="text/javascript">
+    var fullscreen = false;
+    function _evento_fullscreen() {
+        SetFullScreenMode(!fullscreen);
+        fullscreen = !fullscreen;
+    }
+    function _evento_obtener_Marca(idx) {
+        if (marcas.length == 0) {
+            var viewXml = {
+                ViewXml: "<View><Query><Where></Where></Query></View>"
+            }
+            marcas = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_MARCA, viewXml).results
+        }
+
+        for (r = 0; r < marcas.length; r++) {
+            if (marcas[r].Id == idx) {
+                return marcas[r].Title;
+            }
+        }
+
+        return "";
+    }
+</script>
+<script type="text/javascript">
+    function _evento_agregarPaciente() {
+        $('#tdPacientes').append('<br/><input type="text" class="inputMetadata multiPaciente"/><i class="fa fa-minus" style="padding-left: 2px;" onclick="_evento_quitarPaciente($(this));"></i>');
+    }
+    function _evento_quitarPaciente(elem) {
+        elem.prev().prev().remove();
+        elem.prev().remove();
+        elem.remove();
+    }
+    function devolver_Pacientes() {
+        var pacientes = [];
+        sp_controls.Paciente = $(".multiPaciente");
+        if (sp_controls.Paciente.length == 1 && sp_controls.Paciente.first().val() != "") {
+            pacientes.push(sp_controls.Paciente.first().val());
+            return pacientes;
+        }
+        else {
+            if (sp_controls.Paciente.length > 1) {
+                sp_controls.Paciente.each(function () {
+                    if ($(this).val() != "") {
+                        pacientes.push($(this).val());
+                    }
+                });
+            }
+        }
+        return pacientes;
+    }
+</script>
+<script type="text/javascript">
+    function _verInfoMaterial(idx) {
+        var _render = "";
+        for (s = 0; s < _elementosRecuperados.length; s++) {
+            if (_elementosRecuperados[s].ID == idx) {
+
+                if (_elementosRecuperados[s].Producto != null) {
+                    _render = "Producto(s): " + _elementosRecuperados[s].Producto + "<br/>";
+                }
+                if (_elementosRecuperados[s].Medida != null) {
+                    _render = _render + "Medida(s): " + _elementosRecuperados[s].Medida + "<br/>";
+                }
+                if (_elementosRecuperados[s].Unidades != "") {
+                    _render = _render + "Cantidad(s): " + _elementosRecuperados[s].Unidades + "<br/>";
+                }
+                if (_elementosRecuperados[s].MarcaNombres.length > 0) {
+                    _render = _render + "Marca(s): ";
+                    for (d = 0; d < _elementosRecuperados[s].MarcaNombres.length; d++) {
+                        _render = _render + d + "° " + _elementosRecuperados[s].MarcaNombres[d] + " ";
+                    }
+                    _render = _render + "<br/>";
+                }
+                if (_elementosRecuperados[s].StockNoRegistrado != null) {
+                    _render = _render + "Stock no registrado: " + _elementosRecuperados[s].StockNoRegistrado + "<br/>";
+                }
+                if (_elementosRecuperados[s].StockId != null && _elementosRecuperados[s].StockId.results.length > 0) {
+                    var idss = _elementosRecuperados[s].StockId.results;
+                    var render = "Stock registrado<br/><table><tr><th>Nombre</th><th>Estado</th><th>LOT</th><th>REF</th><th>SN</th><th>Marca</th><th>Medida</th><th>Comentario</th></tr>";
+                    for (w = 0; w < idss.length; w++) {
+                        var _currStock = _evento_obtener_stock(idss[w]);
+                        render = render + "<tr><td><nobr>" + _currStock.NombreStock + "</nobr></td>" +
+                            "<td>" + _currStock.Estado + "</td>" + 
+                            "<td>" + _currStock.LOT + "</td>" + 
+                            "<td>" + _currStock.REF + "</td>" + 
+                            "<td>" + (_currStock.SN != null ? _currStock.SN : (_currStock.NROSerie != null ? _currStock.NROSerie : "")) + "</td>" + 
+                            "<td>" + _currStock.Marca + "</td>" + 
+                            "<td>" + _currStock.Medida + "</td>" + 
+                            "<td>" + _currStock.Comentario + "</td></tr>";
+                    }
+                    render = render + "</table>";
+                    _render = _render + render + "<br/>";
+                }
+            }
+        }
+        if (_render == "") {
+            _render = "Sin material asignado";
+        }
+        SPD_CrearCuadroModal(2, 1200, 1500, "Material",_render);
+    }
+    var _stock = [];
+    function _evento_obtener_stock(idx) {
+        var viewXml = {
+            ViewXml: "<View><Query><Where></Where></Query></View>"
+        }
+        if (_stock.length == 0) {
+            _stock = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_STOCK, viewXml).results;
+        }
+
+        for (r = 0; r < _stock.length; r++) {
+            if (_stock[r].Id == idx) {
+                return _stock[r];
+            }
+        }
+        return "";
+    }
+
+</script>
+<script type="text/javascript">
+    function _evento_reporteMensual() {
+
+        var vistas = SPD_GetLisViews(_spPageContextInfo.webAbsoluteUrl, "b2eef159-f5c2-4542-864b-0366056f6608").results;
+        var guid = "";
+        var url = "/Lists/FacturaCompra/MedilifeMensual.aspx";
+        if ($("#SR_Empleado").val() == "2")
+            url = "/Lists/FacturaCompra/DFMedicMensual.aspx";
+        if ($("#SR_Empleado").val() == "(Todos)")
+            url = "/Lists/FacturaCompra/TodosMensual.aspx";
+
+        for (d = 0; d < vistas.length; d++) {
+            if (vistas[d].ServerRelativeUrl.indexOf(url) != -1) {
+                console.log(vistas[d].ServerRelativeUrl)
+                guid = "{" + vistas[d].Id + "}";
+            }
+        }
+
+        var exporturl = _spPageContextInfo.webAbsoluteUrl + "/_vti_bin/owssvr.dll?CS=109&Using=_layouts/query.iqy&List={b2eef159-f5c2-4542-864b-0366056f6608}" + "&View=" + guid + "&CacheControl=1";
+        window.location.href = exporturl;
+    }
+    function _evento_reporteTotal() {
+
+        var vistas = SPD_GetLisViews(_spPageContextInfo.webAbsoluteUrl, "b2eef159-f5c2-4542-864b-0366056f6608").results;
+        var url = "/Lists/FacturaCompra/MedilifeTotal.aspx";
+        if ($("#SR_Empleado").val() == "2")
+            url = "/Lists/FacturaCompra/DFMedicTotal.aspx";
+        if ($("#SR_Empleado").val()  == "(Todos)")
+            url = "/Lists/FacturaCompra/TodosTotal.aspx";
+
+        for (d = 0; d < vistas.length; d++) {
+            if (vistas[d].ServerRelativeUrl.indexOf(url) != -1) {
+                console.log(vistas[d].ServerRelativeUrl)
+                guid = "{" + vistas[d].Id + "}";
+            }
+        }
+
+        var exporturl = _spPageContextInfo.webAbsoluteUrl + "/_vti_bin/owssvr.dll?CS=109&Using=_layouts/query.iqy&List={b2eef159-f5c2-4542-864b-0366056f6608}" + "&View=" + guid + "&CacheControl=1";
+        window.location.href = exporturl;
+
+    }
+</script>
+<script>
+    setInterval(function () {
+        if ($('#sideNavBox').length > 0) {
+            $('#sideNavBox').remove();
+            $('#contentBox').css("margin-left", "100px");
+        }
+    }, 600);
+</script>

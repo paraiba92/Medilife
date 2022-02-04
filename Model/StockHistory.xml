@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/"  xmlns:splog="http://emmsa.net/schemas/splog/">
+	<EnsureList name="StockHistory" title="StockHistory" description="StockHistory">
+
+    <ActionsGroup status="Skip">
+
+      <EnsureTextField internalName="Estado" displayName="Estado" siteColumn="FALSE" />
+      <EnsureTextField internalName="Institucion" displayName="Institucion" siteColumn="FALSE" />
+      <EnsureTextField internalName="InstitucionConsignado" displayName="InstitucionConsignado" siteColumn="FALSE" />
+      <EnsureLookupField internalName="Remito" displayName="Remito asociado" description="" listName="Remito" indexed="TRUE" siteColumn="FALSE" />
+      <EnsureMultiTextField internalName="Comentario" displayName="Comentario" siteColumn="FALSE" />
+      <EnsureLookupField internalName="StockId" displayName="StockId" description="" listName="Stock" indexed="TRUE" siteColumn="FALSE" />
+      <EnsureMultiTextField internalName="Metadata" displayName="Estado" siteColumn="FALSE" />
+
+    </ActionsGroup>
+    <EnsureChoiceField internalName="Estado" displayName="Estado" siteColumn="FALSE" defaultValue="D">
+      <na:Choice value="D">En depósito</na:Choice>
+      <na:Choice value="P">Pendiente de entrega</na:Choice>
+      <na:Choice value="F">Facturado</na:Choice>
+      <na:Choice value="EN">Entregado</na:Choice>
+      <na:Choice value="E">Entregado y usado</na:Choice>
+      <na:Choice value="EI">Entregado institución</na:Choice>
+    </EnsureChoiceField>
+    <EnsureLookupField internalName="RemitoRelacionado" displayName="Remito relacionado" listName="Remito" indexed="TRUE" siteColumn="FALSE" />
+    <EnsureDateField internalName="FechaDevolucion" displayName="Fecha de devolución" siteColumn="FALSE" time="FALSE" />
+
+    <EnsureContentType name="Item" parentContentType="System">
+      <ActionsGroup status="Skip">
+        <AddFieldToContentType name="Title" required="FALSE" showInDisplayForm="FALSE" showInNewForm="FALSE" showInEditForm="FALSE"/>
+        <AddFieldToContentType name="NombreStock" required="TRUE"/>
+        <AddFieldToContentType name="DescripcionProducto" required="FALSE"/>
+        <AddFieldToContentType name="Estado" required="TRUE"/>
+        <AddFieldToContentType name="Institucion_Estado" required="FALSE"/>
+
+        <AddFieldToContentType name="NuevaMarca" required="FALSE"/>
+        <AddFieldToContentType name="Marca" required="FALSE"/>
+        <AddFieldToContentType name="LOT" required="FALSE"/>
+        <AddFieldToContentType name="REF" required="FALSE"/>
+        <AddFieldToContentType name="SN" required="FALSE"/>
+        <AddFieldToContentType name="GETIN" required="FALSE"/>
+        <AddFieldToContentType name="NROSerie" required="FALSE"/>
+        <AddFieldToContentType name="Medida" required="FALSE"/>
+        <AddFieldToContentType name="FechaCompraStock" required="FALSE"/>
+        <AddFieldToContentType name="FechaIngresoStock" required="FALSE"/>
+        <AddFieldToContentType name="FechaVencimientoStock" required="FALSE"/>
+        <AddFieldToContentType name="NumeroRemito" required="FALSE"/>
+        <AddFieldToContentType name="FechaRemito" required="FALSE"/>
+        <AddFieldToContentType name="ProveedorRemito" required="FALSE"/>
+        <AddFieldToContentType name="FacturaProveedor" required="FALSE"/>
+        <AddFieldToContentType name="Institucion" required="FALSE"/>
+        <AddFieldToContentType name="ConsignadoOtros" required="FALSE"/>
+        <AddFieldToContentType name="Comentario" required="FALSE"/>
+        <AddFieldToContentType name="EmpresaTransportadora" required="FALSE"/>
+        <AddFieldToContentType name="IdentificadorUnico" required="FALSE"/>
+        <AddFieldToContentType name="Remito" required="FALSE" showInNewForm="FALSE" showInEditForm="FALSE"/>
+
+        <ReorderFields />
+      </ActionsGroup>
+      
+      <AddFieldToContentType name="RemitoRelacionado" required="FALSE"/>
+      <AddFieldToContentType name="FechaDevolucion" required="FALSE"/>
+
+    </EnsureContentType>
+    
+		<EnsureView name="AllItems" title="Todos los elementos" default="TRUE">
+			<na:ViewFields>
+				<na:FieldRef name="NombreStock"/>
+        <na:FieldRef name="LOT"/>
+        <na:FieldRef name="REF"/>
+        <na:FieldRef name="Medida"/>
+        <na:FieldRef name="FechaVencimientoStock"/>
+        <na:FieldRef name="Comentario"/>
+        <na:FieldRef name="Edit"/>
+			</na:ViewFields>
+		</EnsureView>		
+  
+	</EnsureList>
+</Root>

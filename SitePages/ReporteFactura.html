@@ -1,0 +1,452 @@
+<script type="text/javascript" src="/_layouts/15/ScriptResx.ashx?name=sp.res&culture=es-es"></script>
+<script type="text/javascript" src="/_layouts/15/sp.init.js"></script>
+<script type="text/javascript" src="/_layouts/15/MicrosoftAjax.js"></script>
+<script type="text/javascript" src="/_layouts/15/3082/strings.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.runtime.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.dialog.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientforms.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientpeoplepicker.js"></script>
+<script type="text/javascript" src="/_layouts/15/clienttemplates.js"></script>
+<script type="text/javascript" src="/_layouts/15/autofill.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.taxonomy.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.taxonomy.js"></script>
+<script type="text/javascript">
+
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Office365Icons/Office365Icons.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/paginacion.css") + "'></link>");
+
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-ui/css/base/jquery-ui-1.10.4.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-1.7.1.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-ui/js/jquery-ui-1.10.4.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-1.4.8.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-route.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-locale_es-es.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/Angular/dirPagination.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/ReporteFactura_Angular.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings.js") + "'><" + "/script>");
+
+</script>
+<style>
+    .metadataTd {
+        padding:6px;
+    }
+    .rotulo {
+        padding-right: 10px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: bold;
+            color: steelblue;
+    }
+    .selectMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .inputMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .actualizarGrande {
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: middle;
+        width: 21px;
+        height: 15px;
+        cursor: pointer;
+        vertical-align: middle;
+        background: url('/_layouts/15/images/spcommon.png?rev=23') no-repeat -132px -112px;
+    }
+  
+    .tdAngular {
+        /*text-align:center;*/
+    }
+    .dateInput {
+        width: 150px;
+    }
+    #customers a {
+        color: rgb(0, 114, 198)!important;
+    }
+
+    #customers {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #customers th, #customers td {
+            padding-left: 8px;
+            padding-right: 8px;
+            padding-bottom: 1px;
+            padding-top: 1px;
+        }
+
+    #customers tr:hover {
+        background-color: #ffff99;
+    }
+
+        #customers th {
+            background-color: #F2F2F2;
+            color: grey;
+        }
+    .centerAlign {
+        text-align: center;
+    }
+    .span10 > label {
+    width: 140px;
+    font-weight: bold;
+    color: grey;
+}
+</style>
+        
+<div ng-app="miApp" class="row">
+    <div ng-controller="spResultado" class="span10">
+        <table>
+            <tr>
+                <td colspan="4" style="text-align:right"></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Número:</label></td>
+                <td class="metadataTd"><input class="inputMetadata" id="SR_NUMERO"/></td>
+                <td class="metadataTd"><label class="rotulo">Tipo factura:</label></td>
+                <td class="metadataTd">
+                <select class="selectMetadata" id="SR_TIPO">
+                    <option value="(Todos)">(Todos)</option>
+                    <option value="A">Factura A</option>
+                    <option value="B">Factura B</option>
+                    <option value="CF">Consumidor final</option>
+                    <option value="R">Recibo</option>
+                    <option value="MMA">MiPy Mes A</option>
+                    <option value="MMB">MiPy Mes B</option>
+                </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Proveedor:</label></td>
+                <td class="metadataTd"><select class="selectMetadata" id="SP_OS"><option value="(Todos)">(Todos)</option></select></td>
+                <td class="metadataTd"><label class="rotulo">Stock:</label></td>
+                <td class="metadataTd"><select class="selectMetadata" id="SP_Stock"><option value="(Todos)">(Todos)</option></select></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Emitida:</label></td>
+                <td class="metadataTd"><nobr><input class="dateInput" id="SR_FechaEmitidaDesde"/>&nbsp;&nbsp;<label class="rotulo">hasta:</label>&nbsp;&nbsp;<input class="dateInput" id="SR_FechaEmitidaHasta"/></nobr></td>
+             </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Vencimiento:</label></td>
+                <td class="metadataTd"><nobr><input class="dateInput" id="SR_FechaVencimientoDesde"/>&nbsp;&nbsp;<label class="rotulo">hasta:</label>&nbsp;&nbsp;<input class="dateInput" id="SR_FechaVencimientoHasta"/></nobr></td>
+             </tr>            
+             <tr>
+                <td class="metadataTd"><label class="rotulo">Cobradas:</label></td>
+                <td class="metadataTd"><nobr><input class="dateInput" id="SR_FechaCobradaDesde"/>&nbsp;&nbsp;<label class="rotulo">hasta:</label>&nbsp;&nbsp;<input class="dateInput" id="SR_FechaCobradaHasta"/></nobr></td>
+             </tr>  
+            <tr>
+                <td style="text-align: right; padding-top: 30px;" colspan="4">
+                    <nobr>
+                        <button id="linkVencidas"  onclick="_evento_FacturasVencidas();event.preventDefault()" style="border-radius: 5px;color: white!important;min-width: 30px!important;border: none;background: red;cursor:pointer;font-size:12px;font-weight:bold;border:1px solid lightgrey" ><i class="fa fa-warning"></i>&nbsp;Facturas vencidas</button>
+                        <button  id="linkPorVencer"  onclick="_evento_FacturasCobrar(); event.preventDefault()" style="border-radius: 5px;color: white!important;min-width: 30px!important;border: none;background: darkorange;cursor:pointer;font-size:12px;font-weight:bold;border:1px solid lightgrey" ><i class="fa fa-warning"></i>&nbsp;Facturas a vencer</button>
+                        <button  id="linkACobrar"  onclick="_evento_FacturasPendienteCobro(); event.preventDefault()" style="border-radius: 5px;color: white!important;min-width: 30px!important;border: none;background: green;cursor:pointer;font-size:12px;font-weight:bold;border:1px solid lightgrey" ><i class="fa fa-search"></i>&nbsp;Pendientes de cobro</button>
+                        <button class="add" id="linkActualizar" ng-click="ejecutarWS()" onclick="event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: white;cursor:pointer;font-size:12px;font-weight:bold;color:black;border:1px solid lightgrey" ><i class="fa fa-search"></i>&nbsp;Buscar elementos</button>
+                        <button onclick="limpiarFiltros();event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: white;cursor:pointer;font-size:12px;font-weight:bold;color:black;border:1px solid lightgrey" ><i class="fa fa-filter"></i>&nbsp;Limpiar filtros</button>
+                        <button id="linkActualizar" onclick="CreateElement();event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: steelblue;cursor:pointer;font-size:12px;font-weight:bold" ><i class="fa fa-plus"></i>&nbsp;Crear nuevo</button>
+                    </nobr>
+                </td>
+            </tr>
+        </table>
+    <br />
+    <br />
+        <div id='cargandoPagina' ng-show="showLoading">
+            <div id="progreso" style="width:100%">
+                <div id="DeltaPageStatusBar"><div id="pageStatusBar" class="ms-status-blue" aria-live="polite" aria-relevant="all" style="display: block;"><span id="status_33" class="ms-status-status" role="alert" tabindex="0"><span id="status_33_hiddenPriMsg" class="ms-accessible">Cargando información</span><span class="ms-status-iconSpan"><img class="ms-status-iconImg" src="/_layouts/15/images/spcommon.png" data-themekey="#"></span><span class="ms-bold ms-status-title"><label id="palabraCargando" style="vertical-align:baseline;">Cargando información...</label></span><span class="ms-status-body" id="status_33_body"><img src="/_Layouts/Images/progress.gif" data-themekey="#"></span><br></span></div></div>
+            </div>
+        </div>
+        <div ng-show="jSON.length === 0">
+            No hay elementos para mostrar
+        </div>
+        <div ng-hide="jSON.length === 0">
+            <b><i>{{jSON.length}} registro(s) encontrado(s)</i></b>
+            <br /><br/>
+        </div>
+        <table id="customers" ng-hide="jSON.length === 0" style="border-collapse: collapse">
+            <thead>
+                <tr style="text-align:center;">
+                    <th></th>
+                    <th>Numero</th>
+                    <th>Tipo</th>
+                    <th>Detalle</th>
+                    <th>Emitida</th>
+                    <th>Vencimiento</th>
+                    <th>Cobrada</th>
+                    <th>Crédito</th>
+                    <th>Débito</th>
+                    <th>Proveedor</th>
+                    <th>Stock</th>
+                    <th>Cabecera</th>
+                </tr>
+            </thead>
+            <tr dir-paginate="legajo in jSON|orderBy:sortKey:reverse|filter:search|itemsPerPage:registrosPagina" current-page="currentPage">
+                <td><button style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: steelblue;cursor:pointer;" id="{{legajo.Id}}" onclick="UpdateElement($(this).attr('Id'));event.preventDefault()"><i class="fa fa-edit"></i></button></td>
+                <td class="tdAngular" style="text-align:center;"><a style="cursor:pointer;" id="{{legajo.Id}}" onclick="UpdateElement($(this).attr('Id'))">{{legajo.Numero}}</a></td>
+                <td class="tdAngular" style="text-align:center;"><nobr>{{legajo.TipoFactura}}</nobr></td>
+                <td class="tdAngular" style="text-align:center;"><button style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: deepskyblue;cursor:pointer;" id="{{legajo.Id}}" onclick="showDetalle($(this).attr('Id')); event.preventDefault()" ng-show="legajo.Detalle != null"><i class="fa fa-info"></i></button></td>
+                <td class="tdAngular" style="text-align:center;">{{legajo.FechaEmitida}}</td>
+                <td class="tdAngular" style="text-align:center;color:red;">{{legajo.FechaVencimiento}}</td>
+                <td class="tdAngular" style="text-align:center;color:blue;">{{legajo.FechaPago}}</td>
+                <td class="tdAngular" style="text-align:center;color:green;"><nobr><span ng-show="legajo.Credito">$</span>&nbsp;{{legajo.Credito}}</nobr></td>
+                <td class="tdAngular" style="text-align:center;color:green;"><nobr><span ng-show="legajo.Debito">$</span>&nbsp;{{legajo.Debito}}</nobr></td>
+                <td class="tdAngular" style="text-align:center;color:blue;">{{legajo.ObraSocialNombre}}</td>
+                <td class="tdAngular" style="text-align:center;color:blue;" ><ul><li ng-repeat="stock in legajo.Stock">{{stock}}</li></ul></td>
+                <td class="tdAngular" style="text-align:center;"><button style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: deepskyblue;cursor:pointer;" id="{{legajo.Id}}" onclick="showCabecera($(this).attr('Id')); event.preventDefault()" ng-show="legajo.Cabecera != null"><i class="fa fa-info"></i></button></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="font-weight:bold">Total crédito: </td>
+                <td colspan="2" style="background:darkseagreen;color:white;text-align:center">$ {{creditoTotal}}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="font-weight:bold">Total débito: </td>
+                <td colspan="2" style="background:indianred;color:white;text-align:center;">$ {{debitoTotal}}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="font-weight:bold">Total resultado: </td>
+                <td colspan="2" style="background:darkseagreen;color:white;text-align:center;">$ {{totalidad}}</td>
+            </tr>
+        </table>
+        <dir-pagination-controls class="paginacion" max-size="5" direction-links="true" boundary-links="true"></dir-pagination-controls>
+</div>
+</div>
+<script>
+    //Helper
+    var proveedores = [];
+    var stock = [];
+
+    var sp_controls = {};
+
+    function init_ConsultaLicencias(){
+        $('#DeltaPlaceHolderPageTitleInTitleArea').html("Facturas");
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("font-weight", "bold")
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("color", "steelblue")
+        $('.pagination').css("display", "flex")
+        $('.pagination li').css("padding", "5px")
+        $('.pagination li').css("list-style", "none")
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+              event.preventDefault();
+              $('.add').click();
+              return false;
+            }
+          });
+       inicializarControles();
+    }
+    function inicializarControles() {
+
+        sp_controls.Numero = $('#SR_NUMERO');
+        sp_controls.Tipo = $('#SR_TIPO');
+        sp_controls.Stock = $("#SP_Stock");
+        sp_controls.OS = $("#SP_OS");
+        sp_controls.FechaEmitidaDesde = $("#SR_FechaEmitidaDesde");
+        sp_controls.FechaEmitidaHasta = $("#SR_FechaEmitidaHasta");
+        sp_controls.FechaVencimientoDesde = $("#SR_FechaVencimientoDesde");
+        sp_controls.FechaVencimientoHasta = $("#SR_FechaVencimientoHasta");
+        sp_controls.FechaCobradaDesde = $("#SR_FechaCobradaDesde");
+        sp_controls.FechaCobradaHasta = $("#SR_FechaCobradaHasta");
+
+        _evento_inicializarOS();
+        _evento_inicializarStock();
+        SPStaff_InicializarDatePickers();
+
+    }
+    function limpiarFiltros() {
+
+        sp_controls.Numero.val("");
+        sp_controls.Tipo.val("(Todos)");
+        sp_controls.Stock.val("(Todos)");
+        sp_controls.OS.val("(Todos)");
+
+        sp_controls.FechaEmitidaDesde.val("");
+        sp_controls.FechaEmitidaHasta.val("");
+        sp_controls.FechaVencimientoDesde.val("");
+        sp_controls.FechaVencimientoHasta.val("");
+        sp_controls.FechaCobradaDesde.val("");
+        sp_controls.FechaCobradaHasta.val("");
+
+    }
+    function _evento_inicializarOS() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Nombre' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+        var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_OS, viewXml).results;
+
+        for (ins = 0; ins < oItems.length; ins++) {
+            sp_controls.OS.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].Nombre + "</option>");
+        }
+
+    }
+    
+    function _evento_inicializarStock() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='NombreStock' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+        var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_STOCK, viewXml).results;
+
+        for (ins = 0; ins < oItems.length; ins++) {
+            sp_controls.Stock.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].NombreStock + "</option>");
+        }
+
+    }   
+    function _evento_obtener_OS(idx) {
+
+        if (proveedores.length == 0) {
+             proveedores = SPD_GetListItems(_spPageContextInfo.webAbsoluteUrl, MD_OS).results;
+        }
+
+        for (r = 0; r < proveedores.length; r++) {
+            if (proveedores[r].Id == idx) {
+                return proveedores[r].Nombre;
+            }
+        }
+
+         return "";
+
+    }
+    function _evento_obtener_Stock(idx) {
+        if (stock.length == 0) {
+             stock = SPD_GetListItems(_spPageContextInfo.webAbsoluteUrl, MD_STOCK).results;
+        }
+        for (r = 0; r < stock.length; r++) {
+            if (stock[r].Id == idx) {
+                return stock[r].NombreStock;
+            }
+        }
+        return "";
+    }
+    function SPStaff_InicializarDatePickers() {
+        $('.dateInput').datepicker();
+        proponerFecha();
+    }
+    if (_spBodyOnLoadFunctionNames) {
+        _spBodyOnLoadFunctionNames.push("init_ConsultaLicencias");
+    }
+    else {
+        $(document).ready(function () {
+            init_ConsultaLicencias();
+        });
+    }
+    function proponerFecha() {
+        var date = new Date();
+ /*       var firstDay = new Date(date.getFullYear(), date.getMonth(), 1).format("dd/MM/yyyy");
+        sp_controls.EmitidoDesde.val(firstDay);
+        var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).format("dd/MM/yyyy");
+        sp_controls.EmitidoHasta.val(lastDay);*/
+    }
+    function UpdateElement(idx) {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/Factura/EditForm.aspx?ID=" + idx;
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function CreateElement() {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/Factura/NewForm.aspx";
+        var options = {
+            title: "",
+            width: screen.height * 0.9,
+            height: screen.width * 0.7,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function _callbackRespuesta(result){
+            switch(result) {
+            case SP.UI.DialogResult.OK:
+                console.log("You clicked OK");
+                $('#linkActualizar').click();
+                // reload data as necessary here
+                break;
+            case SP.UI.DialogResult.cancel:
+                console.log("You clicked cancel or close.");
+                break;
+        }
+    }
+    function showDetalle(idx) {
+       var oItem = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_FACTURA, idx);
+        if(oItem) { 
+            if(oItem.Detalle == null)
+             SPD_CrearCuadroModal(1, 800, 600, "Comentario", "<p style='padding-right:20px;'>Sin detalles</p>",false);
+           else
+             SPD_CrearCuadroModal(1, 800, 600, "Comentario", "<p style='padding-right:20px;'>"+ oItem.Detalle +"</p>",false);
+
+        }
+    }
+    function showCabecera(idx) {
+       var oItem = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_FACTURA, idx);
+        if(oItem) { 
+            if(oItem.Cabecera == null)
+             SPD_CrearCuadroModal(1, 800, 600, "Comentario", "<p style='padding-right:20px;'>Sin cabecera</p>",false);
+           else
+             SPD_CrearCuadroModal(1, 800, 600, "Comentario", "<p style='padding-right:20px;'>"+ oItem.Cabecera +"</p>",false);
+
+        }
+    }
+    
+    var vencidas = false;
+    var aVencer = false;
+
+    function _evento_FacturasVencidas() {
+        vencidas = true;
+        limpiarFiltros();
+        var fechaHoy = new Date().format("dd/MM/yyyy");
+        sp_controls.FechaVencimientoHasta.val(fechaHoy);
+        $('#linkActualizar').click();
+    }
+    function _evento_FacturasCobrar() {
+
+        var oneDay = 24 * 60 * 60 * 1000, // 24h
+        today = new Date().getTime(), // in ms
+        firstDate,
+        secondDate;
+
+        firstDate = new Date(today + 30 * oneDay);
+
+        vencidas = true;
+        limpiarFiltros();
+        sp_controls.FechaVencimientoHasta.val(firstDate.format("dd/MM/yyyy"));
+        $('#linkActualizar').click();
+    }
+    function _evento_FacturasPendienteCobro() {
+        vencidas = true;
+        limpiarFiltros();
+        $('#linkActualizar').click();
+    }
+    var marcas = [];
+    function _evento_obtener_Marca(idx) {
+        if (marcas.length == 0) {
+            var viewXml = {
+                ViewXml: "<View><Query><Where></Where></Query></View>"
+            }
+            marcas = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_MARCA, viewXml).results
+        }
+
+        for (r = 0; r < marcas.length; r++) {
+            if (marcas[r].Id == idx) {
+                return marcas[r].Title;
+            }
+        }
+
+        return "";
+    }
+</script>

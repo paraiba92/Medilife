@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/"  xmlns:splog="http://emmsa.net/schemas/splog/">
+	<EnsureList name="Empleado" title="Empleado Medilife" description="Empleado Medilife">
+
+    <EnsureTextField internalName="Descripcion" displayName="Descripción usuario" description="Valor ingresado para diferenciar al usuario en los presupuestos (Ej: Cristian delfabro (dfmedic))" siteColumn="FALSE" />
+    <EnsureTextField internalName="NombreEmpleado" displayName="Nombre" siteColumn="FALSE" />
+    <EnsureTextField internalName="Cuit" displayName="Cuit/Cuil" siteColumn="FALSE" />
+    <EnsureTextField internalName="Telefono" displayName="Tel/Fax" siteColumn="FALSE" />
+    <EnsureTextField internalName="Direccion" displayName="Dirección" siteColumn="FALSE" />
+    <EnsureTextField internalName="Email" displayName="Email" siteColumn="FALSE" />
+    <EnsureTextField internalName="NombreEmpresa" displayName="Nombre empresa" description="Este valor se impactará en los presupuestos" siteColumn="FALSE" />
+
+    <EnsureContentType name="Item" parentContentType="System">
+			<AddFieldToContentType name="Title" required="FALSE" showInDisplayForm="FALSE" showInNewForm="FALSE" showInEditForm="FALSE"/>
+			<AddFieldToContentType name="NombreEmpleado" required="TRUE"/>
+      <AddFieldToContentType name="Descripcion" required="FALSE"/>
+      <AddFieldToContentType name="NombreEmpresa" required="FALSE"/>
+      <AddFieldToContentType name="Cuit" required="FALSE"/>
+      <AddFieldToContentType name="Email" required="FALSE"/>
+			<AddFieldToContentType name="Telefono" required="FALSE"/>
+			<AddFieldToContentType name="Direccion" required="FALSE"/>
+      <ReorderFields />
+		</EnsureContentType>
+    
+		<EnsureView name="AllItems" title="Todos los elementos" default="TRUE">
+			<na:ViewFields>
+				<na:FieldRef name="NombreEmpleado"/>
+				<na:FieldRef name="Telefono"/>
+				<na:FieldRef name="Direccion"/>
+				<na:FieldRef name="Email"/>
+				<na:FieldRef name="Cuit"/>
+				<na:FieldRef name="Modified"/>
+				<na:FieldRef name="Editor"/>
+				<na:FieldRef name="Edit"/>
+			</na:ViewFields>
+		</EnsureView>		
+  
+	</EnsureList>
+</Root>

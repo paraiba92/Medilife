@@ -1,0 +1,56 @@
+<script type="text/javascript">
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/presupuesto.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQ.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js")+"'><"+"/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/ComponenteAdd.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings.js") + "'><" + "/script>");
+</script>
+<script type="text/javascript">
+    SP.SOD.executeFunc("clienttemplates.js", "SPClientTemplates", function () {
+        function init() {
+            var templates = {};
+            SPClientTemplates.TemplateManager.RegisterTemplateOverrides({
+                OnPreRender: CSROnPreRender,
+                OnPostRender: CSROnPostRender
+            });
+        }
+        RegisterModuleInit(SPClientTemplates.Utility.ReplaceUrlTokens("~siteCollection/Style Library/customlayout.js"), init);
+        init();
+    });
+    var _cols = {};
+    function inicializar_Columnas() {
+        _cols.ObraSocial = $("[id^='ObraSocial'][id$='LookupField']");
+        _cols.TipoFactura = $("[id^='TipoFactura'][id$='LookupField']");
+        _cols.IVA = $("[id^='IVA'][id$='NumberField']");
+        _cols.Monto = $("[id^='Monto'][id$='NumberField']");
+        ComponenteAdd_Plus(_cols.ObraSocial, "ObraSocial", MD_OS, "ObraSocial");
+        ComponenteAdd_Plus(_cols.TipoFactura, "TipoFactura", MD_TIPOFACTURA, "TipoFactura");
+
+        _cols.IVA.parent().before("<i class='fa fa-calculator' onclick='calcularIVA()' style='padding-right:5px;cursor:pointer;'></i>")
+
+        _cols.Empleado = $("[id^='Empleado'][id$='LookupField']");
+        if (getUrlParameter("empleado") != undefined && getUrlParameter("empleado") != "")
+            _cols.Empleado.val(getUrlParameter("empleado"));
+
+
+        setTimeout(function () {
+            SPStaff_initDateTimePikers();
+        }, 500);
+        $('li[id="Ribbon.ListForm.Edit.Commit"]').hide();
+        $('li[id="Ribbon.ListForm.Edit.Clipboard"]').hide();
+        $('li[id="Ribbon.ListForm.Edit.SpellCheck"]').hide();
+        $('a[id="Ribbon.ListForm.Edit.Actions.DeleteItem-Large"]').hide();
+    }
+    function onPostRenderFunction(ctx) {
+        inicializar_Columnas();
+    }
+    function calcularIVA() {
+        var result = (parseFloat(_cols.Monto.val().replace(",",".")) / 1.21 * 0.21).toFixed(2).toString();
+        _cols.IVA.val(result.replace(".",","));
+    }
+</script>

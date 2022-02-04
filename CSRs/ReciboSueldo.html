@@ -1,0 +1,159 @@
+<div id="hideParentWebPart" style="display:none"></div>
+<div style="display:none" data-role="form">
+	<h3 style='padding-top:15px'><span><strong>Datos principales:</strong></span></h3>
+	<hr/>
+	<div data-field="Empresa DireccionEmpresa CuitEmpresa TelefonoEmpreas Empleado PeriodoAnio PeriodoMes" class="my-formfield">
+		<label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+		<span>
+			<span data-role="field-control"></span>
+			<span class="ms-metadata">{Description}</span>
+		</span>
+	</div>
+	<h3 style='padding-top:15px'><span><strong>Datos recibo:</strong></span></h3>
+	<table>
+		<tr>
+			<td>
+				<div data-field="Concepto1" class="my-formfield">
+					<label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+					<span>
+						<span data-role="field-control"></span>
+						<span class="ms-metadata">{Description}</span>
+					</span>
+				</div>
+			</td>
+			<td>
+				<div data-field="Monto1" class="my-formfield">
+					<span>
+						<span data-role="field-control"></span>
+						<span class="ms-metadata">{Description}</span>
+					</span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div data-field="Concepto2" class="my-formfield">
+					<label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+					<span>
+						<span data-role="field-control"></span>
+						<span class="ms-metadata">{Description}</span>
+					</span>
+				</div>
+			</td>
+			<td>
+				<div data-field="Monto2" class="my-formfield">
+					<span>
+						<span data-role="field-control"></span>
+						<span class="ms-metadata">{Description}</span>
+					</span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div data-field="Concepto3" class="my-formfield">
+					<label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+					<span>
+						<span data-role="field-control"></span>
+						<span class="ms-metadata">{Description}</span>
+					</span>
+				</div>
+			</td>
+			<td>
+				<div data-field="Monto3" class="my-formfield">
+					<span>
+						<span data-role="field-control"></span>
+						<span class="ms-metadata">{Description}</span>
+					</span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div data-field="Concepto4" class="my-formfield">
+					<label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+					<span>
+						<span data-role="field-control"></span>
+						<span class="ms-metadata">{Description}</span>
+					</span>
+				</div>
+			</td>
+			<td>
+				<div data-field="Monto4" class="my-formfield">
+					<span>
+						<span data-role="field-control"></span>
+						<span class="ms-metadata">{Description}</span>
+					</span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div data-field="Concepto5" class="my-formfield">
+					<label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+					<span>
+						<span data-role="field-control"></span>
+						<span class="ms-metadata">{Description}</span>
+					</span>
+				</div>
+			</td>
+			<td>
+				<div data-field="Monto5" class="my-formfield">
+					<span>
+						<span data-role="field-control"></span>
+						<span class="ms-metadata">{Description}</span>
+					</span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div data-field="Concepto6" class="my-formfield">
+					<label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+					<span>
+						<span data-role="field-control"></span>
+						<span class="ms-metadata">{Description}</span>
+					</span>
+				</div>
+			</td>
+			<td>
+				<div data-field="Monto6" class="my-formfield">
+					<span>
+						<span data-role="field-control"></span>
+						<span class="ms-metadata">{Description}</span>
+					</span>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
+<script type="text/javascript">
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/presupuesto.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQ.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js")+"'><"+"/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/ComponenteAdd.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings.js") + "'><" + "/script>");
+</script>
+<script type="text/javascript">
+    SP.SOD.executeFunc("clienttemplates.js", "SPClientTemplates", function () {
+        function init() {
+            var templates = {};
+            SPClientTemplates.TemplateManager.RegisterTemplateOverrides({
+                OnPreRender: CSROnPreRender,
+                OnPostRender: CSROnPostRender
+            });
+        }
+        RegisterModuleInit(SPClientTemplates.Utility.ReplaceUrlTokens("~siteCollection/Style Library/customlayout.js"), init);
+        init();
+    });
+
+    function onPostRenderFunction(ctx) {
+        SPStaff_initDateTimePikers();
+        $('#Ribbon.ListForm.Edit').hide();
+    }
+</script>

@@ -1,0 +1,476 @@
+<div id="hideParentWebPart" style="display:none"></div>
+<div data-role="form" style="display:none">
+    <div id="FORMULARIO_REMITO" style="padding-top: 40px;"><label></label></div>
+    <div data-field="Numero FechaE Transportador" class="my-formfield" style="width:500px;">
+        <label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+        <span>
+            <span data-role="field-control"></span>
+            <span class="ms-metadata">{Description}</span>
+        </span>
+    </div>
+      <div data-field="Empleado" class="my-formfield" style="width:500px;">
+        <label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+        <span>
+            <span data-role="field-control"></span>
+            <span id="empleadoDescripcion" class="ms-metadata"></span>
+        </span>
+    </div>
+      <div data-field="ObraSocial Institucion Paciente " class="my-formfield" style="width:500px;">
+        <label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+        <span>
+            <span data-role="field-control"></span>
+            <span class="ms-metadata">{Description}</span>
+        </span>
+    </div>
+      <div data-field="Doctor NuevoMedico" class="my-formfield" style="width:500px;">
+        <label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+        <span>
+            <span data-role="field-control"></span>
+            <span class="ms-metadata">{Description}</span>
+        </span>
+    </div>
+      <div data-field="PresupuestoAsociado Stock" class="my-formfield" style="width:500px;">
+        <label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+        <span>
+            <span data-role="field-control"></span>
+            <span class="ms-metadata">{Description}</span>
+        </span>
+    </div>
+    <div data-field="PagoA" class="my-formfield" style="width:500px;">
+        <label>Descripcion pago <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+        <span>
+            <span data-role="field-control"></span>
+            <span class="ms-metadata">{Description}</span>
+        </span>
+    </div>
+    <br />
+    <table><tbody>
+        <tr><td style="width: 350px;"><h2 id="PerfilRRHH">Detalle Remito</h2></td>
+            <td><button onclick="_evento_Autocompletar();event.preventDefault();" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: yellowgreen;cursor:pointer;font-size:12px;font-weight:bold"><i class="fa fa-save"></i>&nbsp;Autocompletar</button></td>
+            <td class="seccionBotones"><button onclick="_evento_GenerarFormulario('Descargar');event.preventDefault();" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: steelblue;cursor:pointer;font-size:12px;font-weight:bold"><i class="fa fa-save"></i>&nbsp;Descargar Remito</button></td>
+            <td class="seccionBotones"><button onclick="_evento_GenerarFormulario('Imprimir');event.preventDefault();" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: cadetblue;cursor:pointer;font-size:12px;font-weight:bold"><i class="fa fa-save"></i>&nbsp;Imprimir Remito</button></td>
+        </tr>
+    </tbody></table>
+    <hr class="hrEffect" />
+    <div>
+        <div>
+            <div class="my-formfield ">
+                <table class="SPD__Data customers">
+                    <tr>
+                        <th></th>
+                        <th style="text-align:left;">Detalle</th>
+                        <th style="display:none;">Cantidad</th>
+                        <th style="display:none;">>Precio</th>
+                        <th></th>
+                    </tr>
+                    <tr class="details">
+                        <td style="width:5px!important"><button onclick="_evento_BorrarFila($(this));event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;color: orangered;cursor:pointer;padding: 2px;"><i class="fa fa-trash fa-2x"></i></button></td>
+                        <td style="width:400px;"><input onchange="_evento_detalle()" class="SPD_Data_Detalle" type="text" placeholder="Ingrese un detalle" style="width: 100%;height: 25px!important;"/></td>
+                        <td><input onchange="_evento_detalle()" class="SPD_Data_Cantidad" type="number" placeholder="cantidad" min="0" max="9999" style="height: 25px!important;width:100%;"/></td>
+                        <td style="display:none;">$&nbsp;<input onchange="_evento_detalle()" class="SPD_Data_PrecioU" type="number" placeholder="precio (u)" style="height: 25px!important;width:90%;"/></td>
+                        <td style="width:5px!important"><button id="btnAgregarDetalle" onclick="_evento_agregarDetalle($(this));event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;color: steelblue;cursor:pointer;padding: 2px;"><i class="fa fa-plus fa-2x"></i></button></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div style="display:none;">
+        <div data-field="Descripcion PrecioU PrecioT Cantidad" class="my-formfield" style="width:500px;">
+            <label>{Title} <span style="{ Required ? '' : 'display: none' }" class="ms-accentText" title="Este campo es obligatorio.">*</span></label>
+            <span>
+                <span data-role="field-control"></span>
+                <span class="ms-metadata"></span>
+            </span>
+        </div></div>
+    </div>
+    <br />
+</div>
+<script type="text/javascript">
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/presupuesto.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQ.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/JQUI.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/csrForms.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Canvas.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/NumeroLetra.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings_v2.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/StockControl.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FormularioCSR_Helper.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/ComponenteAdd.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/StockEstado_v3.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/MaestroFichero.js") + "'><" + "/script>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/MaestroFichero.css") + "'></link>");
+</script>
+<script type="text/javascript">
+    SP.SOD.executeFunc("clienttemplates.js", "SPClientTemplates", function () {
+        function init() {
+            var templates = {};
+            SPClientTemplates.TemplateManager.RegisterTemplateOverrides({
+                OnPreRender: CSROnPreRender,
+                OnPostRender: CSROnPostRender
+            });
+        }
+        RegisterModuleInit(SPClientTemplates.Utility.ReplaceUrlTokens("~siteCollection/Style Library/customlayout.js"), init);
+        init();
+    });
+    var _cols = {};
+    var stockWithComments = [];
+    function init_CustomCSR() {
+
+        if (SPD_Get_CurrentForm("NewForm")) {
+            $('.seccionBotones').hide();
+            inicializarColumnas();
+            inicializarMetadata();
+        }
+        else {
+            inicializarColumnas();
+            inicializarMetadata();
+            _evento_LoadValores();
+        }
+        _evento_renderizarControl();
+        initControlesFormulario();
+        ComponenteAdd_Plus(_cols.ObraSocial, "ObraSocial", MD_OS, "ObraSocial");
+        ComponenteAdd_Plus(_cols.Institucion, "Institucion", MD_INSTITUCION, "Institucion");
+        ComponenteAdd_Plus(_cols.NuevoMedico, "Medico", MD_MEDICO, "NuevoMedico");
+
+        _crearBotonCambiarEstado();
+    }
+    function inicializarColumnas() {
+
+        SPStaff_initDateTimePikers();
+        _cols.Numero = $("[id^='Numero'][id$='NumberField']");
+        _cols.Fecha = $("[id^='FechaE'][id$='DateTimeFieldDate']");
+        _cols.Paciente = $("[id^='Paciente'][id$='TextField']");
+        _cols.Empleado = $("[id^='Empleado'][id$='LookupField']");
+        _cols.Descripcion = $("[id^='Descripcion'][id$='TextField']");
+        _cols.PrecioU = $("[id^='PrecioU'][id$='TextField']");
+        _cols.PrecioT = $("[id^='PrecioT'][id$='TextField']");
+        _cols.Doctor = $("[id^='Doctor'][id$='TextField']");
+        _cols.ObraSocial = $("[id^='ObraSocial'][id$='LookupField']");
+        _cols.Institucion = $("[id^='Institucion'][id$='LookupField']");
+        _cols.PrecioT = $("[id^='PrecioT'][id$='TextField']");
+        _cols.PrecioT = $("[id^='PrecioT'][id$='TextField']");
+        _cols.Cantidad = $("[id^='Cantidad'][id$='TextField']");
+        _cols.PagoA = $("[id^='PagoA'][id$='TextField']");
+        _cols.Title = $("[id^='Title'][id$='TextField']");
+        _cols.Stock = $("[id^='Stock'][id$='MultiLookup_topTable']");
+        _cols.Stock.find("select").css("width", "300px");
+        _cols.Stock.find("select").css("height", "300px");
+
+        _cols.NuevoMedico = $("[id^='NuevoMedico'][id$='LookupField']");
+        _cols.NuevoMedico.attr("onchange", "_evento_cambiarMedico()")
+        _cols.Doctor.closest(".my-formfield").hide();
+
+        setTimeout(function () {
+            _evento_setearDescripcionEmpresa();
+            _cols.Empleado.attr("onchange", "_evento_setearDescripcionEmpresa()");
+        }, 1000);
+
+    }
+    function _evento_cambiarMedico() {
+        _cols.Doctor.val(_cols.NuevoMedico.find("option:selected").text());
+    }
+
+    function _inicializarStockConComentarios() {
+        var viewXml = {
+            ViewXml: "<View><Query><Where><And><Contains><FieldRef Name='Estado' /><Value Type='Choice'>En depósito</Value></Contains><IsNotNull><FieldRef Name='Comentario'></FieldRef></IsNotNull></And></Where></Query></View>"
+        }
+        stockWithComments = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl,MD_STOCK,viewXml).results;
+    }
+    function _obtenerComentarioStock(idx) {
+        for (b = 0; b < stockWithComments.length; b++) {
+            if (stockWithComments[b].ID == idx) {
+                return stockWithComments[b].Comentario;
+            }
+        }
+        return "";
+    }
+
+    function inicializarMetadata() {
+        _cols.Paciente.css("width", "300px");
+        _cols.Doctor.css("width", "300px");
+        _cols.PagoA.css("width", "300px");
+        if (SPD_Get_CurrentForm("NewForm")) {
+
+            var viewXml = {
+                ViewXml: "<View><Query><Where></Where></Query></View>"
+            }
+            var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl,_spPageContextInfo.pageListId,viewXml).results;
+
+            if (oItems.length == 0) {
+                _cols.Numero.val(1);
+            }
+            else {
+                _cols.Numero.val(oItems[oItems.length - 1].Numero + 1);
+            }
+            _cols.Fecha.val(new Date().format("dd/MM/yyyy"));
+            _cols.PagoA.val("");
+            _cols.Empleado.prop("selectedIndex", 1);
+        }
+        _inicializarStockConComentarios();
+    }
+    if (_spBodyOnLoadFunctionNames) {
+        _spBodyOnLoadFunctionNames.push("init_CustomCSR");
+    }
+    else {
+        $(document).ready(function () {
+            init_CustomCSR();
+        });
+    }
+    var elemento
+    function _evento_agregarDetalle(elem) {
+
+        var htmlToClone = elem.closest(".details").html();
+
+        var closestTr = elem.closest(".details");
+
+        if (closestTr.find('.SPD_Data_Detalle').val() == "")
+            alert("Debe ingresar un detalle");
+        else {
+            if (closestTr.find('.SPD_Data_Cantidad').val() == "")
+                closestTr.find('.SPD_Data_Cantidad').val(0)
+
+            elem.closest("td").remove();
+
+            $('.SPD__Data').append("<tr class='details'>" + htmlToClone + "</tr>")
+
+            _evento_detalle();
+        }
+    }
+    function _evento_loadFilter(elem) {
+
+        var htmlToClone = elem.closest(".details").html();
+
+        var closestTr = elem.closest(".details");
+
+        if (closestTr.find('.SPD_Data_Detalle').val() == "")
+            alert("Debe ingresar un detalle");
+        else {
+            if (closestTr.find('.SPD_Data_PrecioU').val() == "")
+                closestTr.find('.SPD_Data_PrecioU').val(0)
+            if (closestTr.find('.SPD_Data_Cantidad').val() == "")
+                closestTr.find('.SPD_Data_Cantidad').val(0)
+
+            elem.closest("td").remove();
+
+            $('.SPD__Data').append("<tr class='details'>" + htmlToClone + "</tr>")
+
+            _evento_detalle();
+        }
+    }
+    function _evento_detalle() {
+        var oDetalle = "";
+        var oCantidad = "";
+        $('.SPD__Data .details').each(function () {
+            if ($(this).find('.SPD_Data_Detalle').val() != "") {
+                oDetalle = oDetalle + $(this).find('.SPD_Data_Detalle').val() + "#;";
+                if ($(this).find('.SPD_Data_Cantidad').val() != "")
+                    oCantidad = oCantidad + $(this).find('.SPD_Data_Cantidad').val() + "#;";
+                else
+                    oCantidad = oCantidad + "-1#;";
+            }
+        });
+        _cols.Descripcion.val(oDetalle);
+        _cols.Cantidad.val(oCantidad);
+    }
+    function _evento_BorrarFila(elem) {
+
+        var closestTr = elem.closest(".details");
+
+        if (closestTr.find("#btnAgregarDetalle").length != 0) {
+            closestTr.find('.SPD_Data_Detalle').val("")
+            closestTr.find('.SPD_Data_PrecioU').val("")
+            closestTr.find('.SPD_Data_Cantidad').val("")
+        }
+        else {
+            closestTr.remove();
+        }
+        _evento_detalle();
+
+    }
+    function _evento_ImprimirPresupuesto() {
+        SPD_CrearCuadroModal(0, 0, 0, "", "Generando impresión... por favor  espere unos segundos", false);
+        setTimeout(function () {
+            _evento_SetearValoresPresupuesto();
+            _evento_ImprimirFormulario("FORMULARIO_REMITO");
+            SPD_CerrarCuadroModal();
+        }, 250);
+    }
+
+
+
+    function _evento_LoadValores() {
+
+        var htmlToClone = $('.details');
+
+        if (_cols.Descripcion.val() != "" && _cols.Descripcion.val().split("#;").length != 0) {
+
+            var descripciones = _cols.Descripcion.val().split("#;");
+            var cantidad = _cols.Cantidad.val().split("#;");
+
+            for (valo = 0; valo < descripciones.length; valo++) {
+
+                var _c = cantidad[valo];
+                if (_c == "-1")
+                    _c = "";
+                var _desc = descripciones[valo];
+                if (descripciones[valo] != "") {
+                    htmlToClone.before('<tr class="details">' +
+                '<td style="width:5px;!important"><button style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: orangered;cursor:pointer;" onclick="_evento_BorrarFila($(this));event.preventDefault()"><i class="fa fa-trash"></i></button></td>' +
+                '<td style="width:400px;"><input onchange="_evento_detalle()" class="SPD_Data_Detalle" type="text" placeholder="Ingrese un detalle" style="width: 100%;height: 25px!important;" value="' + _desc + '"/></td>' +
+                '<td><input onchange="_evento_detalle()" class="SPD_Data_Cantidad" type="number" placeholder="cantidad" min="0" max="9999" style="height: 25px!important;width:100%;" value="' + _c + '"/></td>' +
+                '<td style="display:none">$&nbsp;<input onchange="_evento_detalle()" class="SPD_Data_PrecioU" type="number" placeholder="precio (u)" style="height: 25px!important;width:90%;"/></td>' +
+                '</tr>')
+                }
+            }
+        }
+    }
+
+    function _presave_SetearTitulo() {
+        _cols.Title.val("Formulario " + _cols.Numero.val() + " " + _cols.Fecha.val() + " " + _cols.ObraSocial.find("option:selected").text());
+    }
+    //NewForm.aspx
+    function PreSaveActionLocal() {
+        _evento_detalle();
+        _presave_SetearTitulo();
+        return true;
+    }
+    //EditForm.aspx
+    function PreSaveItem() {
+        _evento_detalle();
+        _presave_SetearTitulo();
+        return true;
+    }
+    function _evento_GenerarFormulario(tarea) {
+        SPD_CrearCuadroModal(0, 0, 0, "", "Generando imagen... por favor  espere unos segundos", false);
+        setTimeout(function () {
+            _evento_GenerarFormulario_DatosPrincipales(tarea);
+            _evento_GenerarFormulario_Cuerpo();
+            _evento_Form_Procesar();
+            SPD_CerrarCuadroModal();
+        }, 250);
+    }
+    function _evento_GenerarFormulario_DatosPrincipales(tarea) {
+        var oUsuario = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_EMPLEADO, _cols.Empleado.val());   
+        _FormPrintData.Tarea = tarea;
+        _FormPrintData.FormId = "FORMULARIO_REMITO";
+        _FormPrintData.Tipo = "Remito";
+        _FormPrintData.Empresa = oUsuario.NombreEmpresa;
+        _FormPrintData.RazonSocial = oUsuario.NombreEmpleado;
+        _FormPrintData.Telefono = oUsuario.Telefono;
+        _FormPrintData.Cuit = oUsuario.Cuit;
+        _FormPrintData.Direccion = oUsuario.Direccion;
+        _FormPrintData.Fecha = _cols.Fecha.val();
+        _FormPrintData.Numero = "000-" + _cols.Numero.val();
+        _FormPrintData.Doctor = _cols.Doctor.val();
+        _FormPrintData.Institucion = _cols.Institucion.val() != "0" ? _cols.Institucion.find("option:selected").text() : "";
+        _FormPrintData.Proveedor = _cols.ObraSocial.find("option:selected").text();
+        _FormPrintData.Paciente = _cols.Paciente.val();
+        _FormPrintData.PagoA = _cols.PagoA.val();
+    }
+    function _evento_GenerarFormulario_Cuerpo() {
+
+        var data = [];
+        var controlDescripciones = _cols.Descripcion.val().split("#;");
+        var controlCantidades = _cols.Cantidad.val().split("#;");
+
+        var valorTotal = 0;
+
+        if (_cols.Descripcion.val() != "") {
+
+            for (r = 0; r < controlDescripciones.length; r++) {
+
+                if (controlDescripciones[r] != "") {
+
+                    var cantidad = controlCantidades[r] != "0" && controlCantidades[r] != "-1" ? parseInt(controlCantidades[r]) : -1;
+
+                    data.push({
+                        Cantidad: cantidad,
+                        PU: -1,
+                        PT: -1,
+                        Descripcion: controlDescripciones[r]
+                    });
+                }
+
+            }
+        }
+        _FormPrintData.ValorTotal = valorTotal;
+        _FormPrintData.TextoTotal = NumeroALetras(valorTotal);
+        _FormPrintData.Data = data;
+
+    }
+function _evento_descargarImagen(imagenSectionId, type) {
+    $('#' + imagenSectionId).find("label").each(function(){
+        $(this).html("<b>" + $(this).text() + "</b>");
+    })
+    $('#' + imagenSectionId).show();
+    html2canvas(document.querySelector("#" + imagenSectionId), {
+        width: 775,
+        height: parseInt($("#" + imagenSectionId).css("height"))
+    }).then(canvas => {
+
+    contenedorFormulario.appendChild(canvas);
+    $("#" + imagenSectionId).hide();
+    getCanvas = canvas;
+
+    var nombreImagen = type + " N° " + _FormPrintData.Numero + " " + _FormPrintData.Proveedor;
+    var imgageData = getCanvas.toDataURL("image/png");
+    var newData = imgageData.replace(/^data:image\/png/, "data:application/octet-stream");
+    $("#btn-Convert-Html2Image").attr("download", nombreImagen + ".png").attr("href", newData);
+    $("#btn-Convert-Html2Image")[0].click();
+    $('#contenedorFormulario').html("");
+});
+    }
+    
+function _FORM_INIT_BODY_CUERPE(index, tipo, cantidad, descripcion, pu, pt) {
+
+    var table = "<table><tr>";
+
+
+    $('#_FORM_TABLE').append("<tr id='_FORM_TABLE_BODY_CUERPE" + index + "'></tr>");
+
+    if (tipo == "Presupuesto") {
+        var firstTD = "<td style='min-width:50px;max-width:50px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (cantidad != -1 ? "(" + cantidad + ")" : "") + "</label></td>";
+        var secondTD = "<td class='parent-canvas' width='450' style='padding-bottom: 10px;min-width:450px;max-width:450px;;vertical-align:top;  display: inline-block;overflow: hidden;position: relative;'>" +
+            "<label class='CUERPEROTULO' style='word-break: break-all;word-break: break-all;max-width: 100%;'>" + fillText(descripcion.toUpperCase()) + "</label></td>";
+        var thirdTD = "<td style='min-width:150px;max-width:150px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (pu != -1 ? "($) " + pu : "") + "</label></td>";
+        var fourTD = "<td style='min-width:150px;max-width:150px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (pt != -1 ? "($) " + pt : "") + "</label></td>";
+
+        table = table + firstTD + secondTD + thirdTD + fourTD + "</tr></table>";
+
+
+        $('#_FORM_TABLE_BODY_CUERPE' + index).append("<td>" + table + "</td>");
+
+    }
+    else {
+        var firstTD = "<td style='min-width:50px;max-width:50px;width:50px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (cantidad != -1 ? "(" + cantidad + ")" : "") + "</label></td>";
+        var secondTD = "<td  width='700'  style='padding-bottom: 10px;word-break: break-all;vertical-align:top;min-width:700px;max-width:700px;width:700px;'>" +
+            "<label class='CUERPEROTULO'  style='word-break: break-all;'>" + fillText(descripcion.toUpperCase()) + "</label></td>";
+
+        table = table + firstTD + secondTD + "</tr></table>";
+
+        $('#_FORM_TABLE_BODY_CUERPE' + index).append("<td>" + table + "</td>");
+    }
+
+}
+
+function fillText(descripcion) {
+    var count = 105;
+    var count2 = 1;
+    var word = "";
+    for (qe = 0; qe < descripcion.length; qe++) {
+        word = word + descripcion[qe];
+        if (qe == count2 * count) {
+            word = word + "<br/>";
+            count2++;
+        }
+    }
+    return word;
+}
+</script>

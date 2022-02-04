@@ -1,0 +1,417 @@
+<div data-role="form">
+<div id="FORMULARIO_REMITO" style="padding-top: 15px;"><label></label></div>
+</div> 
+<script type="text/javascript" src="/_layouts/15/ScriptResx.ashx?name=sp.res&culture=es-es"></script>
+<script type="text/javascript" src="/_layouts/15/sp.init.js"></script>
+<script type="text/javascript" src="/_layouts/15/MicrosoftAjax.js"></script>
+<script type="text/javascript" src="/_layouts/15/3082/strings.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.runtime.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.dialog.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientforms.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientpeoplepicker.js"></script>
+<script type="text/javascript" src="/_layouts/15/clienttemplates.js"></script>
+<script type="text/javascript" src="/_layouts/15/autofill.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.taxonomy.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.taxonomy.js"></script>
+<link  rel="stylesheet" href="/sites/MedilifeHome/SiteAssets/JQUI.css"/>
+<link  rel="stylesheet" href="/sites/MedilifeHome/SiteAssets/FontAwesome/css/font-awesome.css"/>
+<link  rel="stylesheet" href="/sites/MedilifeHome/SiteAssets/"/>
+<script src="/sites/MedilifeHome/SiteAssets/JQ.js"></script>
+<script src="/sites/MedilifeHome/SiteAssets/JQUI.js"></script>
+<script src="/sites/MedilifeHome/SiteAssets/SPD_Helper_1.5.js"></script>
+<script src="https://kendo.cdn.telerik.com/2017.2.621/js/jszip.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2017.2.621/js/kendo.all.min.js"></script>
+<script type="text/javascript">
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings_v2.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/RemoveComponent.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/NumeroLetra.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FormularioCSR_Helper.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Canvas.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/MaestroFichero.js") + "'><" + "/script>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/MaestroFichero.css") + "'></link>");
+</script>
+
+<style>
+    .metadataTd {
+        padding:6px;
+    }
+    .rotulo {
+        padding-right: 10px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: bold;
+            color: steelblue;
+    }
+    .selectMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .inputMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .actualizarGrande {
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: middle;
+        width: 21px;
+        height: 15px;
+        cursor: pointer;
+        vertical-align: middle;
+        background: url('/_layouts/15/images/spcommon.png?rev=23') no-repeat -132px -112px;
+    }
+  
+    .tdAngular {
+        /*text-align:center;*/
+    }
+    .dateInput {
+        width: 150px;
+    }
+
+        #customers {
+            background-color: white;
+            width: 70%;
+            margin: 0;
+            padding: 15px;
+            font-size: 14px;
+            line-height: 18px;
+        }
+    #customers th:first-child {
+        border-bottom-left-radius : 20%!important;
+        border-top-left-radius : 20%!important;
+    }
+    #customers th:last-child {
+        border-bottom-right-radius : 20%!important;
+        border-top-right-radius : 20%!important;
+    }
+
+    #customers a {
+        color: rgb(0, 114, 198)!important;
+    }
+
+    #customers {
+        border-collapse: collapse;
+    }
+
+        #customers th, #customers td {
+            padding-left: 8px;
+            padding-right: 8px;
+            padding-bottom: 1px;
+            padding-top: 1px;
+        }
+
+    #customers tr:hover {
+        background-color: #ffff99;
+    }
+
+        #customers th {
+            background-color: #F2F2F2;
+            color: grey;
+        }
+    .centerAlign {
+        text-align: center;
+    }
+    .span10 > label {
+    width: 140px;
+    font-weight: bold;
+    color: grey;
+}
+</style>
+
+<div id="seccionData">
+    <h1 id="title"></h1>
+    <br />
+    <table style="width:650px;">
+        <tr>
+            <td>Descripción:</td><td><b id="descripcion"></b></td>
+        </tr>
+        <tr>
+            <td>Lot: </td><td><b id="lot"></b></td>
+            <td>Ref: </td><td><b id="ref"></b></td>
+        </tr>
+        <tr>
+            <td>GETIN: </td><td><b id="getin"></b></td>
+            <td colspan="2"><b id="sn"></b></td>
+        </tr>
+        <tr>
+            <td>Marca: </td><td><b id="marca"></b></td>
+            <td>Medidas: </td><td><b id="medidas"></b></td>
+        </tr>
+        <tr>
+            <td>Fecha compra: </td><td><b id="fechaCompra"></b></td>
+            <td>Fecha vencimiento: </td><td><b id="fechaVencimiento"></b></td>
+        </tr>
+        <tr>
+            <td>Fecha ingreso: </td><td><b id="fechaIngreso"></b></td>
+            <td>Proveedor remito: </td><td><b id="proveedorRemito"></b></td>
+        </tr>
+        <tr>
+            <td>Remito compra: </td><td><b id="remitoCompra"></b></td>
+            <td>Fecha del remito: </td><td><b id="fechaRemito"></b></td>
+        </tr>
+        <tr>
+            <td>Remito: </td><td><b id="remitoRelacionado"></b></td>
+        </tr>
+    </table>
+</div>
+<br />
+<div id="seccionHistory">
+    <h2>History</h2>
+    <br />
+    <div id="history">
+        <table id="customers">
+            <tr>
+                <th style="text-align:center!important;">Accion</th>
+                <th style="text-align:center!important;">Fecha actividad</th>
+                <th style="text-align:center!important;">Estado</th>
+                <th style="text-align:center!important;">Comentario</th>
+                <th style="text-align:center!important;">Institucion</th>
+                <th style="text-align:center!important;">Institucion consignado (otros)</th>
+                <th style="text-align:center!important;">Remito</th>
+            </tr>
+            <tbody id="bodyData">
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    function inicializarLegajo() {
+        var stockId = getUrlParameter("IDx");
+
+        if (stockId != undefined) {
+            var stock = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_STOCK, stockId);
+            $('#title').append(stock.NombreStock + " <b>: " + stock.Estado + "</b>");
+            $('#lot').append(stock.LOT != null ? stock.LOT : "n/a");
+            $('#ref').append(stock.REF != null ? stock.REF : "n/a");
+            $('#getin').append(stock.GETIN != null ? stock.GETIN : "n/a");
+            $('#sn').append("SN: " + (stock.SN != null ? stock.SN : "n/a"));
+            $('#sn').append(" | NroSerie: " + (stock.NROSerie != null ? stock.NROSerie : "n/a"));
+            $('#marca').append(stock.Marca != null ? stock.Marca : "n/a");
+            $('#medidas').append(stock.Medida != null ? stock.Medida : "n/a");
+            $('#remitoCompra').append(stock.NumeroRemito != null ? stock.NumeroRemito : "n/a");
+            $('#descripcion').append(stock.DescripcionProducto != null ? stock.DescripcionProducto : "n/a");
+            $('#proveedorRemito').append(stock.ProveedorRemito != null ? stock.ProveedorRemito : "n/a")
+
+            $('#fechaCompra').append("n/a");
+            if (stock.FechaCompraStock != null) {
+                var fechaCompra = new Date(stock.FechaCompraStock);
+                fechaCompra = fechaCompra.format("dd/MM/yyyy");
+                $('#fechaCompra').html(fechaCompra);
+            }
+            $('#fechaVencimiento').append("n/a");
+            if (stock.FechaVencimientoStock != null) {
+                var fechaVencimiento = new Date(stock.FechaVencimientoStock);
+                fechaVencimiento = fechaVencimiento.format("dd/MM/yyyy");
+                $('#fechaVencimiento').html(fechaVencimiento);
+            }
+            $('#fechaIngreso').append("n/a");
+            if (stock.FechaIngresoStock != null) {
+                var fechaIngresoS = new Date(stock.FechaIngresoStock);
+                fechaIngresoS = fechaIngresoS.format("dd/MM/yyyy");
+                $('#fechaIngreso').html(fechaIngresoS);
+            }
+            $('#fechaRemito').append("n/a");
+            if (stock.FechaRemito != null) {
+                var fechaREMITO = new Date(stock.FechaRemito);
+                fechaREMITO = fechaREMITO.format("dd/MM/yyyy");
+                $('#fechaRemito').html(fechaREMITO);
+            }
+            $('#remitoRelacionado').append("n/a");
+            if (stock.RemitoRelacionadoId != null) {
+                $('#remitoRelacionado').html('<span style="cursor:pointer;color:steelblue" title="Descargar remito" id="' + stock.RemitoRelacionadoId + '" onclick="DownloadPresupuesto($(this).attr(\'Id\'));event.preventDefault()"><i class="fa fa-file fa-lg"></i></span>');
+            }
+
+            $('#institucionActual').append("n/a");
+            if (stock.InstitucionId != null) {
+                var institucion = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_INSTITUCION, stock.InstitucionId);
+                $('#institucionActual').html(institucion.NombreInstitucion);
+           }
+
+            var viewXml = { ViewXml: "<View><Query><Where><Eq><FieldRef Name='StockId' LookupId='TRUE'/><Value Type='Lookup'>" + stockId + "</Value></Eq></Where></Query></View>" }
+            var elements = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, "91734b62-fdbb-4e9d-a51c-13512f912c47", viewXml).results;
+
+            if (elements.length > 0) {
+
+                for (k = 0; k < elements.length; k++) {
+                    var accion = "<b style='color:steelblue'>MODIFICADO</b>";
+                    if (k == 0) {
+                        accion = "<b style='color:blue'>CREADO</b>";
+                    }
+                    var fechaActividad = new Date(elements[k].Created);
+                    fechaActividad = fechaActividad.format("dd/MM/yyy HH:mm:ss");
+                    var estado = elements[k].Estado;
+
+                    var comentario = elements[k].Comentario;
+                    var institucion = elements[k].Institucion;
+                    var institucionConsignado = elements[k].InstitucionConsignado;
+                    var remitoId = "";
+                    if(elements[k].RemitoId != null)
+                         remitoId = '<span style="cursor:pointer;color:steelblue" title="Descargar remito" id="' + elements[k].RemitoId + '" onclick="DownloadPresupuesto($(this).attr(\'Id\'));event.preventDefault()"><i class="fa fa-file fa-lg"></i></span>';
+
+                    $('#bodyData').append("<tr><td style='text-align:center;'>" + accion + "</td>" +
+                        "<td style='text-align:center;'>" + fechaActividad + "</td>" +
+                        "<td style='text-align:center;'>" + estado + "</td>" +
+                        "<td style='text-align:center;'>" + comentario + "</td>" +
+                        "<td style='text-align:center;'>" + institucion + "</td>" +
+                        "<td style='text-align:center;'>" + institucionConsignado + "</td>" +
+                        "<td style='text-align:center;'>" + remitoId + "</td></tr>");
+                }
+            }
+            else {
+                $('#history').html("<i>No hay registro de históricos</i>");
+            }
+
+        }
+    }
+    setTimeout(function () {
+        $('#DeltaPlaceHolderPageTitleInTitleArea').html("Histórico");
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("font-weight", "bold");
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("color", "steelblue");
+
+        inicializarLegajo();
+        initControlesFormulario();
+    }, 1000);
+
+</script>
+<script>
+        function DownloadPresupuesto(idx) {
+        var item = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_REMITO, idx);
+        _evento_GenerarFormulario_DatosPrincipales("Descargar", item);
+        _evento_GenerarFormulario_Cuerpo(item);
+        _evento_Form_Procesar();
+    }
+    function _evento_GenerarFormulario_DatosPrincipales(tarea, item) {
+
+        var oUsuario = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_EMPLEADO, item.EmpleadoId);
+        _FormPrintData.Proveedor = "";
+        var obraSocial = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_OS, item.ObraSocialId);
+        if (obraSocial != "" && obraSocial != null)
+            _FormPrintData.Proveedor = obraSocial.Nombre;
+
+        if (item.InstitucionId != null && item.InstitucionId != undefined) {
+            _FormPrintData.Institucion = "";
+            var institucion = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_INSTITUCION, item.InstitucionId);
+            if (institucion != "" && institucion != null)
+                _FormPrintData.Institucion = institucion.NombreInstitucion;
+        }
+
+        _FormPrintData.Tarea = tarea;
+        _FormPrintData.FormId = "FORMULARIO_REMITO";
+        _FormPrintData.Tipo = "Remito";
+
+        _FormPrintData.Empresa = oUsuario.NombreEmpresa;
+        _FormPrintData.RazonSocial = oUsuario.NombreEmpleado;
+        _FormPrintData.Telefono = oUsuario.Telefono;
+        _FormPrintData.Cuit = oUsuario.Cuit;
+        _FormPrintData.Direccion = oUsuario.Direccion;
+
+        _FormPrintData.Fecha = new Date(item.FechaE).format("dd/MM/yyyy");
+
+        _FormPrintData.Numero = "000-" + item.Numero;
+
+        _FormPrintData.Doctor = item.Doctor ? item.Doctor : "";
+        _FormPrintData.Paciente = item.Paciente ? item.Paciente : "";
+        _FormPrintData.PagoA = item.PagoA;
+    }
+    function _evento_GenerarFormulario_Cuerpo(item) {
+
+        var data = [];
+        var controlDescripciones = item.Descripcion.split("#;");
+        var controlCantidades = item.Cantidad.split("#;");
+
+        var valorTotal = 0;
+
+        if (item.Descripcion != "") {
+
+            for (r = 0; r < controlDescripciones.length; r++) {
+
+                if (controlDescripciones[r] != "") {
+
+                    var cantidad = controlCantidades[r] != "0" && controlCantidades[r] != "-1" ? parseInt(controlCantidades[r]) : -1;
+
+                    data.push({
+                        Cantidad: cantidad,
+                        PU: -1,
+                        PT: -1,
+                        Descripcion: controlDescripciones[r]
+                    });
+                }
+
+            }
+        }
+        _FormPrintData.ValorTotal = valorTotal;
+        _FormPrintData.TextoTotal = NumeroALetras(valorTotal);
+        _FormPrintData.Data = data;
+
+    }
+    function _evento_descargarImagen(imagenSectionId, type) {
+
+        $('#' + imagenSectionId).show();
+        html2canvas(document.querySelector("#" + imagenSectionId), {
+            width: 775,
+            height: parseInt($("#" + imagenSectionId).css("height"))
+        }).then(canvas => {
+
+            contenedorFormulario.appendChild(canvas);
+            $("#" + imagenSectionId).hide();
+            getCanvas = canvas;
+
+            var nombreImagen = type + " N° " + _FormPrintData.Numero + " " + _FormPrintData.Proveedor;
+            var imgageData = getCanvas.toDataURL("image/png");
+            var newData = imgageData.replace(/^data:image\/png/, "data:application/octet-stream");
+            $("#btn-Convert-Html2Image").attr("download", nombreImagen + ".png").attr("href", newData);
+            $("#btn-Convert-Html2Image")[0].click();
+            $('#contenedorFormulario').html("");
+        });
+    }
+
+function _FORM_INIT_BODY_CUERPE(index, tipo, cantidad, descripcion, pu, pt) {
+
+    var table = "<table><tr>";
+
+
+    $('#_FORM_TABLE').append("<tr id='_FORM_TABLE_BODY_CUERPE" + index + "'></tr>");
+
+    if (tipo == "Presupuesto") {
+        var firstTD = "<td style='min-width:50px;max-width:50px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (cantidad != -1 ? "(" + cantidad + ")" : "") + "</label></td>";
+        var secondTD = "<td class='parent-canvas' width='450' style='padding-bottom: 10px;min-width:450px;max-width:450px;;vertical-align:top;  display: inline-block;overflow: hidden;position: relative;'>" +
+            "<label class='CUERPEROTULO' style='word-break: break-all;word-break: break-all;max-width: 100%;'>" + fillText(descripcion.toUpperCase()) + "</label></td>";
+        var thirdTD = "<td style='min-width:150px;max-width:150px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (pu != -1 ? "($) " + pu : "") + "</label></td>";
+        var fourTD = "<td style='min-width:150px;max-width:150px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (pt != -1 ? "($) " + pt : "") + "</label></td>";
+
+        table = table + firstTD + secondTD + thirdTD + fourTD + "</tr></table>";
+
+        $('#_FORM_TABLE_BODY_CUERPE' + index).append("<td>" + table + "</td>");
+
+    }
+    else {
+        var firstTD = "<td style='min-width:50px;max-width:50px;width:50px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (cantidad != -1 ? "(" + cantidad + ")" : "") + "</label></td>";
+        var secondTD = "<td  width='700'  style='padding-bottom: 10px;word-break: break-all;vertical-align:top;min-width:700px;max-width:700px;width:700px;'>" +
+            "<label class='CUERPEROTULO'  style='word-break: break-all;'>" + fillText(descripcion.toUpperCase()) + "</label></td>";
+
+        table = table + firstTD + secondTD + "</tr></table>";
+
+        $('#_FORM_TABLE_BODY_CUERPE' + index).append("<td>" + table + "</td>");
+    }
+}
+function fillText(descripcion) {
+    var count = 110;
+    var count2 = 1;
+    var word = "";
+    for (qe = 0; qe < descripcion.length; qe++) {
+        word = word + descripcion[qe];
+        if (qe == count2 * count) {
+            word = word + "<br/>";
+            count2++;
+        }
+    }
+    return word;
+}
+</script>

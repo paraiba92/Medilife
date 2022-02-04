@@ -1,0 +1,750 @@
+<script type="text/javascript" src="/_layouts/15/ScriptResx.ashx?name=sp.res&culture=es-es"></script>
+<script type="text/javascript" src="/_layouts/15/sp.init.js"></script>
+<script type="text/javascript" src="/_layouts/15/MicrosoftAjax.js"></script>
+<script type="text/javascript" src="/_layouts/15/3082/strings.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.runtime.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.dialog.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientforms.js"></script>
+<script type="text/javascript" src="/_layouts/15/clientpeoplepicker.js"></script>
+<script type="text/javascript" src="/_layouts/15/clienttemplates.js"></script>
+<script type="text/javascript" src="/_layouts/15/autofill.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.taxonomy.js"></script>
+<script type="text/javascript" src="/_layouts/15/sp.ui.taxonomy.js"></script>
+<script type="text/javascript" src="https://medilifesalud.sharepoint.com/sites/MedilifeHome/SiteAssets/MaestroFichero.js"></script>
+<script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+
+<script type="text/javascript">
+
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FontAwesome/css/font-awesome.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Office365Icons/Office365Icons.css") + "'></link>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/paginacion.css") + "'></link>");
+
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-ui/css/base/jquery-ui-1.10.4.css") + "'></link>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-1.7.1.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/jquery/jquery-ui/js/jquery-ui-1.10.4.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-1.4.8.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-route.min.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/angular/angular-locale_es-es.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Frameworks/Angular/dirPagination.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/SPD_Helper_1.5.js") + "'><" + "/script>");
+
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Medilife_Settings_v2.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/RemoveComponent.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/NumeroLetra.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/FormularioCSR_Helper.js") + "'><" + "/script>");
+    document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/Canvas.js") + "'><" + "/script>");
+    //document.write("<script src='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/MaestroFichero.js") + "'><" + "/script>");
+    document.write("<link rel='stylesheet' href='" + SPClientTemplates.Utility.ReplaceUrlTokens("~site/SiteAssets/MaestroFichero.css") + "'></link>");
+
+</script>
+<script>
+    var myAngApp = angular.module('miApp', ['ngRoute', 'angularUtils.directives.dirPagination']).config(['$compileProvider', function ($compileProvider) {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|skype|chrome-extension):/);
+}]);
+
+var gUsuarioAccountName;
+function init() {
+    AngularController();
+};
+init();
+function AngularController() {
+
+    myAngApp.controller('spResultado', function ($scope, $location, $http, $anchorScroll, $timeout) {
+       
+        $scope.showSection = false;
+        $scope.showLoading = false;
+        $scope.jSON = [];
+        $scope.sortingOrder = "None"; //orden por default
+        $scope.reverse = false;
+        $scope.currentPage = 1;
+        $scope.registrosPagina = 20;
+
+        $scope.sortBy = function (sortType) {
+            if ($scope.sortingOrder == sortType) {
+                $scope.reverse = !$scope.reverse;
+            }
+            $scope.sortingOrder = sortType;
+        };
+        $scope.ejecutarWS = function () {
+            $scope.showLoading = true;
+            $timeout(function () {
+                
+                var viewXml = {
+                    ViewXml: GenerarCamlQuery(DevolverNodos())
+                }
+
+                var elementos = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_Presupuestos, viewXml).results;
+
+                procesarJSON(elementos);
+                $scope.showLoading = false;
+
+                var element = document.getElementById("customers");
+
+                element.scrollIntoView();
+
+            })
+        }
+        function procesarJSON(elementos) {
+
+           $scope.jSON = [];
+
+           for(rec=0; rec < elementos.length; rec++) {
+                var rta = true;
+
+            elementos[rec].ObraSocialNombre = "";
+
+            if(elementos[rec].ObraSocialId != null) {
+                elementos[rec].ObraSocialNombre = _evento_obtener_OS(elementos[rec].ObraSocialId); 
+            }
+
+            elementos[rec].InstitucionNombre = "";
+
+            if(elementos[rec].InstitucionId != null) {
+                elementos[rec].InstitucionNombre = _evento_obtener_Institucion(elementos[rec].InstitucionId); 
+            }
+            
+               elementos[rec].EmpresaDescripcion = "";
+
+            if(elementos[rec].EmpleadoId != null) {
+                elementos[rec].EmpresaDescripcion = _evento_obtener_Empresa(elementos[rec].EmpleadoId); 
+            }
+            elementos[rec].MedicoNombre = "";
+            if (elementos[rec].NuevoMedicoId != null) {
+                elementos[rec].MedicoNombre = _evento_obtener_Medicos(elementos[rec].NuevoMedicoId);
+            }
+            if(elementos[rec].FechaE != null){
+                elementos[rec].FechaE =  new Date(elementos[rec].FechaE).format("dd/MM/yyyy");
+            }
+                if(rta){
+                    $scope.jSON.push(elementos[rec]);
+                }
+           }
+           if (!$scope.$$phase)
+                $scope.$apply();
+        }
+    });
+}
+function GenerarCamlQuery(oNodos) {
+    var inicioQ = "<View><Query><Where>";
+    var abroA = "<And>";
+    var cierroA = "</And>";
+    var finQ = "</Where></Query></View>";
+    var Nodos = oNodos;
+    var cont = 0;
+    var arregloY = [];
+    var nodo = "";
+    //Este algoritmo agrupa los nodos de a pares uniendolos con "<And>" recursivamente
+    for (k = 0; k < Nodos.length; k++) {
+        cont++;
+        if (cont == 1) {
+            nodo = Nodos[k];
+            if (k == (Nodos.length - 1))
+                arregloY.push(nodo);
+        }
+        if (cont == 2) {
+            nodo = abroA + nodo + Nodos[k] + cierroA;
+            arregloY.push(nodo);
+            nodo = "";
+            cont = 0;
+        }
+        if (k == (Nodos.length - 1)) {
+            Nodos = arregloY;
+            if (arregloY.length == 1)
+                break;
+            k = -1;
+            cont = 0;
+            arregloY = [];
+        }
+    }
+    if (arregloY.length > 0)
+        inicioQ = inicioQ + arregloY[0];
+
+    inicioQ = inicioQ + finQ;
+    datos = inicioQ;
+    return inicioQ;
+}
+function DevolverNodos() {
+    var nodos = [];
+
+    if(sp_controls.Institucion.val() != "(Todos)"){
+        nodos.push('<Eq><FieldRef Name="Institucion" LookupId="TRUE" /><Value Type="Lookup">' + sp_controls.Institucion.val() + '</Value></Eq>');
+    }
+    if(sp_controls.OS.val() != "(Todos)"){
+        nodos.push('<Eq><FieldRef Name="ObraSocial" LookupId="TRUE" /><Value Type="Lookup">' + sp_controls.OS.val() + '</Value></Eq>');
+    }
+    if(sp_controls.Medico.val() != "(Todos)"){
+        nodos.push('<Eq><FieldRef Name="NuevoMedico" LookupId="TRUE" /><Value Type="Lookup">' + sp_controls.Medico.val() + '</Value></Eq>');
+    }
+    if(sp_controls.Paciente.val() != ""){
+        nodos.push('<Contains><FieldRef Name="Paciente" /><Value Type="Text">' + sp_controls.Paciente.val() + '</Value></Contains>');
+    }
+    if(sp_controls.Numero.val() != ""){
+        nodos.push('<Eq><FieldRef Name="Numero" /><Value Type="Number">' + sp_controls.Numero.val() + '</Value></Eq>');
+    }
+    if (sp_controls.EmitidoDesde.val() != "") {
+        var desde = sp_controls.EmitidoDesde.val().split('/');
+        if (desde.length == 3) {
+            desde = desde[2] + "-" + desde[1] + "-" + desde[0];
+            nodos.push('<Geq><FieldRef Name="FechaE" /><Value IncludeTimeValue="False" Type="DateTime">' + desde + 'T06:53:16Z</Value></Geq>');
+        }
+    }
+    if (sp_controls.EmitidoDesde.val() != "") {
+        var desde = sp_controls.EmitidoHasta.val().split('/');
+        if (desde.length == 3) {
+            desde = desde[2] + "-" + desde[1] + "-" + desde[0];
+            nodos.push('<Leq><FieldRef Name="FechaE" /><Value IncludeTimeValue="False" Type="DateTime">' + desde + 'T06:53:16Z</Value></Leq>');
+        }
+    }
+   /* 
+    if (param.PeriodoEvaluacion != "(Todos)")
+        nodos.push('<Eq><FieldRef Name="PeriodoEvaluacion" /><Value Type="Lookup">' + param.PeriodoEvaluacion + '</Value></Eq>');
+   */
+    return nodos;
+}
+</script>
+<style>
+    .metadataTd {
+        padding:6px;
+    }
+    .rotulo {
+        padding-right: 10px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: bold;
+            color: steelblue;
+    }
+    .selectMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .inputMetadata {
+        width: 250px;
+        font-family: "Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif !important;
+        font-weight: normal;
+    }
+    .actualizarGrande {
+        overflow: hidden;
+        display: inline-block;
+        vertical-align: middle;
+        width: 21px;
+        height: 15px;
+        cursor: pointer;
+        vertical-align: middle;
+        background: url('/_layouts/15/images/spcommon.png?rev=23') no-repeat -132px -112px;
+    }
+  
+    .tdAngular {
+        /*text-align:center;*/
+    }
+    .dateInput {
+        width: 150px;
+    }
+    #customers a {
+        color: rgb(0, 114, 198)!important;
+    }
+
+    #customers {
+        border-collapse: collapse;
+        width: 100%;
+        font-size:10px;
+    }
+
+        #customers th, #customers td {
+            padding: 8px;
+        }
+
+    #customers tr:hover {
+        background-color: #ffff99;
+    }
+
+        #customers th {
+            background-color: #F2F2F2;
+            color: grey;
+        }
+    .centerAlign {
+        text-align: center;
+    }
+    .span10 > label {
+    width: 140px;
+    font-weight: bold;
+    color: grey;
+}
+</style>
+<div id="hideParentWebPart" style="display:none"></div>
+<div data-role="form">
+<div id="FORMULARIO_PRESUPUESTO" style="padding-top: 40px;"><label></label></div>
+</div>
+<div ng-app="miApp" class="row">
+    <div ng-controller="spResultado" class="span10">
+        <table>
+            <tr>
+                <td colspan="4" style="text-align:right"></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Numero:</label></td>
+                <td class="metadataTd"><input id="SR_Numero" type="number" class="inputMetadata"/></td>
+                <td class="metadataTd"><label class="rotulo">Obra social:</label></td>
+                <td class="metadataTd"><select class="selectMetadata" id="SP_OS"><option value="(Todos)">(Todos)</option></select></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Institución:</label></td>
+                <td class="metadataTd"><select class="selectMetadata" id="SP_Institucion"><option value="(Todos)">(Todos)</option></select></td>
+                <td class="metadataTd"><label class="rotulo">Paciente:</label></td>
+                <td class="metadataTd"><input id="SR_Paciente" class="inputMetadata"/></td>
+            </tr>
+            <tr>
+                <td class="metadataTd"><label class="rotulo">Médico:</label></td>
+                <td class="metadataTd"><select class="selectMetadata" id="SR_Medico"><option value="(Todos)">(Todos)</option></select></td>
+                <td class="metadataTd"><label class="rotulo">Emitido:</label></td>
+                <td class="metadataTd"><nobr><input class="dateInput" id="emitidoDesde"/>&nbsp;&nbsp;<label class="rotulo">hasta:</label>&nbsp;&nbsp;<input class="dateInput" id="emitidoHasta"/></nobr></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style="text-align: right; padding-top: 30px;">
+                    <button class="add" id="linkActualizar" ng-click="ejecutarWS()" onclick="event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: white;cursor:pointer;font-size:12px;font-weight:bold;color:black;border:1px solid lightgrey" ><i class="fa fa-search"></i>&nbsp;Buscar elementos</button>
+                    <button onclick="limpiarFiltros();event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: white;cursor:pointer;font-size:12px;font-weight:bold;color:black;border:1px solid lightgrey" ><i class="fa fa-filter"></i>&nbsp;Limpiar filtros</button>
+                    <button id="linkActualizar" onclick="CreateElement();event.preventDefault()" style="border-radius: 5px;color: white;min-width: 30px!important;border: none;background: steelblue;cursor:pointer;font-size:12px;font-weight:bold" ><i class="fa fa-plus"></i>&nbsp;Crear nuevo</button>
+                </td>
+            </tr>
+        </table>
+    <br />
+    <br />
+        <div id='cargandoPagina' ng-show="showLoading">
+            <div id="progreso" style="width:100%">
+                <div id="DeltaPageStatusBar"><div id="pageStatusBar" class="ms-status-blue" aria-live="polite" aria-relevant="all" style="display: block;"><span id="status_33" class="ms-status-status" role="alert" tabindex="0"><span id="status_33_hiddenPriMsg" class="ms-accessible">Cargando información</span><span class="ms-status-iconSpan"><img class="ms-status-iconImg" src="/_layouts/15/images/spcommon.png" data-themekey="#"></span><span class="ms-bold ms-status-title"><label id="palabraCargando" style="vertical-align:baseline;">Cargando información...</label></span><span class="ms-status-body" id="status_33_body"><img src="/_Layouts/Images/progress.gif" data-themekey="#"></span><br></span></div></div>
+            </div>
+        </div>
+        <div ng-show="jSON.length === 0">
+            No hay elementos para mostrar
+        </div>
+        <div ng-hide="jSON.length === 0">
+            <b><i>{{jSON.length}} registro(s) encontrado(s)</i></b>
+            <br /><br/>
+        </div>
+        <table id="customers" ng-hide="jSON.length === 0" style="border-collapse: collapse;">
+            <thead>
+                <tr style="text-align:center;">
+                    <th></th>
+                    <th>N°</th>
+                    <th>Proveedor</th>
+                    <th>Doctor</th>
+                    <th>Paciente</th>
+                    <th>Institucion</th>
+                    <th>Fecha</th>
+                    <th>Empresa</th>
+                </tr>
+            </thead>
+            <tr dir-paginate="legajo in jSON|orderBy:sortKey:reverse|filter:search|itemsPerPage:registrosPagina" current-page="currentPage">
+                <td style="min-width: 100px;">
+                    <button id="{{legajo.Id}}" onclick="RemoveElement($(this).attr('Id'));event.preventDefault()" style="margin-left: 0px;border-radius: 5px;color: white;min-width: 30px!important;border: none;color: red;cursor:pointer;padding: 2px;"><i class="fa fa-trash fa-lg"></i></button>  
+                    <button id="{{legajo.Id}}" onclick="UpdateElement($(this).attr('Id'));event.preventDefault()" style="margin-left: 0px;border-radius: 5px;color: white;min-width: 30px!important;border: none;color: steelblue;cursor:pointer;padding: 2px;"><i class="fa fa-edit fa-lg"></i></button>
+                    <button id="{{legajo.Id}}" onclick="DownloadPresupuesto($(this).attr('Id'));event.preventDefault()" style="margin-left: 0px;border-radius: 5px;color: white;min-width: 30px!important;border: none;color: limegreen;cursor:pointer;padding: 2px;"><i class="fa fa-download fa-lg"></i></button>
+                </td>       
+                <td class="tdAngular" style="text-align:center;"><nobr><a style="cursor:pointer;" id="{{legajo.Id}}" onclick="UpdateElement($(this).attr('Id'))">{{legajo.Numero}}</a></nobr></td>
+                <td class="tdAngular" style="text-align:center;color:blue;">{{legajo.ObraSocialNombre}}</td>
+                <td class="tdAngular" style="text-align:center;">{{legajo.MedicoNombre}}</td>
+                <td class="tdAngular" style="text-align:center;">{{legajo.Paciente}}</td>
+                <td class="tdAngular" style="text-align:center;">{{legajo.InstitucionNombre}}</td>
+                <td class="tdAngular" style="text-align:center;">{{legajo.FechaE}}</td>
+                <td class="tdAngular" style="text-align:center;">{{legajo.EmpresaDescripcion}}</td>
+            </tr>
+        </table>
+        <dir-pagination-controls class="paginacion" max-size="5" direction-links="true" boundary-links="true"></dir-pagination-controls>
+</div>
+</div>
+<script>
+    //Helper
+    function _evento_modificar(idx) {
+      window.open('/sites/MedilifeHome/Lists/Presupuesto/EditForm.aspx?ID='+ idx, '_blank');
+    }
+
+    var proveedores = [];
+    var insituciones = [];
+
+    var sp_controls = {};
+
+    function init_ConsultaLicencias(){
+        $('#DeltaPlaceHolderPageTitleInTitleArea').html("Consulta de presupuestos");
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("font-weight", "bold")
+        $('#DeltaPlaceHolderPageTitleInTitleArea').css("color", "steelblue")
+        $('.pagination').css("display", "flex")
+        $('.pagination li').css("padding", "5px")
+        $('.pagination li').css("list-style", "none")
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+              event.preventDefault();
+              $('.add').click();
+              return false;
+            }
+          });
+        inicializarControles();
+        initControlesFormulario();
+
+    }
+    function _evento_inicializarMedicos() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Title' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+        var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_MEDICO, viewXml).results;
+
+        for (ins = 0; ins < oItems.length; ins++) {
+            sp_controls.Medico.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].Title + "</option>");
+        }
+    }
+    function inicializarControles() {
+
+        sp_controls.Numero = $("#SR_Numero");
+        sp_controls.OS = $("#SP_OS");
+        sp_controls.Institucion = $("#SP_Institucion");
+        sp_controls.Paciente = $("#SR_Paciente");
+        sp_controls.Medico = $("#SR_Medico");
+        sp_controls.EmitidoDesde = $("#emitidoDesde");
+        sp_controls.EmitidoHasta = $("#emitidoHasta");
+
+        _evento_inicializarInstituciones();
+        _evento_inicializarMedicos();
+        _evento_inicializarOS();
+        SPStaff_InicializarDatePickers();
+        proponerFecha();
+
+    }
+    var medicos = [];
+    function _evento_obtener_Medicos(idx) {
+        if (medicos.length == 0) {
+            var viewXml = {
+                ViewXml: "<View><Query><Where></Where></Query></View>"
+            }
+            medicos = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_MEDICO, viewXml).results
+        }
+
+        for (r = 0; r < medicos.length; r++) {
+            if (medicos[r].Id == idx) {
+                return medicos[r].Title;
+            }
+        }
+
+        return "";
+    }
+    function limpiarFiltros() {
+        sp_controls.Numero.val("");
+        sp_controls.Paciente.val("");
+        sp_controls.Doctor.val("");
+        sp_controls.EmitidoDesde.val("");
+        sp_controls.EmitidoHasta.val("");
+
+        sp_controls.OS.val("(Todeos)")
+        sp_controls.Institucion.val("(Todeos)")
+    }
+    function _evento_inicializarInstituciones() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='NombreInstitucion' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+        var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_INSTITUCION, viewXml).results;
+
+        for (ins = 0; ins < oItems.length; ins++) {
+            sp_controls.Institucion.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].NombreInstitucion + "</option>");
+        }
+
+    }
+    function _evento_inicializarOS() {
+
+        var viewXml = {
+            ViewXml: "<View><Query><Where>" +
+                "</Where><OrderBy><FieldRef Name='Nombre' Ascending='True' /></OrderBy></Query></View>"
+        }
+
+        var oItems = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_OS, viewXml).results;
+
+        for (ins = 0; ins < oItems.length; ins++) {
+            sp_controls.OS.append("<option value='" + oItems[ins].Id + "'>" + oItems[ins].Nombre + "</option>");
+        }
+
+    }    
+    function _evento_obtener_OS(idx) {
+
+        if (proveedores.length == 0) {
+            var viewXml = {
+                ViewXml: "<View><Query><Where>" +
+                    "</Where></Query></View>"
+            }
+            proveedores = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_OS, viewXml).results;
+        }
+
+        for (r = 0; r < proveedores.length; r++) {
+            if (proveedores[r].Id == idx) {
+                return proveedores[r].Nombre;
+            }
+        }
+
+         return "";
+
+    }
+    var empresas = [];
+    function _evento_obtener_Empresa(idx) {
+
+        if (empresas.length == 0) {
+             empresas = SPD_GetListItems(_spPageContextInfo.webAbsoluteUrl, MD_EMPLEADO).results;
+        }
+
+        for (r = 0; r < empresas.length; r++) {
+            if (empresas[r].Id == idx) {
+                return empresas[r].NombreEmpresa;
+            }
+        }
+
+         return "";
+
+    }
+    function _evento_obtener_Institucion(idx) {
+        if (insituciones.length == 0) {
+             var viewXml = {
+                ViewXml: "<View><Query><Where>" +
+                    "</Where></Query></View>"
+            }
+            insituciones = SPD_GetListItems_CamlQuery(_spPageContextInfo.webAbsoluteUrl, MD_INSTITUCION, viewXml).results;;
+        }
+
+        for (r = 0; r < insituciones.length; r++) {
+            if (insituciones[r].Id == idx) {
+                return insituciones[r].NombreInstitucion;
+            }
+        }
+
+        return "";
+    }
+    function SPStaff_InicializarDatePickers() {
+        $('.dateInput').datepicker();
+    }
+    if (_spBodyOnLoadFunctionNames) {
+        _spBodyOnLoadFunctionNames.push("init_ConsultaLicencias");
+    }
+    else {
+        $(document).ready(function () {
+            init_ConsultaLicencias();
+        });
+    }
+    function proponerFecha() {
+        var date = new Date();
+        var firstDay = new Date(date.getFullYear(), date.getMonth(), 1).format("dd/MM/yyyy");
+        sp_controls.EmitidoDesde.val(firstDay);
+        var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).format("dd/MM/yyyy");
+        sp_controls.EmitidoHasta.val(lastDay);
+    }
+    function UpdateElement(idx) {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/Presupuesto/EditForm.aspx?ID=" + idx;
+        var options = {
+            title: "",
+            autoSize: true,
+            url: urlData,
+            dialogReturnValueCallback: function (result) { _callbackRespuesta(result) }
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function CreateElement() {
+        var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/Presupuesto/NewForm.aspx";
+        var options = {
+            title: "",
+            autoSize: true,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function _callbackRespuesta(result){
+        switch(result) {
+        case SP.UI.DialogResult.OK:
+            console.log("You clicked OK");
+            $('#linkActualizar').click();
+            // reload data as necessary here
+            break;
+        case SP.UI.DialogResult.cancel:
+            console.log("You clicked cancel or close.");
+            break;
+        }
+    }
+    function RemoveElement(idx) {
+       var urlData = _spPageContextInfo.webAbsoluteUrl + "/Lists/Presupuesto/DispForm.aspx?ID=" + idx+ "&Source=" + window.location.href;
+        var options = {
+            title: "",
+            autoSize: true,
+            url: urlData,
+			dialogReturnValueCallback:function(result){_callbackRespuesta(result)}         
+        };
+        a = SP.UI.ModalDialog.showModalDialog(options);
+    }
+    function DownloadPresupuesto(idx) {
+        var item = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_Presupuestos, idx);
+        _evento_GenerarFormulario_DatosPrincipales("Descargar", item);
+        _evento_GenerarFormulario_Cuerpo(item);
+        _evento_Form_Procesar();
+    }
+
+    function _evento_GenerarFormulario(tarea) {
+        SPD_CrearCuadroModal(0, 0, 0, "", "Generando imagen... por favor  espere unos segundos", false);
+        setTimeout(function () {
+            _evento_GenerarFormulario_DatosPrincipales(tarea);
+            _evento_GenerarFormulario_Cuerpo();
+            _evento_Form_Procesar();
+            SPD_CerrarCuadroModal();
+        }, 250);
+    }
+    function _evento_GenerarFormulario_DatosPrincipales(tarea, item) {
+
+        var oUsuario = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_EMPLEADO, item.EmpleadoId);
+
+        var obraSocial = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_OS, item.ObraSocialId);
+        if (obraSocial != "")
+            _FormPrintData.Proveedor = obraSocial.Nombre;
+
+        if (item.InstitucionId != null && item.InstitucionId != undefined) {
+            var institucion = SPD_GetListItemById(_spPageContextInfo.webAbsoluteUrl, MD_INSTITUCION, item.InstitucionId);
+            if (institucion != "")
+                _FormPrintData.Institucion = institucion.NombreInstitucion;
+        }
+
+        _FormPrintData.Tarea = tarea;
+        _FormPrintData.FormId = "FORMULARIO_PRESUPUESTO";
+        _FormPrintData.Tipo = "Presupuesto";
+
+        _FormPrintData.Empresa = oUsuario.NombreEmpresa;
+        _FormPrintData.RazonSocial = oUsuario.NombreEmpleado;
+        _FormPrintData.Telefono = oUsuario.Telefono;
+        _FormPrintData.Cuit = oUsuario.Cuit;
+        _FormPrintData.Direccion = oUsuario.Direccion;
+
+        _FormPrintData.Fecha = new Date(item.FechaE).format("dd/MM/yyyy");
+
+        _FormPrintData.Numero = "000-" + item.Numero;
+
+        _FormPrintData.Doctor = item.Doctor;
+        _FormPrintData.Paciente = item.Paciente;
+        _FormPrintData.PagoA = item.PagoA;
+    }
+    function _evento_GenerarFormulario_Cuerpo(item) {
+
+        var data = [];
+        var controlDescripciones = item.Descripcion.split("#;");
+        var controlCantidades = item.Cantidad.split("#;");
+        var controlPrecioU = item.PrecioU.split("#;");
+        var controlPrecioT = item.PrecioT.split("#;");
+
+        var valorTotal = 0;
+
+        if (item.Descripcion != "") {
+
+            for (r = 0; r < controlDescripciones.length; r++) {
+
+                if (controlDescripciones[r] != "") {
+
+                    var cantidad = controlCantidades[r] != "0" && controlCantidades[r] != "-1" ? parseInt(controlCantidades[r]) : -1;
+                    var pu = controlPrecioU[r] != "0" && controlPrecioU[r] != "-1" ? parseInt(controlPrecioU[r]) : -1;
+                    var pt = controlPrecioT[r] != "0" && controlPrecioT[r] != "-1" ? parseInt(controlPrecioT[r]) : -1;
+
+                    valorTotal = valorTotal + pt;
+
+                    data.push({
+                        Cantidad: cantidad,
+                        PU: pu,
+                        PT: pt,
+                        Descripcion: controlDescripciones[r]
+                    });
+                }
+
+            }
+        }
+        _FormPrintData.ValorTotal = valorTotal;
+        _FormPrintData.TextoTotal = NumeroALetras(valorTotal);
+        _FormPrintData.Data = data;
+
+    }
+function _evento_descargarImagen(imagenSectionId, type) {
+    $('#' + imagenSectionId).find("label").each(function(){
+        $(this).html("<b>" + $(this).text() + "</b>");
+    })
+    $('#' + imagenSectionId).show();
+    html2canvas(document.querySelector("#" + imagenSectionId), {
+        width: 775,
+        height: parseInt($("#" + imagenSectionId).css("height"))
+    }).then(canvas => {
+        contenedorFormulario.appendChild(canvas);
+       //red $("#" + imagenSectionId).hide();
+        getCanvas = canvas;
+
+        var nombreImagen = type + " N° " + _FormPrintData.Numero + " " + _FormPrintData.Proveedor;
+        var imgageData = getCanvas.toDataURL("image/png");
+        var newData = imgageData.replace(/^data:image\/png/, "data:application/octet-stream");
+        $("#btn-Convert-Html2Image").attr("download", nombreImagen + ".png").attr("href", newData);
+        $("#btn-Convert-Html2Image")[0].click();
+        $('#contenedorFormulario').html("");
+    });
+}
+function _FORM_INIT_BODY_CUERPE(index, tipo, cantidad, descripcion, pu, pt) {
+
+    var table = "<table><tr>";
+
+
+    $('#_FORM_TABLE').append("<tr id='_FORM_TABLE_BODY_CUERPE" + index + "'></tr>");
+
+    if (tipo == "Presupuesto") {
+        var firstTD = "<td style='min-width:50px;max-width:50px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (cantidad != -1 ? "(" + cantidad + ")" : "") + "</label></td>";
+        var secondTD = "<td class='parent-canvas' width='450' style='padding-bottom: 10px;min-width:450px;max-width:450px;;vertical-align:top;  display: inline-block;overflow: hidden;position: relative;'>" +
+            "<label class='CUERPEROTULO' wrap='hard' style='width: 450px;display: block;'>" + fillText(descripcion.toUpperCase()) + "</label></td>";
+        var thirdTD = "<td style='min-width:150px;max-width:150px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (pu != -1 ? "($) " + pu : "") + "</label></td>";
+        var fourTD = "<td style='min-width:150px;max-width:150px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (pt != -1 ? "($) " + pt : "") + "</label></td>";
+
+        table = table + firstTD + secondTD + thirdTD + fourTD + "</tr></table>";
+
+
+        $('#_FORM_TABLE_BODY_CUERPE' + index).append("<td><b>" + table + "</b></td>");
+
+    }
+    else {
+        var firstTD = "<td style='min-width:50px;max-width:50px;width:50px;vertical-align:top;text-align: center;'>" +
+            "<label class='CUERPEROTULO'>" + (cantidad != -1 ? "(" + cantidad + ")" : "") + "</label></td>";
+        var secondTD = "<td  width='700'  style='padding-bottom: 10px;word-break: break-all;vertical-align:top;min-width:700px;max-width:700px;width:700px;'>" +
+            "<label class='CUERPEROTULO'  style='word-break: break-all;'>" + descripcion + "</label></td>";
+
+        table = table + firstTD + secondTD + "</tr></table>";
+
+        $('#_FORM_TABLE_BODY_CUERPE' + index).append("<td>" + table + "</td>");
+    }
+
+}
+
+function fillText(descripcion) {
+    var count = 60;
+    var count2 = 1;
+    var word = "";
+    for (qe = 0; qe < descripcion.length; qe++) {
+        word = word + descripcion[qe];
+        if (qe == count2 * count) {
+            word = word + "<br/>";
+            count2++;
+        }
+    }
+    return word;
+}
+</script>
+<script>
+    setInterval(function () {
+        if ($('#sideNavBox').length > 0) {
+            $('#sideNavBox').remove();
+            $('#contentBox').css("margin-left", "100px");
+        }
+    }, 600);
+</script>

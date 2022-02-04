@@ -1,0 +1,6 @@
+    function _evento_visual_datosGenerales() {
+        $('.datosgenerales').toggle()
+    }
+    function _evento_visual_infoestado() {
+        $('.infoestado').toggle()
+    }

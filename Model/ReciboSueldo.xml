@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root xmlns="http://emmsa.net/schemas/spshell/" xmlns:na="http://emmsa.net/schemas/spshell/null/" xmlns:sp="http://schemas.microsoft.com/sharepoint/"  xmlns:splog="http://emmsa.net/schemas/splog/">
+	<EnsureList name="Recibo" title="Recibo de sueldo">
+
+    <EnsureTextField internalName="Empresa" DefaultValue="Medilife Salud" displayName="Empresa" siteColumn="FALSE" />
+    <EnsureTextField internalName="DireccionEmpresa" DefaultValue="Larrea 3034" displayName="Dirección" siteColumn="FALSE" />
+    <EnsureTextField internalName="CuitEmpresa"  DefaultValue="27-18139446-9" displayName="Cuit" siteColumn="FALSE" />
+    <EnsureTextField internalName="TelefonoEmpreas"  DefaultValue="223-1555357261" displayName="Teléfono" siteColumn="FALSE" />
+
+    <EnsureTextField internalName="Concepto1" displayName="Concepto" siteColumn="FALSE" />
+    <EnsureTextField internalName="Concepto2" displayName="Concepto" siteColumn="FALSE" />
+    <EnsureTextField internalName="Concepto3" displayName="Concepto" siteColumn="FALSE" />
+    <EnsureTextField internalName="Concepto4" displayName="Concepto" siteColumn="FALSE" />
+    <EnsureTextField internalName="Concepto5" displayName="Concepto" siteColumn="FALSE" />
+    <EnsureTextField internalName="Concepto6" displayName="Concepto" siteColumn="FALSE" />
+    
+    <EnsureNumberField internalName="Monto1" displayName="Monto $" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Monto2" displayName="Monto $" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Monto3" displayName="Monto $" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Monto4" displayName="Monto $" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Monto5" displayName="Monto $" decimalPlaces="2" siteColumn="FALSE" />
+    <EnsureNumberField internalName="Monto6" displayName="Monto $" decimalPlaces="2" siteColumn="FALSE" />
+
+    <EnsureChoiceField internalName="Empleado" displayName="Empleado" siteColumn="FALSE">
+      <na:Choice value="AK">Ariel Köhl</na:Choice>
+      <na:Choice value="AM">Agustín Miguelez</na:Choice>
+    </EnsureChoiceField>
+
+    <EnsureChoiceField internalName="PeriodoAnio" displayName="Año" siteColumn="FALSE" defaultValue="21">
+      <na:Choice value="21">2021</na:Choice>
+      <na:Choice value="22">2022</na:Choice>
+    </EnsureChoiceField>   
+    
+    <EnsureChoiceField internalName="PeriodoMes" displayName="Mes" siteColumn="FALSE">
+      <na:Choice value="0">Enero</na:Choice>
+      <na:Choice value="1">Febrero</na:Choice>
+      <na:Choice value="2">Marzo</na:Choice>
+      <na:Choice value="3">Abril</na:Choice>
+      <na:Choice value="4">Mayo</na:Choice>
+      <na:Choice value="5">Junio</na:Choice>
+      <na:Choice value="6">Agosto</na:Choice>
+      <na:Choice value="7">Septiembre</na:Choice>
+      <na:Choice value="8">Octubre</na:Choice>
+      <na:Choice value="9">Noviembre</na:Choice>
+      <na:Choice value="10">Diciembre</na:Choice>
+    </EnsureChoiceField>
+
+    <EnsureContentType name="Item" parentContentType="System">
+      
+      <AddFieldToContentType name="Title" required="FALSE" showInDisplayForm="FALSE" showInNewForm="FALSE" showInEditForm="FALSE"/>
+
+      <AddFieldToContentType name="Empresa" showInDisplayForm="FALSE" required="TRUE"/>
+      <AddFieldToContentType name="DireccionEmpresa" showInDisplayForm="FALSE" required="TRUE"/>
+      <AddFieldToContentType name="CuitEmpresa" showInDisplayForm="FALSE" required="TRUE"/>
+      <AddFieldToContentType name="TelefonoEmpreas" showInDisplayForm="FALSE" required="TRUE"/>
+      <AddFieldToContentType name="Empleado" required="TRUE"/>
+      <AddFieldToContentType name="PeriodoAnio" required="TRUE"/>
+      <AddFieldToContentType name="PeriodoMes" required="TRUE"/>
+      
+      <AddFieldToContentType name="Concepto1" showInDisplayForm="FALSE" required="TRUE"/>
+      <AddFieldToContentType name="Concepto2" showInDisplayForm="FALSE"/>
+      <AddFieldToContentType name="Concepto3" showInDisplayForm="FALSE"/>
+      <AddFieldToContentType name="Concepto4" showInDisplayForm="FALSE"/>
+      <AddFieldToContentType name="Concepto5" showInDisplayForm="FALSE"/>
+      <AddFieldToContentType name="Concepto6" showInDisplayForm="FALSE"/>
+      
+      <AddFieldToContentType name="Monto1" showInDisplayForm="FALSE" required="TRUE"/>
+      <AddFieldToContentType name="Monto2" showInDisplayForm="FALSE"/>
+      <AddFieldToContentType name="Monto3" showInDisplayForm="FALSE"/>
+      <AddFieldToContentType name="Monto4" showInDisplayForm="FALSE"/>
+      <AddFieldToContentType name="Monto5" showInDisplayForm="FALSE"/>
+      <AddFieldToContentType name="Monto6" showInDisplayForm="FALSE"/>
+
+      <ReorderFields />  
+    </EnsureContentType> 
+  
+	</EnsureList>
+</Root>
